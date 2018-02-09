@@ -122,7 +122,6 @@ function render()
     {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);
-        window.removeEventListener("keypress", onKeyPress);
         canvas.removeEventListener("click", fire);
         if (gameIsLost)
         {

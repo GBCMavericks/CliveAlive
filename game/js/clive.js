@@ -4,6 +4,7 @@ canvas.height = 400;
 
 var surface = canvas.getContext("2d");
 var uInt;        // Variable for setInterval.
+var crateInt;    // Crate spawn interval.
 
 var background;  // The background image.
 const GROUND_Y = 295; // The y coordinate of the ground.
@@ -16,7 +17,6 @@ var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
-
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = {img:null,x:null,y:null,inAir:false,verticalVelocity:0}; // The player class. img is the image of the player. x and y are the player coordinates.
 var playerSpeed; // Player's speed in pixels.
@@ -34,8 +34,8 @@ var zombieDamageSound = document.createElement("AUDIO"); // Played when tthe zom
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
 
 // PICKUP RELATED VARIABLES **********************************************************************************************************
-var crate = {img:null,x:null,y:null}; // The crate's image
-var crateSpeed; // Crate vertical speed (y)
+var crate = {img:null,x:null,y:null,onGround:null,speed:null}; // The crate object. img: the image od the crate. x: x-coordinate y: y-coordinate onGround: true if the crate is on the ground. speed: crate's vertical speed in pixels.
+var crateCounter; // Spawn timer of the crate.
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
 var leftPressed = false; // These flags are used  
@@ -85,7 +85,8 @@ function createMap() // Initialize all the variables here.
 	crate.img.src = "img/crate.png";
 	crate.x = 20;
 	crate.y = 20;
-	crateSpeed = 2;
+	crate.speed = 2;
+	crate.onGround = false;
     currentDirection = true;
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
@@ -111,6 +112,7 @@ function createMap() // Initialize all the variables here.
     gameIsLost = false;
     gameIsWon = false;
     uInt = setInterval(update, 15.34);
+	crateInt = setInterval(spawnCrate(),10000);
 }
 
 function render()
@@ -180,10 +182,22 @@ function moveZombie()
 
 function moveCrate()
 {
-	crate.y += crateSpeed;
+	if (!crate.onGround)
+	{
+		crate.y += crate.speed;
+	}
 }
 
 function collisionCrateGround()
+{
+	if (crate.y - crate.img.height >= GROUND_Y)
+	{
+		crate.onGround = true;
+		crate.y = GROUND_Y + crate.img.height;
+	}
+}
+
+function spawnCrate()
 {
 	
 }

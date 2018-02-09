@@ -1,9 +1,9 @@
 var canvas = document.querySelector("canvas");
 canvas.width = 800;
 canvas.height = 400;
+const FPS = 60;
 
 var surface = canvas.getContext("2d");
-var uInt;        // Variable for setInterval.
 var background;  // The backgound image.
 var loseImage;   // This image is displayed when the player dies.
 var winImage;
@@ -13,13 +13,15 @@ var pad1 = {img:null,x:null,y:null,onPad:null}; // The two
 var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
-var bulletSpeedMultiplier; // A vairable used to determine the value of bullet speed.
 
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = {img:null,x:null,y:null,inAir:false,verticalVelocity:0}; // The player class. img is the image of the player. x and y are the player coordinates.
-var playerSpeed; // Player's speed in pixels.
-const JUMP_INITIAL_VELOCITY = 20; // The player's vertical velocity at the beginning of a jump.
-const GRAVITY = 2; // The deceleration due to gravity.
+const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
+const GRAVITY_MULTIPLIER = 40;
+const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
+const PLAYER_SPEED = 240 / FPS;
+const ZOMBIE_SPEED = 60 / FPS;
+const BULLET_SPEED_MULTIPLIER = 1200 / FPS; // A vairable used to determine the value of bullet speed.
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
@@ -27,7 +29,6 @@ var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 
 // ZOMBIE RELATED VARIABLES **********************************************************************************************************
 var zombie = {img:null,lives:null,x:null,y:null};
-var zombieSpeed; // Speed of zombiein pixels.
 var zombieDamageSound = document.createElement("AUDIO"); // Played when tthe zombie takes damage.
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
 
@@ -56,6 +57,7 @@ function update()
     collisionBulletGround();
     playerGravity();
     render();
+    requestAnimationFrame(update);
 }
 
 function createMap() // Initialize all the variables here.
@@ -73,16 +75,13 @@ function createMap() // Initialize all the variables here.
     zombieDamageSound.setAttribute("src","aud/damage.wav");
     player.x = 300;
     player.y = 295;
-    playerSpeed = 4;
     currentDirection = true;
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
     zombie.lives = 3;
     zombie.x = 100;
     zombie.y = 275 - zombie.img.height;
-    zombieSpeed = 1;
     bullets = [];
-    bulletSpeedMultiplier = 20;
     pads = [];
     pad1.img = new Image();
     pad1.img.src = "img/pad.png";
@@ -98,7 +97,8 @@ function createMap() // Initialize all the variables here.
     pads.push(pad2);
     gameIsLost = false;
     gameIsWon = false;
-    uInt = setInterval(update, 15.34);
+    // Start the game
+    update();
 }
 
 function render()
@@ -156,12 +156,12 @@ function moveZombie()
     if (player.x > zombie.x)
     {
         zombie.img.src = "img/zombieRight.png";
-        zombie.x += zombieSpeed;
+        zombie.x += ZOMBIE_SPEED;
     }
     else
     {
         zombie.img.src = "img/zombieLeft.png";
-        zombie.x -= zombieSpeed;
+        zombie.x -= ZOMBIE_SPEED;
     }
 }
 
@@ -173,7 +173,7 @@ function movePlayer()
             player.img.src = "img/playerLeftJump.png";
         else
             player.img.src = "img/playerLeft.png";
-        player.x = player.x - playerSpeed;
+        player.x = player.x - PLAYER_SPEED;
         currentDirection = false;
     }
     if (rightPressed && player.x < (canvas.width - player.img.width))
@@ -182,7 +182,7 @@ function movePlayer()
             player.img.src = "img/playerRightJump.png";
         else
             player.img.src = "img/playerRight.png";
-        player.x = player.x + playerSpeed;
+        player.x = player.x + PLAYER_SPEED;
         currentDirection = true;
     }
     if (upPressed && !player.inAir)
@@ -397,8 +397,8 @@ function fire(event)
     var xCoef = mouseX - player.x;
     var yCoef = mouseY - player.y;
     var commonSpeedVariable = 1/(Math.abs(xCoef)+Math.abs(yCoef));
-    var finalSpeedX = commonSpeedVariable*xCoef*bulletSpeedMultiplier;
-    var finalSpeedY = commonSpeedVariable*yCoef*bulletSpeedMultiplier;
+    var finalSpeedX = commonSpeedVariable*xCoef*BULLET_SPEED_MULTIPLIER;
+    var finalSpeedY = commonSpeedVariable*yCoef*BULLET_SPEED_MULTIPLIER;
     // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
     var bulletImage = new Image();
     bulletImage.src = "img/bullet.png";

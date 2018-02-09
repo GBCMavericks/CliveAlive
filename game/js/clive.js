@@ -4,16 +4,18 @@ canvas.height = 400;
 
 var surface = canvas.getContext("2d");
 var uInt;        // Variable for setInterval.
-var background;  // The backgound image.
+
+var background;  // The background image.
+const GROUND_Y = 295; // The y coordinate of the ground.
 var loseImage;   // This image is displayed when the player dies.
-var winImage;
+var winImage;    // This image is displayed when the player wins.
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var pad1 = {img:null,x:null,y:null,onPad:null}; // The two 
 var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
-var bulletSpeedMultiplier; // A vairable used to determine the value of bullet speed.
+var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
 
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = {img:null,x:null,y:null}; // The player class. img is the image of the player. x and y are the player coordinates.
@@ -21,7 +23,7 @@ var playerSpeed; // Player's speed in pixels.
 const JUMP_SPEED = 8; // Used to set the jump speed back to it's original value.
 var jumpSpeed;   // Player's current jump speed in pixels.
 var jumpHeight;  // Player's jump height in pixels.
-var jumpCounter; // Trackshow many pixels the player jumped so far.
+var jumpCounter; // Tracks how many pixels the player jumped so far.
 var goingUp;     // Flag for the jumping animation. True means jumping up, false means falling down.
 var flag1 = true;  //  These flags are used to make sure
 var flag2 = false; //  the jump speed is modified once,
@@ -35,16 +37,19 @@ var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 
 // ZOMBIE RELATED VARIABLES **********************************************************************************************************
 var zombie = {img:null,lives:null,x:null,y:null}
-var zombieSpeed; // Speed of zombiein pixels.
+var zombieSpeed; // Speed of zombie in pixels.
 var zombieDamageSound = document.createElement("AUDIO"); // Played when tthe zombie takes damage.
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
+
+// PICKUP RELATED VARIABLES **********************************************************************************************************
+var crate = {img:null,x:null,y:null}; // The crate's image
+var crateSpeed; // Crate vertical speed (y)
+// END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
 var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
-
-
 
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
@@ -58,6 +63,8 @@ function update()
 	moveZombie();
 	movePlayer();
 	moveBullet();
+	moveCrate();
+	collisionCrateGround();
 	collisionBulletZombie();
 	collisionPlayerZombie();
 	collisionPlayerPad();
@@ -77,11 +84,16 @@ function createMap() // Initialize all the variables here.
 	winImage.src = "img/win.png";
 	player.img = new Image();
 	player.img.src = "img/playerRight.png";
+	crate.img = new Image();
+	crate.img.src = "img/crate.png";
+	crate.x = 20;
+	crate.y = 20;
+	crateSpeed = 2;
 	jumpSound.setAttribute("src","aud/jump.wav");
 	shootSound.setAttribute("src","aud/shoot.wav");
 	zombieDamageSound.setAttribute("src","aud/damage.wav");
 	player.x = 300;
-	player.y = 295;
+	player.y = GROUND_Y;
 	playerSpeed = 4;
 	jumpSpeed = JUMP_SPEED;
 	jumpHeight = 120;
@@ -133,6 +145,7 @@ function render()
 		surface.drawImage(zombie.img,zombie.x,zombie.y); // Draw the zombie.
 	}
 	surface.drawImage(player.img,player.x,player.y); // Draw the player.
+	surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
 	if (gameIsLost || gameIsWon)
 	{
 		window.removeEventListener("keydown", onKeyDown);
@@ -158,7 +171,7 @@ function moveBullet()
 	{ // For each bullet in bullets array:
 		currentBullet = bullets[i];
 		if (currentBullet.x > canvas.width || currentBullet.x < 0 || currentBullet.y > canvas.height || currentBullet.y < 0)
-		{ // Then the current bulletis out of the canvas. Time to delete it from the bullets array.
+		{ // Then the current bullet is out of the canvas. Time to delete it from the bullets array.
 			bullets.splice(i,i+1); // Removes the current bullet from the bullet array.
 		}
 		
@@ -179,6 +192,16 @@ function moveZombie()
 		zombie.img.src = "img/zombieLeft.png";
 		zombie.x -= zombieSpeed;
 	}
+}
+
+function moveCrate()
+{
+	crate.y += crateSpeed;
+}
+
+function collisionCrateGround()
+{
+	
 }
 
 function movePlayer()
@@ -416,9 +439,9 @@ function playerGravity()
 				}
 			}
 		}
-		if (player.y >= 295)
+		if (player.y >= GROUND_Y)
 		{ // Then the player reached the ground, time to stop.
-			player.y = 295; // Make sure the player does not go below ground.
+			player.y = GROUND_Y; // Make sure the player does not go below ground.
 			applyPlayerGravity = false; // Make sure the player is exactly on the pad.
 			resetJump(); // Reset the jump variables so the next jump is not screwed up.
 			if(currentDirection)

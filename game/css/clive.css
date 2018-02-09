@@ -12,3 +12,15 @@ body
 	height: 400px;
 	background-color: white;
 }
+
+@font-face {
+    font-family: zombieSlayer;
+    src: url(../fonts/ZombieSlayer.ttf);
+}
+
+h1{
+	font-family:zombieSlayer;
+	color:#B10610;
+	font-size: 80px;
+	font-weight: normal;
+}

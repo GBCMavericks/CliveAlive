@@ -18,7 +18,15 @@ var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
 // PLAYER RELATED VARIABLES **********************************************************************************************************
-var player = {img:null,x:null,y:null,inAir:false,verticalVelocity:0}; // The player class. img is the image of the player. x and y are the player coordinates.
+var player = 
+{
+	img:null,
+	x:null,
+	y:null,
+	inAir:false,
+	verticalVelocity:0, // Vertical velocity of the player.
+	currentPowerUp:null // 0 = no powerup, 1 = spray gun
+};
 var playerSpeed; // Player's speed in pixels.
 const JUMP_INITIAL_VELOCITY = 20; // The player's vertical velocity at the beginning of a jump.
 const GRAVITY = 2; // The deceleration due to gravity.
@@ -34,8 +42,18 @@ var zombieDamageSound = document.createElement("AUDIO"); // Played when tthe zom
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
 
 // PICKUP RELATED VARIABLES **********************************************************************************************************
-var crate = {img:null,x:null,y:null,onGround:null,speed:null}; // The crate object. img: the image od the crate. x: x-coordinate y: y-coordinate onGround: true if the crate is on the ground. speed: crate's vertical speed in pixels.
+var crate = 
+{
+	img:null, // Image of the crate.
+	x:null, // X-coordinate of the crate.
+	y:null, // Y-coordinate of the crate.
+	onGround:null, // True: crate is on the ground. False: crate is nit on the ground.
+	speed:null, // Vertical speed of the crate in pixels.
+	onPad:null, // True: crate is on a pad. False: crate is not on a pad.
+	hide:null // True: hide the crate image. False: render the crate image.
+}; 
 var crateCounter; // Spawn timer of the crate.
+var crateSound = document.createElement("AUDIO");
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
 var leftPressed = false; // These flags are used  
@@ -56,6 +74,8 @@ function update()
 	moveBullet();
 	moveCrate();
 	collisionCrateGround();
+	collisionCratePad();
+	collisionCratePlayer();
 	collisionBulletZombie();
 	collisionPlayerZombie();
 	collisionPlayerPad();
@@ -78,15 +98,19 @@ function createMap() // Initialize all the variables here.
     jumpSound.setAttribute("src","aud/jump.wav");
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
+	crateSound.setAttribute("src","aud/pickup.wav");
     player.x = 300;
     player.y = 295;
     playerSpeed = 4;
+	player.currentPowerUp = 0;
 	crate.img = new Image();
 	crate.img.src = "img/crate.png";
 	crate.x = 20;
 	crate.y = 20;
 	crate.speed = 2;
 	crate.onGround = false;
+	crate.onPad = false;
+	crate.hide = false;
     currentDirection = true;
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
@@ -112,7 +136,7 @@ function createMap() // Initialize all the variables here.
     gameIsLost = false;
     gameIsWon = false;
     uInt = setInterval(update, 15.34);
-	crateInt = setInterval(spawnCrate(),10000);
+	crateInt = setInterval(spawnCrate,3000);
 }
 
 function render()
@@ -132,7 +156,10 @@ function render()
         surface.drawImage(zombie.img,zombie.x,zombie.y); // Draw the zombie.
     }
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
-	surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
+	if (!crate.hide)
+	{
+		surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
+	}
     if (gameIsLost || gameIsWon)
     {
         window.removeEventListener("keydown", onKeyDown);
@@ -182,7 +209,7 @@ function moveZombie()
 
 function moveCrate()
 {
-	if (!crate.onGround)
+	if (!crate.onGround || !crate.onPad)
 	{
 		crate.y += crate.speed;
 	}
@@ -193,13 +220,49 @@ function collisionCrateGround()
 	if (crate.y - crate.img.height >= GROUND_Y)
 	{
 		crate.onGround = true;
+		crate.onPad = false;
 		crate.y = GROUND_Y + crate.img.height;
+	}
+}
+
+function collisionCratePad()
+{
+	for ( var i = 0; i < pads.length; i++)
+    { // For each pad in the pads array:
+		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - crate.speed && crate.y + crate.img.height >= pads[i].y + crate.speed)
+		{ // Then there is a collision between the y coordinates of the crate and the pad.
+			if (crate.x + crate.img.width >= pads[i].x && crate.x <= pads[i].x + pads[i].img.width)
+			{
+				crate.onPad = true;
+				crate.y = pads[i].y - crate.img.height; // Make sure the crate is exactly on the pad.
+			}
+		}
+    }
+}
+
+function collisionCratePlayer()
+{
+	if (!crate.hide)
+	{
+		if (player.x + player.img.width >= crate.x && player.x <= crate.x + crate.img.width)
+		{ // Then the x coordinates collide.
+			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
+			{ // Then the y coordinates collide. We have a collision!
+				player.currentPowerUp = 1;
+				crate.hide = true;
+				crateSound.play();
+			}
+		}
 	}
 }
 
 function spawnCrate()
 {
-	
+	crate.x = Math.random() * (canvas.width - crate.img.width);
+	crate.y = -crate.img.height;
+	crate.onGround = false;
+	crate.onPad = false;
+	crate.hide = false;
 }
 
 function movePlayer()

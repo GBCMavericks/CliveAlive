@@ -1,7 +1,7 @@
 var canvas = document.querySelector("canvas");
 canvas.width = 800;
 canvas.height = 400;
-
+const FPS = 60;
 var surface = canvas.getContext("2d");
 
 var uInt;        // Variable for setInterval.
@@ -31,9 +31,12 @@ var player =
 	verticalVelocity:0, // Vertical velocity of the player.
 	currentPowerUp:null // 0 = no power up, 1 = spray gun
 };
-var playerSpeed; // Player's speed in pixels.
-const JUMP_INITIAL_VELOCITY = 25; // The player's vertical velocity at the beginning of a jump.
-const GRAVITY = 2; // The deceleration due to gravity.
+const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
+const GRAVITY_MULTIPLIER = 40;
+const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
+const PLAYER_SPEED = 240 / FPS;
+const ZOMBIE_SPEED = 60 / FPS;
+const BULLET_SPEED_MULTIPLIER = 600 / FPS; // A vairable used to determine the value of bullet speed.
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
@@ -42,7 +45,6 @@ var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 // ZOMBIE RELATED VARIABLES **********************************************************************************************************
 var zombies; // The array of zombies.
 var zombie = {img:null,lives:null,x:null,y:null}
-var zombieSpeed; // Speed of zombie in pixels.
 var zombieDamageSound = document.createElement("AUDIO"); // Played when the zombie takes damage.
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
 
@@ -53,10 +55,10 @@ var crate =
 	x:null, // X-coordinate of the crate.
 	y:null, // Y-coordinate of the crate.
 	onGround:null, // True: crate is on the ground. False: crate is nit on the ground.
-	speed:null, // Vertical speed of the crate in pixels.
 	onPad:null, // True: crate is on a pad. False: crate is not on a pad.
 	hide:null // True: hide the crate image. False: render the crate image.
-}; 
+};  
+const CRATE_SPEED = 120 / FPS;
 var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
@@ -71,24 +73,6 @@ window.addEventListener("keyup", onKeyUp);
 canvas.addEventListener("click", fire);
 
 imagePreloader();
-
-function update()
-{
-	moveZombie();
-	movePlayer();
-	moveBullet();
-	moveCrate();
-	collisionCrateGround();
-	collisionCratePad();
-	collisionCratePlayer();
-	collisionBulletZombie();
-	collisionPlayerZombie();
-	collisionPlayerPad();
-	collisionBulletPad();
-	collisionBulletGround()
-	playerGravity();
-	render();
-}
 
 function imagePreloader() // Initialize the source of the image here!
 {
@@ -123,11 +107,9 @@ function createMap() // Initialize all the variables here.
     player.x = 300;
     player.y = ground.y - player.img.height;
 	player.onPad = false;
-    playerSpeed = 4;
 	player.currentPowerUp = 0;
 	crate.x = Math.random() * (canvas.width - crate.img.width);;
 	crate.y = -crate.img.height;
-	crate.speed = 2;
 	crate.onGround = false;
 	crate.onPad = false;
 	crate.hide = false;
@@ -136,7 +118,6 @@ function createMap() // Initialize all the variables here.
     zombie.lives = 3;
     zombie.x = -zombie.img.width;
     zombie.y = ground.y - zombie.img.height;
-    zombieSpeed = 1;
     bullets = [];
     bulletSpeedMultiplier = 10;
     pads = [];
@@ -158,6 +139,25 @@ function createMap() // Initialize all the variables here.
     uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
 	zombieInt = setInterval(spawnZombie,3000);
+}
+
+function update()
+{
+    moveZombie();
+    movePlayer();
+    moveBullet();
+	moveCrate();
+	collisionCrateGround();
+	collisionCratePad();
+	collisionCratePlayer();
+    collisionBulletZombie();
+    collisionPlayerZombie();
+    collisionPlayerPad();
+    collisionBulletPad();
+    collisionBulletGround();
+    playerGravity();
+    render();
+    //requestAnimationFrame(update);
 }
 
 function render()
@@ -224,12 +224,12 @@ function moveZombie()
 		if (player.x > zombies[i].x)
 		{
 			zombies[i].img.src = "img/zombieRight.png";
-			zombies[i].x += zombieSpeed;
+			zombies[i].x += ZOMBIE_SPEED;
 		}
 		else
 		{
 			zombies[i].img.src = "img/zombieLeft.png";
-			zombies[i].x -= zombieSpeed;
+			zombies[i].x -= ZOMBIE_SPEED;
 		}
 	}
 }
@@ -256,7 +256,7 @@ function moveCrate()
 {
 	if (!crate.onGround || !crate.onPad)
 	{
-		crate.y += crate.speed;
+		crate.y += CRATE_SPEED;
 	}
 }
 
@@ -274,7 +274,7 @@ function collisionCratePad()
 {
 	for ( var i = 0; i < pads.length; i++)
     { // For each pad in the pads array:
-		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - crate.speed && crate.y + crate.img.height >= pads[i].y + crate.speed)
+		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - CRATE_SPEED && crate.y + crate.img.height >= pads[i].y + CRATE_SPEED)
 		{ // Then there is a collision between the y coordinates of the crate and the pad.
 			if (crate.x + crate.img.width >= pads[i].x && crate.x <= pads[i].x + pads[i].img.width)
 			{
@@ -318,7 +318,7 @@ function movePlayer()
             player.img.src = "img/playerLeftJump.png";
         else
             player.img.src = "img/playerLeft.png";
-        player.x = player.x - playerSpeed;
+        player.x = player.x - PLAYER_SPEED;
         currentDirection = false;
     }
     if (rightPressed && player.x < (canvas.width - player.img.width))
@@ -327,7 +327,7 @@ function movePlayer()
             player.img.src = "img/playerRightJump.png";
         else
             player.img.src = "img/playerRight.png";
-        player.x = player.x + playerSpeed;
+        player.x = player.x + PLAYER_SPEED;
         currentDirection = true;
     }
     if (upPressed && !player.inAir)
@@ -557,8 +557,8 @@ function fire(event)
     var xCoef = mouseX - player.x;
     var yCoef = mouseY - player.y;
     var commonSpeedVariable = 1/(Math.abs(xCoef)+Math.abs(yCoef));
-    var finalSpeedX = commonSpeedVariable*xCoef*bulletSpeedMultiplier;
-    var finalSpeedY = commonSpeedVariable*yCoef*bulletSpeedMultiplier;
+    var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
+    var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
     // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
     var bulletImage = new Image();
     bulletImage.src = "img/bullet.png";

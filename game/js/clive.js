@@ -5,21 +5,26 @@ const FPS = 60;
 
 var surface = canvas.getContext("2d");
 var background;  // The backgound image.
+var crateInt;    // Crate spawn interval.
+
+const GROUND_Y = 295; // The y coordinate of the ground.
 var loseImage;   // This image is displayed when the player dies.
-var winImage;
+var winImage;    // This image is displayed when the player wins.
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var pad1 = {img:null,x:null,y:null,onPad:null}; // The two 
 var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
-
+var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = {img:null,x:null,y:null,inAir:false,verticalVelocity:0}; // The player class. img is the image of the player. x and y are the player coordinates.
 const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
 const GRAVITY_MULTIPLIER = 40;
 const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
+
 const PLAYER_SPEED = 240 / FPS;
+
 const ZOMBIE_SPEED = 60 / FPS;
 const BULLET_SPEED_MULTIPLIER = 1200 / FPS; // A vairable used to determine the value of bullet speed.
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
@@ -29,15 +34,29 @@ var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 
 // ZOMBIE RELATED VARIABLES **********************************************************************************************************
 var zombie = {img:null,lives:null,x:null,y:null};
+var zombieSpeed; // Speed of zombie in pixels.
 var zombieDamageSound = document.createElement("AUDIO"); // Played when tthe zombie takes damage.
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
 
-var leftPressed = false; // These flags are used
+// PICKUP RELATED VARIABLES **********************************************************************************************************
+var crate = 
+{
+	img:null, // Image of the crate.
+	x:null, // X-coordinate of the crate.
+	y:null, // Y-coordinate of the crate.
+	onGround:null, // True: crate is on the ground. False: crate is nit on the ground.
+	speed:null, // Vertical speed of the crate in pixels.
+	onPad:null, // True: crate is on a pad. False: crate is not on a pad.
+	hide:null // True: hide the crate image. False: render the crate image.
+}; 
+var crateCounter; // Spawn timer of the crate.
+var crateSound = document.createElement("AUDIO");
+// END OF PICKUP RELATED VARIABLES ***************************************************************************************************
+
+var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
-
-
 
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
@@ -50,6 +69,10 @@ function update()
     moveZombie();
     movePlayer();
     moveBullet();
+	moveCrate();
+	collisionCrateGround();
+	collisionCratePad();
+	collisionCratePlayer();
     collisionBulletZombie();
     collisionPlayerZombie();
     collisionPlayerPad();
@@ -73,8 +96,18 @@ function createMap() // Initialize all the variables here.
     jumpSound.setAttribute("src","aud/jump.wav");
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
+	crateSound.setAttribute("src","aud/pickup.wav");
     player.x = 300;
     player.y = 295;
+	player.currentPowerUp = 0;
+	crate.img = new Image();
+	crate.img.src = "img/crate.png";
+	crate.x = 20;
+	crate.y = 20;
+	crate.speed = 2;
+	crate.onGround = false;
+	crate.onPad = false;
+	crate.hide = false;
     currentDirection = true;
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
@@ -99,6 +132,7 @@ function createMap() // Initialize all the variables here.
     gameIsWon = false;
     // Start the game
     update();
+	crateInt = setInterval(spawnCrate,3000);
 }
 
 function render()
@@ -118,6 +152,10 @@ function render()
         surface.drawImage(zombie.img,zombie.x,zombie.y); // Draw the zombie.
     }
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
+	if (!crate.hide)
+	{
+		surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
+	}
     if (gameIsLost || gameIsWon)
     {
         window.removeEventListener("keydown", onKeyDown);
@@ -163,6 +201,64 @@ function moveZombie()
         zombie.img.src = "img/zombieLeft.png";
         zombie.x -= ZOMBIE_SPEED;
     }
+}
+
+function moveCrate()
+{
+	if (!crate.onGround || !crate.onPad)
+	{
+		crate.y += crate.speed;
+	}
+}
+
+function collisionCrateGround()
+{
+	if (crate.y - crate.img.height >= GROUND_Y)
+	{
+		crate.onGround = true;
+		crate.onPad = false;
+		crate.y = GROUND_Y + crate.img.height;
+	}
+}
+
+function collisionCratePad()
+{
+	for ( var i = 0; i < pads.length; i++)
+    { // For each pad in the pads array:
+		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - crate.speed && crate.y + crate.img.height >= pads[i].y + crate.speed)
+		{ // Then there is a collision between the y coordinates of the crate and the pad.
+			if (crate.x + crate.img.width >= pads[i].x && crate.x <= pads[i].x + pads[i].img.width)
+			{
+				crate.onPad = true;
+				crate.y = pads[i].y - crate.img.height; // Make sure the crate is exactly on the pad.
+			}
+		}
+    }
+}
+
+function collisionCratePlayer()
+{
+	if (!crate.hide)
+	{
+		if (player.x + player.img.width >= crate.x && player.x <= crate.x + crate.img.width)
+		{ // Then the x coordinates collide.
+			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
+			{ // Then the y coordinates collide. We have a collision!
+				player.currentPowerUp = 1;
+				crate.hide = true;
+				crateSound.play();
+			}
+		}
+	}
+}
+
+function spawnCrate()
+{
+	crate.x = Math.random() * (canvas.width - crate.img.width);
+	crate.y = -crate.img.height;
+	crate.onGround = false;
+	crate.onPad = false;
+	crate.hide = false;
 }
 
 function movePlayer()

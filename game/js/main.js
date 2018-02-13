@@ -1,9 +1,7 @@
 
-surface.font="50px zombieSlayer";
-surface.fillText("Clive Alive",10,50);
 
 
-createMap();
+//createMap();
 
 function update()
 {

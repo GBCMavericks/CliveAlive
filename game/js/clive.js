@@ -72,8 +72,6 @@ window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
 canvas.addEventListener("click", fire);
 
-<<<<<<< HEAD
-
 function initFiles(){
 	player.img = new Image();
 	player.img.src = "img/playerRight.png";
@@ -104,9 +102,7 @@ function update()
     render();
     requestAnimationFrame(update);
 }
-=======
 imagePreloader();
->>>>>>> master
 
 function imagePreloader() // Initialize the source of the image here!
 {

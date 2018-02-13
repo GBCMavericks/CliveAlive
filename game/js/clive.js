@@ -136,9 +136,10 @@ function createMap() // Initialize all the variables here.
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
 	crateSound.setAttribute("src","aud/pickup.wav");
-    uInt = setInterval(update, 15.34);
+    //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
-	zombieInt = setInterval(spawnZombie,3000);
+    zombieInt = setInterval(spawnZombie,3000);
+    update();
 }
 
 function update()
@@ -157,7 +158,7 @@ function update()
     collisionBulletGround();
     playerGravity();
     render();
-    //requestAnimationFrame(update);
+    requestAnimationFrame(update);
 }
 
 function render()
@@ -195,7 +196,7 @@ function render()
         {
             surface.drawImage(winImage,200,100); // Draw the player.
         }
-        clearInterval(uInt);
+        //clearInterval(uInt);
 		clearInterval(crateInt);
 		clearInterval(zombieInt);
     }

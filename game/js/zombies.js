@@ -12,7 +12,8 @@ function drawZombies(surface)
 {
 	for (var i = 0; i < zombies.length; i++) // Draw the zombies.
 	{
-		surface.drawImage(zombies[i].img, zombies[i].x, zombies[i].y);
+		if(zombies[i].onPlay)
+			surface.drawImage(zombies[i].img, zombies[i].x, zombies[i].y);
 	}
 }
 
@@ -20,15 +21,18 @@ function moveZombie()
 {
 	for (var i = 0; i < zombies.length; i++)
 	{
-		if (player.x > zombies[i].x)
+		if(zombies[i].onPlay)
 		{
-			zombies[i].img.src = "img/zombieRight.png";
-			zombies[i].x += ZOMBIE_SPEED;
-		}
-		else
-		{
-			zombies[i].img.src = "img/zombieLeft.png";
-			zombies[i].x -= ZOMBIE_SPEED;
+			if (player.x > zombies[i].x)
+			{
+				zombies[i].img.src = "img/zombieRight.png";
+				zombies[i].x += ZOMBIE_SPEED;
+			}
+			else
+			{
+				zombies[i].img.src = "img/zombieLeft.png";
+				zombies[i].x -= ZOMBIE_SPEED;
+			}	
 		}
 	}
 }
@@ -48,6 +52,19 @@ function spawnZombie()
 	}
 	currentZombie.y = ground.y - zombie.img.height;
 	currentZombie.lives = 1;
+	currentZombie.onPlay = true;
 	zombies.push(currentZombie);
 }
 
+function cleanZombieArray()
+{
+	var newZombies = [];
+	for (var i = 0; i < zombies.length; i++)
+	{
+		if(zombies[i].onPlay)
+		{
+			newZombies.push(zombies[i]);
+		}
+	}
+	zombies = newZombies;
+}

@@ -131,6 +131,8 @@ function update()
     collisionBulletGround();
     playerGravity();
     render();
+    cleanZombieArray();
+    cleanBulletArray();
 }
 
 
@@ -143,10 +145,7 @@ function render()
     { // For each pad in the pads array, draw it on the canvas.
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
     }
-    for (var i = 0; i < bullets.length; i++)
-    { // For each bullet in bullets array:
-        surface.drawImage(bullets[i].img,bullets[i].x,bullets[i].y); // Draw the bullet on the canvas.
-    }
+    drawBullets(surface);
     drawZombies(surface);
     //console.log(player);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
@@ -176,21 +175,6 @@ function render()
     }
 }
 
-function moveBullet()
-{
-    var currentBullet;
-    for (var i = 0; i < bullets.length; i++)
-    { // For each bullet in bullets array:
-        currentBullet = bullets[i];
-        if (currentBullet.x > canvas.width || currentBullet.x < 0 || currentBullet.y > canvas.height || currentBullet.y < 0)
-        { // Then the current bullet is out of the canvas. Time to delete it from the bullets array.
-            bullets.splice(i,i+1); // Removes the current bullet from the bullet array.
-        }
-
-        currentBullet.x += currentBullet.xSpeed;
-        currentBullet.y += currentBullet.ySpeed;
-    }
-}
 
 function moveCrate()
 {
@@ -292,48 +276,6 @@ function movePlayer()
     }
 }
 
-function collisionBulletZombie()
-{
-	for (var i = 0; i < bullets.length; i++)
-    { // For all bullets in bullets array:
-		for (var j = 0; j < zombies.length; j++)
-		{ // For all zombies in the zombies array:
-			if (bullets[i].x + bullets[i].img.width >= zombies[j].x && bullets[i].x <= zombies[j].x + zombie.img.width)
-			{ // Then the x coordinates collide.
-				if (bullets[i].y + bullets[i].img.height >= zombies[j].y && bullets[i].y <= zombies[j].y + zombie.img.height)
-				{ // Then the y coordinates collide. We have a collision!
-					zombies[j].lives--;
-					bullets.splice(i,i+1);
-					zombieDamageSound.load();
-					zombieDamageSound.play();
-					if (zombies[j].lives == 0)
-					{ // If the zombie dies:
-						zombies.splice(j,j+1); // Remove it from the zombies array.
-						killCounter++;
-						if (killCounter >= 10)
-						{
-							gameIsWon = true;
-						}
-					}
-				}
-			}
-		}
-    }
-}
-
-function collisionPlayerZombie()
-{
-	for (var i = 0; i < zombies.length; i++)
-	{
-		if (player.x + player.img.width - 12 >= zombies[i].x && player.x <= zombies[i].x + zombie.img.width - 12)
-		{ // Then the x coordinates collide.
-			if (player.y + player.img.height >= zombies[i].y + 12 && player.y <= zombies[i].y + zombie.img.height)
-			{ // Then the y coordinates collide. We have a collision!
-				gameIsLost = true;
-			}
-		}
-	}
-}
 
 function collisionPlayerPad()
 {
@@ -372,72 +314,6 @@ function collisionPlayerPad()
     }
 }
 
-function collisionBulletPad()
-{
-    for (var i = 0; i < bullets.length; i++)
-    { // For each bullet in the bullets array:
-        for (var j = 0; j < pads.length; j++)
-        { // For each pad in the pads array:
-            var leftCollide = false, rightCollide = false, upCollide = false, downCollide = false;
-            if (bullets[i].x + bullets[i].img.width + bullets[i].xSpeed >= pads[j].x)
-            { // IMPORTANT: Adding the speed of the bullet to these four if statements is crucial! It prevents the bullet from going inside the pad.
-                leftCollide = true;
-            }
-            if (bullets[i].x  + bullets[i].xSpeed <= pads[j].x + pads[j].img.width)
-            {
-                rightCollide = true;
-            }
-            if (bullets[i].y + bullets[i].img.height + bullets[i].ySpeed>= pads[j].y)
-            {
-                upCollide = true;
-            }
-            if (bullets[i].y + bullets[i].ySpeed<= pads[j].y + pads[j].img.height)
-            {
-                downCollide = true;
-            }
-            if (leftCollide && rightCollide && upCollide && downCollide)
-            {// Collision occured!
-                var bulletCenterY = bullets[i].y + bullets[i].img.height/2;
-                if ( bulletCenterY > pads[j].y && bulletCenterY < pads[j].y + pads[j].img.height)
-                { // Then a horizontal collision occured.
-                    if (bullets[i].x < pads[j].x)
-                    { // Then the bullet collided with the left side.
-                        bullets[i].x = pads[j].x - bullets[i].img.width; // This ensures the bullet ricochet animation is smooth.
-                    }
-                    else
-                    { // Then the bullet collided with the right side.
-                        bullets[i].x = pads[j].x + pads[j].img.width; // This ensures the bullet ricochet animation is smooth.
-                    }
-                    bullets[i].xSpeed = -bullets[i].xSpeed;
-                }
-                else
-                { // Then a vertical collision occured.
-                    if (bullets[i].y < pads[j].y)
-                    { // Then the bullet collided with the top side.
-                        bullets[i].y = pads[j].y - bullets[i].img.height; // This ensures the bullet ricochet animation is smooth.
-                    }
-                    else
-                    { // Then the bullet collided with the bottom side.
-                        bullets[i].y = pads[j].y + pads[j].img.height; // This ensures the bullet ricochet animation is smooth.
-                    }
-                    bullets[i].ySpeed = -bullets[i].ySpeed;
-                }
-            }
-        }
-    }
-}
-
-function collisionBulletGround()
-{
-    for (var i = 0; i < bullets.length; i++)
-    {
-        if (bullets[i].y + bullets[i].img.height + bullets[i].ySpeed > ground.y)
-        {
-			bullets[i].y = ground.y - bullets[i].img.height;
-            bullets[i].ySpeed = -bullets[i].ySpeed;
-        }
-    }
-}
 
 function playerGravity()
 {
@@ -502,7 +378,15 @@ function fire(event)
     // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
     var bulletImage = new Image();
     bulletImage.src = "img/bullet.png";
-    bullets.push({img:bulletImage,x:player.x,y:player.y,xSpeed:finalSpeedX,ySpeed:finalSpeedY});
+    bullets.push(
+        {
+            img:bulletImage,
+            x:player.x,
+            y:player.y,
+            xSpeed:finalSpeedX,
+            ySpeed:finalSpeedY,
+            onPlay:true, 
+        });
 }
 
 function onKeyDown(event)

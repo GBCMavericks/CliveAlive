@@ -2,7 +2,7 @@ function collisionPlayerZombie()
 {
 	for (var i = 0; i < zombies.length; i++)
 	{
-		if(zombie.onPlay)
+		if(zombies[i].onPlay)
 		{
 			if (player.x + player.img.width - 12 >= zombies[i].x && player.x <= zombies[i].x + zombie.img.width - 12)
 			{ // Then the x coordinates collide.
@@ -17,12 +17,12 @@ function collisionPlayerZombie()
 
 function collisionBulletZombie()
 {
-	for (var i = 0; i < bullets.length; i++)
-	{ // For all bullets in bullets array:
-		if(!bullets[i].onPlay)
-			continue;
-		for (var j = 0; j < zombies.length; j++)
-		{ // For all zombies in the zombies array:
+	for (var j = 0; j < zombies.length; j++)
+	{ // For all zombies in the zombies array:
+		for (var i = 0; i < bullets.length; i++)
+		{ // For all bullets in bullets array:
+			if(!bullets[i].onPlay)
+				continue;
 			if(!zombies[j].onPlay)
 				continue;
             if (typeof bullets[i] == 'undefined')

@@ -39,3 +39,28 @@ function cleanBulletArray()
 	}
     bullets = newBullets;
 }
+
+function fire(event)
+{
+    shootSound.play(); // Play the shooting sound effect. Pew pew pew!
+    var mouseX = event.clientX - surface.canvas.offsetLeft; // You have to subtract the offset value
+    var mouseY = event.clientY - surface.canvas.offsetTop;  // to get the mouse coordinate inside the canvas.
+    // THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
+    var xCoef = mouseX - player.x;
+    var yCoef = mouseY - player.y;
+    var commonSpeedVariable = 1/(Math.abs(xCoef)+Math.abs(yCoef));
+    var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
+    var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
+    // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
+    var bulletImage = new Image();
+    bulletImage.src = "img/bullet.png";
+    bullets.push(
+        {
+            img:bulletImage,
+            x:player.x,
+            y:player.y,
+            xSpeed:finalSpeedX,
+            ySpeed:finalSpeedY,
+            onPlay:true, 
+        });
+}

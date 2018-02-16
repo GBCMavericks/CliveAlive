@@ -7,7 +7,6 @@ var pad1 = {img:null,x:null,y:null,onPad:null}; // The two
 var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
-var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = 
 {
@@ -19,11 +18,7 @@ var player =
 	verticalVelocity:0, // Vertical velocity of the player.
 	currentPowerUp:null // 0 = no power up, 1 = spray gun
 };
-const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
-const GRAVITY_MULTIPLIER = 40;
-const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
-const PLAYER_SPEED = 240 / FPS;
-const BULLET_SPEED_MULTIPLIER = 600 / FPS; // A vairable used to determine the value of bullet speed.
+
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
@@ -39,8 +34,7 @@ var crate =
 	onGround:null, // True: crate is on the ground. False: crate is nit on the ground.
 	onPad:null, // True: crate is on a pad. False: crate is not on a pad.
 	hide:null // True: hide the crate image. False: render the crate image.
-};  
-const CRATE_SPEED = 120 / FPS;
+};
 var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
@@ -66,7 +60,15 @@ function update()
     collisionBulletPad();
     collisionBulletGround();
     playerGravity();
-    render();
+    if(frameCounter % RECALCULATE_GLOBALS_INTERVAL == 0)
+    {
+        fps = 1000 / ((window.performance.now() - lastFrameTime) / RECALCULATE_GLOBALS_INTERVAL);
+        render();
+        recalculateGlobals();
+    }
+    else
+        render();
+    frameCounter++;
     requestAnimationFrame(update);
 }
 
@@ -112,29 +114,9 @@ function createMap() // Initialize all the variables here.
     //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
+    recalculateGlobals(); // Get the globals ready for the first frame.
     update();
 }
-
-function update()
-{
-    moveZombie();
-    movePlayer();
-    moveBullet();
-	moveCrate();
-	collisionCrateGround();
-	collisionCratePad();
-	collisionCratePlayer();
-    collisionBulletZombie();
-    collisionPlayerZombie();
-    collisionPlayerPad();
-    collisionBulletPad();
-    collisionBulletGround();
-    playerGravity();
-    render();
-    cleanZombieArray();
-    cleanBulletArray();
-}
-
 
 function render()
 {
@@ -180,7 +162,7 @@ function moveCrate()
 {
 	if (!crate.onGround || !crate.onPad)
 	{
-		crate.y += CRATE_SPEED;
+		crate.y += crateSpeed;
 	}
 }
 
@@ -198,7 +180,7 @@ function collisionCratePad()
 {
 	for ( var i = 0; i < pads.length; i++)
     { // For each pad in the pads array:
-		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - CRATE_SPEED && crate.y + crate.img.height >= pads[i].y + CRATE_SPEED)
+		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - crateSpeed && crate.y + crate.img.height >= pads[i].y + crateSpeed)
 		{ // Then there is a collision between the y coordinates of the crate and the pad.
 			if (crate.x + crate.img.width >= pads[i].x && crate.x <= pads[i].x + pads[i].img.width)
 			{
@@ -242,7 +224,7 @@ function movePlayer()
             player.img.src = "img/playerLeftJump.png";
         else
             player.img.src = "img/playerLeft.png";
-        player.x = player.x - PLAYER_SPEED;
+        player.x = player.x - playerSpeed;
         currentDirection = false;
     }
     if (rightPressed && player.x < (canvas.width - player.img.width))
@@ -251,7 +233,7 @@ function movePlayer()
             player.img.src = "img/playerRightJump.png";
         else
             player.img.src = "img/playerRight.png";
-        player.x = player.x + PLAYER_SPEED;
+        player.x = player.x + playerSpeed;
         currentDirection = true;
     }
     if (upPressed && !player.inAir)
@@ -269,7 +251,7 @@ function movePlayer()
             player.img.src = "img/playerLeftJump.png";
         }
 
-        player.verticalVelocity = JUMP_INITIAL_VELOCITY;
+        player.verticalVelocity = jumpInitialVelocity;
         player.inAir = true;
 		player.onPad = false;
         jumpSound.play();
@@ -318,7 +300,7 @@ function collisionPlayerPad()
 function playerGravity()
 {
     player.y -= player.verticalVelocity; // Move the player up or down according to the vertical velocity.
-    player.verticalVelocity -= GRAVITY; // Decelerate the player due to gravity.
+    player.verticalVelocity -= gravity; // Decelerate the player due to gravity.
     if(currentDirection)
     {
         player.img.src = "img/playerRightJump.png";

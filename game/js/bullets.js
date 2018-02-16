@@ -49,8 +49,8 @@ function fire(event)
     var xCoef = mouseX - player.x;
     var yCoef = mouseY - player.y;
     var commonSpeedVariable = 1/(Math.abs(xCoef)+Math.abs(yCoef));
-    var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
-    var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
+    var finalSpeedX = commonSpeedVariable * xCoef * bulletSpeedMultiplier;
+    var finalSpeedY = commonSpeedVariable * yCoef * bulletSpeedMultiplier;
     // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
     var bulletImage = new Image();
     bulletImage.src = "img/bullet.png";

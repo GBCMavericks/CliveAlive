@@ -31,7 +31,8 @@ window.onload = function()
     });
 };
 
-function onSpaceDown(){
+function onSpaceDown(event)
+{
     switch (event.keyCode)
     {
         case 32:

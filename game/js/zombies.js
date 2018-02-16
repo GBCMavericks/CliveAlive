@@ -1,7 +1,6 @@
 
 // ZOMBIE RELATED VARIABLES **********************************************************************************************************
-const FPS = 60;
-const ZOMBIE_SPEED = 60 / FPS;
+const ZOMBIE_SPEED = 60 / fps;
 
 var zombies = []; // The array of zombies.
 var zombie = {img:null,lives:null,x:null,y:null}

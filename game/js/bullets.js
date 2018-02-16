@@ -77,6 +77,10 @@ function fire(event)
         var commonSpeedVariable3 ;
         var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
         var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedX2 = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedY2 = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedX3 = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedY3 = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
         // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
         var bulletImage = new Image();
         bulletImage.src = "img/bullet.png";
@@ -94,8 +98,8 @@ function fire(event)
                 img: bulletImage,
                 x: player.x,
                 y: player.y,
-                xSpeed: finalSpeedX,
-                ySpeed: finalSpeedY,
+                xSpeed: finalSpeedX2,
+                ySpeed: finalSpeedY2,
                 onPlay: true,
             });
         bullets.push(
@@ -103,8 +107,8 @@ function fire(event)
                 img: bulletImage,
                 x: player.x,
                 y: player.y,
-                xSpeed: finalSpeedX,
-                ySpeed: finalSpeedY,
+                xSpeed: finalSpeedX3,
+                ySpeed: finalSpeedY3,
                 onPlay: true,
             });
         powerUpAmmo = powerUpAmmo - 1;

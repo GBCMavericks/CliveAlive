@@ -50,7 +50,6 @@ var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
 
-
 function update()
 {
     moveZombie();
@@ -161,6 +160,8 @@ function render()
         if (gameIsLost)
         {
             surface.drawImage(loseImage,200,100); 
+			drawLoseInstructions();
+			window.addEventListener("keydown", restartPage);
         }
         if (gameIsWon)
         {
@@ -395,4 +396,14 @@ function onKeyUp(event)
         case 119:
             upPressed = false;
     }
+}
+
+function restartPage(event)
+{
+	switch (event.keyCode)
+	{
+		case 82:
+			downPressed = true;
+			location.reload();
+	}
 }

@@ -9,7 +9,7 @@ var ground = {};
 var loseImage = {};
 var winImage = {};
 //var player = {};
-//var crate = {};
+var crate = {};
 var zombie = {};
 //var pad1 = {};
 //var pad2 = {};
@@ -31,7 +31,7 @@ window.onload = function()
     });
 };
 
-function onSpaceDown(){
+function onSpaceDown(event){
     switch (event.keyCode)
     {
         case 32:

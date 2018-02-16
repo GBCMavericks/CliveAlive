@@ -43,6 +43,8 @@ var crate =
 const CRATE_SPEED = 120 / FPS;
 var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
+var currentPowerUp = 0; // 0: normal, 1: spray
+var powerUpAmmo; // Number of uses of the power-up
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
 var leftPressed = false; // These flags are used  
@@ -217,7 +219,8 @@ function collisionCratePlayer()
 		{ // Then the x coordinates collide.
 			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
 			{ // Then the y coordinates collide. We have a collision!
-				player.currentPowerUp = 1;
+				currentPowerUp = 1;
+				powerUpAmmo += 5;
 				crate.hide = true;
 				crateSound.play();
 			}

@@ -80,6 +80,10 @@ function loadResources(callback){
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
     zombie.img.onload = function(){loadCounter(callback);}
+	
+	flyingZombie.img = new Image();
+	flyingZombie.img.src = "img/flyingZombieLeft.png";
+	flyingZombie.imgonload = function(){loadCounter(callback);}
 
     pad1.img = new Image();
     pad1.img.src = "img/pad.png";

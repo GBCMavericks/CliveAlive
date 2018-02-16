@@ -6,6 +6,8 @@ const ZOMBIE_SPEED = 60 / FPS;
 var zombies = []; // The array of zombies.
 var zombie = {img:null,lives:null,x:null,y:null}
 var zombieDamageSound = document.createElement("AUDIO"); // Played when the zombie takes damage.
+var flyingZombie = {img:null, lives:null, x:null, y:null, onPlay:null} // Flying zombies variable
+var flyingZombies = []; // The array of flying zombies.
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
 
 function drawZombies(surface)
@@ -67,4 +69,25 @@ function cleanZombieArray()
 		}
 	}
 	zombies = newZombies;
+}
+
+function spawnFlyingZombie()
+{
+	var currentFlyingZombie = Object.create(flyingZombie);
+	currentFlyingZombie.img = new Image();
+	currentFlyingZombie.img.src = "img/flyingZombieLeft.png";
+	currentFlyingZombie.x = 0;
+	currentFlyingZombie.y = 0;
+	currentFlyingZombie.lives = 1;
+	currentFlyingZombie.onPlay = true;
+	flyingZombies.push(currentFlyingZombie);
+}
+
+function drawFlyingZombies(surface)
+{
+	for (var i = 0; i < flyingZombies.length; i++) // Draw the flying zombies.
+	{
+		if(flyingZombies[i].onPlay)
+			surface.drawImage(flyingZombies[i].img, flyingZombies[i].x, flyingZombies[i].y);
+	}
 }

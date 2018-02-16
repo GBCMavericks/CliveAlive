@@ -1,5 +1,5 @@
 var crateInt;    // Crate spawn interval.
-
+var flyingZombieInt; // Flying zombie spawn interval.
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
@@ -112,6 +112,7 @@ function createMap() // Initialize all the variables here.
     //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
+	flyingZombieInt = setInterval (spawnFlyingZombie, 3000);
     update();
 }
 
@@ -147,6 +148,7 @@ function render()
     }
     drawBullets(surface);
     drawZombies(surface);
+	drawFlyingZombies(surface);
     //console.log(player);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
 	if (!crate.hide)

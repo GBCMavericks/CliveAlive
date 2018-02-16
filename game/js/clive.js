@@ -220,7 +220,7 @@ function collisionCratePlayer()
 			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
 			{ // Then the y coordinates collide. We have a collision!
 				currentPowerUp = 1;
-				powerUpAmmo += 5;
+				powerUpAmmo = 5;
 				crate.hide = true;
 				crateSound.play();
 			}

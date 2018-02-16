@@ -107,8 +107,11 @@ function fire(event)
                 ySpeed: finalSpeedY,
                 onPlay: true,
             });
-        powerUpAmmo -= 1;
-        if (powerUpAmmo == 0){powerUpState = 0};
+        powerUpAmmo = powerUpAmmo - 1;
+        if (powerUpAmmo == 0)
+        {
+            currentPowerUp = 0;
+        }
 
 
 

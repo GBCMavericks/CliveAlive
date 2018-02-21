@@ -1,4 +1,3 @@
-
 const BLACK_TITLE = 10;
 const RED_TITLE = 40;
 const TOTAL_INTERVAL = 70;
@@ -6,7 +5,6 @@ const BLACK = '#000000';
 const BLOOD_RED = '#B10610';
 const YELLOW = '#FED631';
 const MAX_NUM_ZOMBIES = 6;
-
 
 function startScreen() {
     drawStartBackground(surface);

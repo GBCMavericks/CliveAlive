@@ -116,11 +116,5 @@ function fire(event)
         {
             currentPowerUp = 0;
         }
-
-
-
     }
-
-
-
 }

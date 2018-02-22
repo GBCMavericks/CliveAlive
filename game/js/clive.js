@@ -45,10 +45,10 @@ var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
-var leftPressed = false; // These flags are used  
-var rightPressed = false;// to keep track of which
-var upPressed = false;   // keyboard button the
-var downPressed = false; // player presses.
+var leftPressed; // These flags are used  
+var rightPressed;// to keep track of which
+var upPressed;   // keyboard button the
+var downPressed; // player presses.
 
 function update()
 {
@@ -71,6 +71,10 @@ function update()
 
 function createMap() // Initialize all the variables here.
 { 
+	leftPressed = false; 
+	rightPressed = false;
+	upPressed = false;   
+	downPressed = false; 
 	background.x = 0;
 	background.y = 0;
 	ground.offset = 20;
@@ -111,6 +115,9 @@ function createMap() // Initialize all the variables here.
     //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
+	restartImg.x = 230;
+	restartImg.y = 220;
+	restartImg.onPlay = false;
     update();
 }
 
@@ -144,7 +151,6 @@ function render()
     { // For each pad in the pads array, draw it on the canvas.
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
     }
-    drawBullets(surface);
     drawZombies(surface);
     //console.log(player);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
@@ -152,6 +158,9 @@ function render()
 	{
 		surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
 	}
+	
+	drawBullets(surface);
+	
     if (gameIsLost || gameIsWon)
     {
         window.removeEventListener("keydown", onKeyDown);
@@ -159,9 +168,9 @@ function render()
         canvas.removeEventListener("click", fire);
         if (gameIsLost)
         {
-            surface.drawImage(loseImage,200,100); 
-			drawLoseInstructions();
-			window.addEventListener("keydown", restartPage);
+			canvas.addEventListener("click", restartGame);
+            surface.drawImage(loseImage,200,100);
+			restartImg.onPlay = true;
         }
         if (gameIsWon)
         {
@@ -174,6 +183,10 @@ function render()
     else{
         requestAnimationFrame(update);
     }
+	if(restartImg.onPlay == true)
+	{
+		surface.drawImage(restartImg.img, restartImg.x, restartImg.y);
+	}
 }
 
 
@@ -398,12 +411,22 @@ function onKeyUp(event)
     }
 }
 
-function restartPage(event)
+function restartGame(event)
 {
-	switch (event.keyCode)
+    var mouseX = event.clientX - surface.canvas.offsetLeft;
+    var mouseY = event.clientY - surface.canvas.offsetTop;
+	// detectimg mouse click
+	if(mouseX >= restartImg.x && mouseX <= restartImg.x + restartImg.img.width)
 	{
-		case 82:
-			downPressed = true;
-			location.reload();
+		if(mouseY >= restartImg.y && mouseY <= restartImg.y + restartImg.img.height)
+		{
+			//add listeneres back and removing listener for restart button
+			window.addEventListener("keydown", onKeyDown);
+			window.addEventListener("keyup", onKeyUp);
+			canvas.removeEventListener("click", restartGame);
+			canvas.addEventListener("click", fire);
+			//generating the game again
+			createMap();
+		}	
 	}
 }

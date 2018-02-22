@@ -7,6 +7,7 @@ var surface;
 var background = {};
 var ground = {};
 var loseImage = {};
+var restartImg = {x:null, y:null, onPlay:null};
 var winImage = {};
 //var player = {};
 var crate = {};
@@ -88,6 +89,10 @@ function loadResources(callback){
     pad2.img = new Image();
     pad2.img.src = "img/pad.png";
     pad2.img.onload = function(){loadCounter(callback);}
+	
+	restartImg.img = new Image();
+	restartImg.img.src = "img/restart.png";
+	restartImg.onload = function(){loadCounter(callback)};
 }
 
 

@@ -56,6 +56,8 @@ var rightPressed;// to keep track of which
 var upPressed;   // keyboard button the
 var downPressed; // player presses.
 
+var isPaused = false;
+
 function createMap() // Initialize all the variables here.
 { 
 	leftPressed = false; 
@@ -77,10 +79,13 @@ function createMap() // Initialize all the variables here.
 	crate.onPad = false;
 	crate.hide = false;
     currentDirection = true;
+    // Cleaning enemy []
 	zombies = [];
     zombie.lives = 3;
     zombie.x = -zombie.img.width;
     zombie.y = ground.y - zombie.img.height;
+    flyingZombies = [];
+    slimes = [];
     bullets = [];
     bulletSpeedMultiplier = 10;
     pads = [];
@@ -103,12 +108,16 @@ function createMap() // Initialize all the variables here.
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
 
-	restartImg.x = 230;
-	restartImg.y = 220;
-	restartImg.onPlay = false;
-
 	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
+
+    //buttons values
+    restartImg.x = 230;
+    restartImg.y = 220;
+    restartImg.onPlay = false;
+    options.x = 230;
+    options.y = 300;
+    options.onPlay = false;
 
     update();
 }
@@ -139,8 +148,6 @@ function update()
 	cleanFlyingZombieArray();
     cleanBulletArray();
 	cleanSlimesArray();
-
-
 }
 
 
@@ -148,7 +155,8 @@ function render()
 {
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
     surface.drawImage(background.img, background.x, background.y); // Draw the background.
-	surface.drawImage(ground.img, ground.x, ground.y); // Draw the ground.
+    surface.drawImage(ground.img, ground.x, ground.y); // Draw the ground.
+    surface.drawImage(options.img, 745, -5); //Draw options/pause button.
     for (var i = 0; i < pads.length; i++)
     { // For each pad in the pads array, draw it on the canvas.
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
@@ -164,27 +172,34 @@ function render()
 	
 	drawBullets(surface);
 	
-    if (gameIsLost || gameIsWon)
-    {
+    if (gameIsLost || gameIsWon) {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);
         canvas.removeEventListener("click", fire);
-        if (gameIsLost)
-        {
-			canvas.addEventListener("click", restartGame);
-            surface.drawImage(loseImage,200,100);
-			restartImg.onPlay = true;
+        if (gameIsLost) {
+            canvas.addEventListener("click", restartGame);
+            surface.drawImage(loseImage, 200, 100);
+            restartImg.onPlay = true;
         }
-        if (gameIsWon)
-        {
-            surface.drawImage(winImage,200,100);
+        if (gameIsWon) {
+            surface.drawImage(winImage, 200, 100);
         }
         //clearInterval(uInt);
-		clearInterval(crateInt);
-		clearInterval(zombieInt);
+        clearInterval(crateInt);
+        clearInterval(zombieInt);
+        clearInterval(flyingZombieInt);
+        clearInterval(flyingZombieFireInt);
     }
-    else{
+    else if (!isPaused) {
         requestAnimationFrame(update);
+    }
+    else if (isPaused)
+    {
+        surface.drawImage(resume.img, 230, 300);
+        clearInterval(crateInt);
+        clearInterval(zombieInt);
+        clearInterval(flyingZombieInt);
+        clearInterval(flyingZombieFireInt);
     }
 	if(restartImg.onPlay == true)
 	{

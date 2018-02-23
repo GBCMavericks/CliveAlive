@@ -7,7 +7,9 @@ var surface;
 var background = {};
 var ground = {};
 var loseImage = {};
-var restartImg = {x:null, y:null, onPlay:null};
+var restartImg = { x: null, y: null, onPlay: null };
+var options = { x: null, y: null, onPlay: null };
+var resume = { x: null, y: null, onPlay: null };
 var winImage = {};
 
 //var player = {};
@@ -91,5 +93,13 @@ function loadResources(callback){
 	
 	restartImg.img = new Image();
 	restartImg.img.src = "img/restart.png";
-	restartImg.onload = function(){loadCounter(callback)};
+    restartImg.onload = function () { loadCounter(callback) };
+
+    options.img = new Image();
+    options.img.src = "img/options.png";
+    options.onload = function () { loadCounter(callback) };
+
+    resume.img = new Image();
+    resume.img.src = "img/options.png";
+    resume.onload = function () { loadCounter(callback) };
 }

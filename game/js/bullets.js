@@ -43,10 +43,21 @@ function cleanBulletArray()
 
 function fire(event)
 {
-    shootSound.play(); // Play the shooting sound effect. Pew pew pew!
-
     var mouseX = event.clientX - surface.canvas.offsetLeft; // You have to subtract the offset value
     var mouseY = event.clientY - surface.canvas.offsetTop;  // to get the mouse coordinate inside the canvas.
+
+    //pause button. 
+    if (mouseX >= options.x && mouseX <= options.x + options.img.width)
+    {
+        if (mouseY >= options.y && mouseY <= options.y + options.img.height)
+        {
+            isPaused = true;
+            return;
+        }
+    }
+
+    shootSound.play(); // Play the shooting sound effect. Pew pew pew!
+
     // THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
     var xCoef = mouseX - player.x;
     var yCoef = mouseY - player.y;

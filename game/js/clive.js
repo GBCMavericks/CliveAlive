@@ -131,7 +131,6 @@ function update()
     cleanBulletArray();
 	cleanSlimesArray();
 
-    requestAnimationFrame(update);
 
 }
 

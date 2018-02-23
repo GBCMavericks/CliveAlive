@@ -28,7 +28,7 @@ const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at th
 const GRAVITY_MULTIPLIER = 40;
 const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
 const PLAYER_SPEED = 240 / FPS;
-const BULLET_SPEED_MULTIPLIER = 600 / FPS; // A vairable used to determine the value of bullet speed.
+const BULLET_SPEED_MULTIPLIER = 600 / FPS; // A variable used to determine the value of bullet speed.
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
@@ -115,7 +115,6 @@ function createMap() // Initialize all the variables here.
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
 	crateSound.setAttribute("src","aud/pickup.wav");
-    //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
 	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);

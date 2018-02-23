@@ -1,4 +1,4 @@
-const sprayCoef = 200;
+const sprayCoef = 0.6;
 
 function moveBullet()
 {
@@ -49,10 +49,10 @@ function fire(event)
     // THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
     var xCoef = mouseX - player.x;
     var yCoef = mouseY - player.y;
-	var xCoefB = xCoef * Math.cos(0.3) - yCoef * Math.sin(0.3)
-	var yCoefB = yCoef * Math.cos(0.3) + xCoef * Math.sin(0.3)
-	var xCoefC = xCoef * Math.cos(-0.3) - yCoef * Math.sin(-0.3)
-	var yCoefC = yCoef * Math.cos(-0.3) + xCoef * Math.sin(-0.3)
+	var xCoefB = xCoef * Math.cos(sprayCoef) - yCoef * Math.sin(sprayCoef)
+	var yCoefB = yCoef * Math.cos(sprayCoef) + xCoef * Math.sin(sprayCoef)
+	var xCoefC = xCoef * Math.cos(-sprayCoef) - yCoef * Math.sin(-sprayCoef)
+	var yCoefC = yCoef * Math.cos(-sprayCoef) + xCoef * Math.sin(-sprayCoef)
     var commonSpeedVariable = 1 / (Math.abs(xCoef) + Math.abs(yCoef));
     var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
     var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;

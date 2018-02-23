@@ -5,6 +5,7 @@ var pad1 = {img:null,x:null,y:null,onPad:null}; // The two
 var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
+var bulletsD; // array for diamond bullets
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
 
 // INTERVALS ************************************************************************************************************************
@@ -79,6 +80,7 @@ function createMap() // Initialize all the variables here.
     zombie.x = -zombie.img.width;
     zombie.y = ground.y - zombie.img.height;
     bullets = [];
+    bulletsD = [];
     bulletSpeedMultiplier = 10;
     pads = [];
     pad1.x = 100;
@@ -215,7 +217,7 @@ function collisionCratePlayer()
 		{ // Then the x coordinates collide.
 			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
 			{ // Then the y coordinates collide. We have a collision!
-				currentPowerUp = 1;
+				currentPowerUp = 2;
 				powerUpAmmo = 5;
 				crate.hide = true;
 				crateSound.play();

@@ -21,35 +21,65 @@ function collisionBulletZombie()
 	{ // For all zombies in the zombies array:
 		for (var i = 0; i < bullets.length; i++)
 		{ // For all bullets in bullets array:
-			if(!bullets[i].onPlay)
-				continue;
-			if(!zombies[j].onPlay)
-				continue;
-            if (typeof bullets[i] == 'undefined')
-                console.log('bullet undefined!!!');
-            if(typeof zombies[j] == 'undefined')
-                console.log('zombie undefined!!!');
-			if (bullets[i].x + bullets[i].img.width >= zombies[j].x && bullets[i].x <= zombies[j].x + zombie.img.width)
-			{ // Then the x coordinates collide.
-				if (bullets[i].y + bullets[i].img.height >= zombies[j].y && bullets[i].y <= zombies[j].y + zombie.img.height)
-				{ // Then the y coordinates collide. We have a collision!
-					zombies[j].lives--;
-					bullets[i].onPlay = false;
-					//bullets.splice(i,i+1);
-					zombieDamageSound.load();
-					zombieDamageSound.play();
-					if (zombies[j].lives == 0)
-					{ // If the zombie dies:
-						zombies[j].onPlay=false;
-						//zombies.splice(j,j+1); // Remove it from the zombies array.
-						killCounter++;
-						if (killCounter >= 10)
-						{
-							gameIsWon = true;
-						}
-					}
-				}
-			}
+			for (var k = 0; k < bulletsD.length; k++)
+			{
+                if(!bullets[i].onPlay)
+                    continue;
+                if(!zombies[j].onPlay)
+                    continue;
+                if(!bulletsD[k].onPlay)
+                	continue;
+                if (typeof bullets[i] == 'undefined')
+                    console.log('bullet undefined!!!');
+                if(typeof zombies[j] == 'undefined')
+                    console.log('zombie undefined!!!');
+                if (typeof bulletsD[k] == 'undefined')
+                	console.log('bulletD undefined!!!')
+                if (bullets[i].x + bullets[i].img.width >= zombies[j].x && bullets[i].x <= zombies[j].x + zombie.img.width)
+                { // Then the x coordinates collide.
+                    if (bullets[i].y + bullets[i].img.height >= zombies[j].y && bullets[i].y <= zombies[j].y + zombie.img.height)
+                    { // Then the y coordinates collide. We have a collision!
+                        zombies[j].lives--;
+                        bullets[i].onPlay = false;
+						console.log('wheeeeee')
+                        //bullets.splice(i,i+1);
+                        zombieDamageSound.load();
+                        zombieDamageSound.play();
+                        if (zombies[j].lives == 0)
+                        { // If the zombie dies:
+                            zombies[j].onPlay=false;
+                            //zombies.splice(j,j+1); // Remove it from the zombies array.
+                            killCounter++;
+                            if (killCounter >= 10)
+                            {
+                                gameIsWon = true;
+                            }
+                        }
+                    }
+                }
+                // Separate check for Diamond Bullets
+                if (bulletsD[k].x + bulletsD[k].img.width >= zombies[j].x && bulletsD[k].x <= zombies[j].x + zombie.img.width)
+                { // Then the x coordinates collide.
+                    if (bulletsD[k].y + bulletsD[k].img.height >= zombies[j].y && bulletsD[k].y <= zombies[j].y + zombie.img.height)
+                    { // Then the y coordinates collide. We have a collision!
+                        zombies[j].lives--;
+                        //bullets.splice(i,i+1);
+                        zombieDamageSound.load();
+                        zombieDamageSound.play();
+                        if (zombies[j].lives == 0)
+                        { // If the zombie dies:
+                            zombies[j].onPlay=false;
+                            //zombies.splice(j,j+1); // Remove it from the zombies array.
+                            killCounter++;
+                            if (killCounter >= 10)
+                            {
+                                gameIsWon = true;
+                            }
+                        }
+                    }
+                }
+            }
+
 		}
     }
 }
@@ -120,6 +150,7 @@ function collisionBulletGround()
             continue;
         if (bullets[i].y + bullets[i].img.height + bullets[i].ySpeed > ground.y)
         {
+        	console.log("ASD");
 			bullets[i].y = ground.y - bullets[i].img.height;
             bullets[i].ySpeed = -bullets[i].ySpeed;
         }

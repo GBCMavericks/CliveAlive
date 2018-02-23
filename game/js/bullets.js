@@ -38,7 +38,10 @@ function cleanBulletArray()
 			newBullets.push(bullets[i]);
 		}
 	}
+    var newBulletsD = []
+
     bullets = newBullets;
+    bulletsD = newBullets;
 }
 
 function fire(event)
@@ -58,17 +61,33 @@ function fire(event)
     var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
     // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
     var bulletImage = new Image();
+    var bulletImageD = new Image();
     bulletImage.src = "img/bullet.png";
-    bullets.push(
-        {
-            img: bulletImage,
-            x: player.x,
-            y: player.y,
-            xSpeed: finalSpeedX,
-            ySpeed: finalSpeedY,
-            onPlay: true,
-        });
+    bulletImageD.src = "img/diBullet.png";
+    if (currentPowerUp == 0) {
+        bullets.push(
+            {
+                img: bulletImage,
+                x: player.x,
+                y: player.y,
+                xSpeed: finalSpeedX,
+                ySpeed: finalSpeedY,
+                onPlay: true,
+            });
+    }
+
     if (currentPowerUp == 1) {
+
+        bullets.push(
+            {
+                img: bulletImage,
+                x: player.x,
+                y: player.y,
+                xSpeed: finalSpeedX,
+                ySpeed: finalSpeedY,
+                onPlay: true,
+            });
+
         var finalSpeedX2 = commonSpeedVariable * xCoefB * BULLET_SPEED_MULTIPLIER;
         var finalSpeedY2 = commonSpeedVariable * yCoefB * BULLET_SPEED_MULTIPLIER;
         var finalSpeedX3 = commonSpeedVariable * xCoefC * BULLET_SPEED_MULTIPLIER;
@@ -96,5 +115,18 @@ function fire(event)
         {
             currentPowerUp = 0;
         }
+    }
+    if (currentPowerUp == 2)
+    {
+        bulletsD.push(
+            {
+                img: bulletImageD,
+                x: player.x,
+                y: player.y,
+                xSpeed: finalSpeedX,
+                ySpeed: finalSpeedY,
+                onPlay: true,
+            });
+
     }
 }

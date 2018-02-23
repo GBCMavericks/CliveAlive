@@ -85,7 +85,7 @@ function createMap() // Initialize all the variables here.
     pad1.y = 600;
     pad1.onPad = false;
     pads.push(pad1);
-    pad2.x = 1150;
+    pad2.x = 1100;
     pad2.y = 600;
     pad2.onPad = false;
     pads.push(pad2);

@@ -57,25 +57,6 @@ var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
 
 
-function update()
-{
-    moveZombie();
-    movePlayer();
-    moveBullet();
-	moveCrate();
-	collisionCrateGround();
-	collisionCratePad();
-	collisionCratePlayer();
-    collisionBulletZombie();
-    collisionPlayerZombie();
-    collisionPlayerPad();
-    collisionBulletPad();
-    collisionBulletGround();
-    playerGravity();
-    render();
-    requestAnimationFrame(update);
-}
-
 function createMap() // Initialize all the variables here.
 { 
 	background.x = 0;
@@ -148,6 +129,8 @@ function update()
 	cleanFlyingZombieArray();
     cleanBulletArray();
 	cleanSlimesArray();
+
+
 }
 
 

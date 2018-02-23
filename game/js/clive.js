@@ -61,10 +61,10 @@ function createMap() // Initialize all the variables here.
 { 
 	background.x = 0;
 	background.y = 0;
-	ground.offset = 20;
+	ground.offset = 40;
 	ground.x = 0;
 	ground.y = background.img.height - ground.img.height + ground.offset;
-    player.x = 300;
+    player.x = 600;
     player.y = ground.y - player.img.height;
 	player.onPad = false;
 	player.currentPowerUp = 0;
@@ -81,12 +81,12 @@ function createMap() // Initialize all the variables here.
     bullets = [];
     bulletSpeedMultiplier = 10;
     pads = [];
-    pad1.x = 100;
-    pad1.y = 250;
+    pad1.x = 300;
+    pad1.y = 600;
     pad1.onPad = false;
     pads.push(pad1);
-    pad2.x = 450;
-    pad2.y = 250;
+    pad2.x = 1150;
+    pad2.y = 600;
     pad2.onPad = false;
     pads.push(pad2);
     gameIsLost = false;
@@ -160,11 +160,11 @@ function render()
         canvas.removeEventListener("click", fire);
         if (gameIsLost)
         {
-            surface.drawImage(loseImage,200,100); 
+            surface.drawImage(loseImage,600,400);
         }
         if (gameIsWon)
         {
-            surface.drawImage(winImage,200,100);
+            surface.drawImage(winImage,600,400);
         }
         //clearInterval(uInt);
 		clearInterval(crateInt);

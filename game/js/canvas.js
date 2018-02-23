@@ -1,6 +1,6 @@
 var canvas = document.querySelector("canvas");
-canvas.width = 800; 	
-canvas.height = 400;
+canvas.width = 1600;
+canvas.height = 800;
 var surface;
 
 // External File Variables
@@ -27,7 +27,7 @@ window.onload = function()
     });
 };
 
-function onSpaceDown(){
+function onSpaceDown(event) {
     switch (event.keyCode)
     {
         case 32:

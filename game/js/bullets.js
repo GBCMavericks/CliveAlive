@@ -44,12 +44,15 @@ function cleanBulletArray()
 function fire(event)
 {
     shootSound.play(); // Play the shooting sound effect. Pew pew pew!
-
     var mouseX = event.clientX - surface.canvas.offsetLeft; // You have to subtract the offset value
     var mouseY = event.clientY - surface.canvas.offsetTop;  // to get the mouse coordinate inside the canvas.
     // THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
     var xCoef = mouseX - player.x;
     var yCoef = mouseY - player.y;
+	var xCoefB = xCoef * Math.cos(0.3) - yCoef * Math.sin(0.3)
+	var yCoefB = yCoef * Math.cos(0.3) + xCoef * Math.sin(0.3)
+	var xCoefC = xCoef * Math.cos(-0.3) - yCoef * Math.sin(-0.3)
+	var yCoefC = yCoef * Math.cos(-0.3) + xCoef * Math.sin(-0.3)
     var commonSpeedVariable = 1 / (Math.abs(xCoef) + Math.abs(yCoef));
     var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
     var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
@@ -66,13 +69,10 @@ function fire(event)
             onPlay: true,
         });
     if (currentPowerUp == 1) {
-        var commonSpeedVariable2 = 1 / (Math.abs(xCoef) + Math.abs(yCoef + sprayCoef));
-        var commonSpeedVariable3 = 1 / (Math.abs(xCoef) + Math.abs(yCoef - sprayCoef));
-        var finalSpeedX2 = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
-        var finalSpeedY2 = commonSpeedVariable * (yCoef + sprayCoef) * BULLET_SPEED_MULTIPLIER;
-        var finalSpeedX3 = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
-        var finalSpeedY3 = commonSpeedVariable * (yCoef - sprayCoef) * BULLET_SPEED_MULTIPLIER;
-
+        var finalSpeedX2 = commonSpeedVariable * xCoefB * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedY2 = commonSpeedVariable * yCoefB * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedX3 = commonSpeedVariable * xCoefC * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedY3 = commonSpeedVariable * yCoefC * BULLET_SPEED_MULTIPLIER;
         bullets.push(
             {
                 img: bulletImage,
@@ -87,10 +87,8 @@ function fire(event)
                 img: bulletImage,
                 x: player.x,
                 y: player.y,
-
                 xSpeed: finalSpeedX3,
                 ySpeed: finalSpeedY3,
-
                 onPlay: true,
             });
         powerUpAmmo = powerUpAmmo - 1;

@@ -49,8 +49,6 @@ function fire(event)
         var xCoef = mouseX - player.x;
         var yCoef = mouseY - player.y;
         var commonSpeedVariable = 1 / (Math.abs(xCoef) + Math.abs(yCoef));
-        var commonSpeedVariable2 ;
-        var commonSpeedVariable3 ;
         var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
         var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
         // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
@@ -72,11 +70,26 @@ function fire(event)
         // THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
         var xCoef = mouseX - player.x;
         var yCoef = mouseY - player.y;
+        var xCoefB = xCoef*Math.cos(0.6)+yCoef*Math.sin(0.6);
+        var yCoefB = -xCoef*Math.sin(0.6)+yCoef*Math.cos(0.6);
+        var xCoefC = xCoef*Math.cos(-0.6)+yCoef*Math.sin(-0.6);
+        var yCoefC = -xCoef*Math.sin(-0.6)+yCoef*Math.cos(-0.6);
         var commonSpeedVariable = 1 / (Math.abs(xCoef) + Math.abs(yCoef));
-        var commonSpeedVariable2 ;
-        var commonSpeedVariable3 ;
         var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
         var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
+
+
+
+        var finalSpeedXB = commonSpeedVariable * xCoefB * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedYB = commonSpeedVariable * yCoefB * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedXC = commonSpeedVariable * xCoefC * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedYC = commonSpeedVariable * yCoefC * BULLET_SPEED_MULTIPLIER;
+
+        var finalSpeedX2 = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedY2 = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER + 1;
+        var finalSpeedX3 = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
+        var finalSpeedY3 = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER - 1;
+
         // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
         var bulletImage = new Image();
         bulletImage.src = "img/bullet.png";
@@ -94,8 +107,17 @@ function fire(event)
                 img: bulletImage,
                 x: player.x,
                 y: player.y,
-                xSpeed: finalSpeedX,
-                ySpeed: finalSpeedY,
+
+
+
+                xSpeed: finalSpeedXB,
+                ySpeed: finalSpeedYB,
+
+                xSpeed: finalSpeedX2,
+                ySpeed: finalSpeedY2,
+
+
+
                 onPlay: true,
             });
         bullets.push(
@@ -103,8 +125,23 @@ function fire(event)
                 img: bulletImage,
                 x: player.x,
                 y: player.y,
-                xSpeed: finalSpeedX,
-                ySpeed: finalSpeedY,
+
+
+
+                xSpeed: finalSpeedXC,
+                ySpeed: finalSpeedYC,
+
+                xSpeed: finalSpeedX3,
+                ySpeed: finalSpeedY3,
+
+
+                xSpeed: finalSpeedX3,
+                ySpeed: finalSpeedY3,
+
+
+                xSpeed: finalSpeedX3,
+                ySpeed: finalSpeedY3,
+
                 onPlay: true,
             });
         powerUpAmmo = powerUpAmmo - 1;
@@ -112,11 +149,5 @@ function fire(event)
         {
             currentPowerUp = 0;
         }
-
-
-
     }
-
-
-
 }

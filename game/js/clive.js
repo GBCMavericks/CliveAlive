@@ -1,5 +1,3 @@
-var crateInt;    // Crate spawn interval.
-
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
@@ -8,6 +6,13 @@ var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
+
+// INTERVALS ************************************************************************************************************************
+var crateInt;    // Crate spawn interval.
+var flyingZombieInt; // Flying zombie spawn interval.
+var flyingZombieFireInt; // Flying zombie fire (slime ball) interval.
+// END OF INTERVALS *****************************************************************************************************************
+
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = 
 {
@@ -28,7 +33,6 @@ var currentDirection;// Used to keep track of player's direction. (true=right fa
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 // END OF PLAYER RELATED VARIABLES ***************************************************************************************************
-
 
 // PICKUP RELATED VARIABLES **********************************************************************************************************
 var crate = 
@@ -114,6 +118,8 @@ function createMap() // Initialize all the variables here.
     //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
+	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
+	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
     update();
 }
 
@@ -123,6 +129,8 @@ function update()
     movePlayer();
     moveBullet();
 	moveCrate();
+	moveFlyingZombie();
+	moveSlime();
 	collisionCrateGround();
 	collisionCratePad();
 	collisionCratePlayer();
@@ -131,10 +139,16 @@ function update()
     collisionPlayerPad();
     collisionBulletPad();
     collisionBulletGround();
+	collisionBulletFlyingZombie();
+	collisionPlayerFlyingZombie();
+	collisionSlimeGround();
+	collisionSlimePlayer();
     playerGravity();
     render();
     cleanZombieArray();
+	cleanFlyingZombieArray();
     cleanBulletArray();
+	cleanSlimesArray();
 }
 
 
@@ -149,7 +163,8 @@ function render()
     }
     drawBullets(surface);
     drawZombies(surface);
-    //console.log(player);
+	drawFlyingZombies(surface);
+	drawSlimes(surface);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
 	if (!crate.hide)
 	{
@@ -176,7 +191,6 @@ function render()
         requestAnimationFrame(update);
     }
 }
-
 
 function moveCrate()
 {

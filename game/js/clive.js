@@ -1,5 +1,3 @@
-var crateInt;    // Crate spawn interval.
-
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
@@ -8,6 +6,13 @@ var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
+
+// INTERVALS ************************************************************************************************************************
+var crateInt;    // Crate spawn interval.
+var flyingZombieInt; // Flying zombie spawn interval.
+var flyingZombieFireInt; // Flying zombie fire (slime ball) interval.
+// END OF INTERVALS *****************************************************************************************************************
+
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = 
 {
@@ -29,7 +34,6 @@ var jumpSound = document.createElement("AUDIO"); // This is the jump sound effec
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 // END OF PLAYER RELATED VARIABLES ***************************************************************************************************
 
-
 // PICKUP RELATED VARIABLES **********************************************************************************************************
 var crate = 
 {
@@ -43,31 +47,14 @@ var crate =
 const CRATE_SPEED = 120 / FPS;
 var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
+var currentPowerUp = 0; // 0: normal, 1: spray
+var powerUpAmmo; // Number of uses of the power-up
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
 var leftPressed; // These flags are used  
 var rightPressed;// to keep track of which
 var upPressed;   // keyboard button the
 var downPressed; // player presses.
-
-function update()
-{
-    moveZombie();
-    movePlayer();
-    moveBullet();
-	moveCrate();
-	collisionCrateGround();
-	collisionCratePad();
-	collisionCratePlayer();
-    collisionBulletZombie();
-    collisionPlayerZombie();
-    collisionPlayerPad();
-    collisionBulletPad();
-    collisionBulletGround();
-    playerGravity();
-    render();
-    requestAnimationFrame(update);
-}
 
 function createMap() // Initialize all the variables here.
 { 
@@ -115,9 +102,14 @@ function createMap() // Initialize all the variables here.
     //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
+
 	restartImg.x = 230;
 	restartImg.y = 220;
 	restartImg.onPlay = false;
+
+	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
+	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
+
     update();
 }
 
@@ -127,6 +119,8 @@ function update()
     movePlayer();
     moveBullet();
 	moveCrate();
+	moveFlyingZombie();
+	moveSlime();
 	collisionCrateGround();
 	collisionCratePad();
 	collisionCratePlayer();
@@ -135,10 +129,18 @@ function update()
     collisionPlayerPad();
     collisionBulletPad();
     collisionBulletGround();
+	collisionBulletFlyingZombie();
+	collisionPlayerFlyingZombie();
+	collisionSlimeGround();
+	collisionSlimePlayer();
     playerGravity();
     render();
     cleanZombieArray();
+	cleanFlyingZombieArray();
     cleanBulletArray();
+	cleanSlimesArray();
+
+
 }
 
 
@@ -152,7 +154,8 @@ function render()
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
     }
     drawZombies(surface);
-    //console.log(player);
+	drawFlyingZombies(surface);
+	drawSlimes(surface);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
 	if (!crate.hide)
 	{
@@ -188,7 +191,6 @@ function render()
 		surface.drawImage(restartImg.img, restartImg.x, restartImg.y);
 	}
 }
-
 
 function moveCrate()
 {
@@ -231,7 +233,8 @@ function collisionCratePlayer()
 		{ // Then the x coordinates collide.
 			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
 			{ // Then the y coordinates collide. We have a collision!
-				player.currentPowerUp = 1;
+				currentPowerUp = 1;
+				powerUpAmmo = 5;
 				crate.hide = true;
 				crateSound.play();
 			}

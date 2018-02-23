@@ -125,3 +125,88 @@ function collisionBulletGround()
         }
     }
 }
+
+function collisionBulletFlyingZombie()
+{
+	for (var j = 0; j < flyingZombies.length; j++)
+	{ // For all zombies in the zombies array:
+		for (var i = 0; i < bullets.length; i++)
+		{ // For all bullets in bullets array:
+			if(!bullets[i].onPlay)
+				continue;
+			if(!flyingZombies[j].onPlay)
+				continue;
+            if (typeof bullets[i] == 'undefined')
+                console.log('bullet undefined!!!');
+            if(typeof flyingZombies[j] == 'undefined')
+                console.log('zombie undefined!!!');
+			if (bullets[i].x + bullets[i].img.width >= flyingZombies[j].x && bullets[i].x <= flyingZombies[j].x + flyingZombies[j].img.width)
+			{ // Then the x coordinates collide.
+				if (bullets[i].y + bullets[i].img.height >= flyingZombies[j].y && bullets[i].y <= flyingZombies[j].y + flyingZombies[j].img.height)
+				{ // Then the y coordinates collide. We have a collision!
+					flyingZombies[j].lives--;
+					bullets[i].onPlay = false;
+					//bullets.splice(i,i+1);
+					zombieDamageSound.load();
+					zombieDamageSound.play();
+					if (flyingZombies[j].lives == 0)
+					{ // If the zombie dies:
+						flyingZombies[j].onPlay=false;
+						//zombies.splice(j,j+1); // Remove it from the zombies array.
+						killCounter++;
+						if (killCounter >= 10)
+						{
+							gameIsWon = true;
+						}
+					}
+				}
+			}
+		}
+    }
+}
+
+function collisionPlayerFlyingZombie()
+{
+	for (var i = 0; i < flyingZombies.length; i++)
+	{
+		if(flyingZombies[i].onPlay)
+		{
+			if (player.x + player.img.width - 12 >= flyingZombies[i].x && player.x <= flyingZombies[i].x + flyingZombies[i].img.width - 12)
+			{ // Then the x coordinates collide.
+				if (player.y + player.img.height >= flyingZombies[i].y + 12 && player.y <= flyingZombies[i].y + flyingZombies[i].img.height)
+				{ // Then the y coordinates collide. We have a collision!
+					gameIsLost = true;
+				}
+			}	
+		}
+	}
+}
+
+function collisionSlimeGround()
+{
+	for (var i = 0; i < slimes.length; i++)
+	{
+		if (slimes[i].y + slimes[i].img.height >= ground.y)
+		{
+			slimes[i].onPlay = false;
+		}
+	}
+}
+
+function collisionSlimePlayer()
+{
+	for (var i = 0; i < slimes.length; i++)
+	{
+		if(!slimes[i].onPlay)
+				continue;
+		if (typeof slimes[i] == 'undefined')
+                console.log('slime undefined!!!');
+		if (slimes[i].x + slimes[i].img.width >= player.x && slimes[i].x <= player.x + player.img.width)
+		{
+			if (slimes[i].y + slimes[i].img.height >= player.y && slimes[i].y <= player.y + player.img.height)
+			{ 
+				gameIsLost = true;
+			}
+		}
+	}
+}

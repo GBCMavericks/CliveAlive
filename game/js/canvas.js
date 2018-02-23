@@ -9,17 +9,17 @@ var ground = {};
 var loseImage = {};
 var restartImg = {x:null, y:null, onPlay:null};
 var winImage = {};
+
 //var player = {};
 var crate = {};
+
 var zombie = {};
-//var pad1 = {};
-//var pad2 = {};
+var slime = {};
 var loadedResources = 0;
 const NUM_RESOURCES = 9;
 var glow = 0;
 var startZombieInterval; 
 var startAnimation;
-
 
 window.onload = function()
 {
@@ -44,7 +44,6 @@ function onSpaceDown(event){
             cancelAnimationFrame(startAnimation);
             createMap();
     }
-
 };
 
 function loadCounter(callback){
@@ -94,13 +93,3 @@ function loadResources(callback){
 	restartImg.img.src = "img/restart.png";
 	restartImg.onload = function(){loadCounter(callback)};
 }
-
-
-/*
-
-var uInt;        // Variable for setInterval.
-
-var gameIsLost = false  // Set to true when the player dies.
-var gameIsWon = false;   // Set to true when the game is won.
-*/
-

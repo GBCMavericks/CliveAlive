@@ -11,6 +11,7 @@ var bulletSpeedMultiplier; // A variable used to determine the value of bullet s
 var crateInt;    // Crate spawn interval.
 var flyingZombieInt; // Flying zombie spawn interval.
 var flyingZombieFireInt; // Flying zombie fire (slime ball) interval.
+var jumperZombieInt; // Jumper zombie spawn interval.
 // END OF INTERVALS *****************************************************************************************************************
 
 // PLAYER RELATED VARIABLES **********************************************************************************************************
@@ -101,6 +102,7 @@ function createMap() // Initialize all the variables here.
     zombieInt = setInterval(spawnZombie,3000);
 	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
+	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
     update();
 }
 
@@ -112,6 +114,7 @@ function update()
 	moveCrate();
 	moveFlyingZombie();
 	moveSlime();
+	moveJumperZombie();
 	collisionCrateGround();
 	collisionCratePad();
 	collisionCratePlayer();
@@ -124,6 +127,8 @@ function update()
 	collisionPlayerFlyingZombie();
 	collisionSlimeGround();
 	collisionSlimePlayer();
+	collisionPlayerJumperZombie();
+	collisionBulletJumperZombie();
     playerGravity();
     render();
     cleanZombieArray();
@@ -147,6 +152,7 @@ function render()
     drawBullets(surface);
     drawZombies(surface);
 	drawFlyingZombies(surface);
+	drawJumperZombies(surface);
 	drawSlimes(surface);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
 	if (!crate.hide)

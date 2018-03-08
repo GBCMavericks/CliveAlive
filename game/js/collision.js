@@ -210,3 +210,58 @@ function collisionSlimePlayer()
 		}
 	}
 }
+
+function collisionPlayerJumperZombie()
+{
+	for (var i = 0; i < jumperZombies.length; i++)
+	{
+		if(jumperZombies[i].onPlay)
+		{
+			if (player.x + player.img.width - 12 >= jumperZombies[i].x && player.x <= jumperZombies[i].x + jumperZombies[i].img.width - 12)
+			{ // Then the x coordinates collide.
+				if (player.y + player.img.height >= jumperZombies[i].y + 12 && player.y <= jumperZombies[i].y + jumperZombies[i].img.height)
+				{ // Then the y coordinates collide. We have a collision!
+					gameIsLost = true;
+				}
+			}	
+		}
+	}
+}
+
+function collisionBulletJumperZombie()
+{
+	for (var j = 0; j < jumperZombies.length; j++)
+	{ 
+		for (var i = 0; i < bullets.length; i++)
+		{ 
+			if(!bullets[i].onPlay)
+				continue;
+			if(!jumperZombies[j].onPlay)
+				continue;
+            if (typeof bullets[i] == 'undefined')
+                console.log('bullet undefined!!!');
+            if(typeof jumperZombies[j] == 'undefined')
+                console.log('jumper zombie undefined!!!');
+			if (bullets[i].x + bullets[i].img.width >= jumperZombies[j].x && bullets[i].x <= jumperZombies[j].x + jumperZombies[j].img.width)
+			{ // Then the x coordinates collide.
+				if (bullets[i].y + bullets[i].img.height >= jumperZombies[j].y && bullets[i].y <= jumperZombies[j].y + jumperZombies[j].img.height)
+				{ // Then the y coordinates collide. We have a collision!
+					jumperZombies[j].lives--;
+					bullets[i].onPlay = false;
+					zombieDamageSound.load();
+					zombieDamageSound.play();
+					if (jumperZombies[j].lives == 0)
+					{ // If the zombie dies:
+						jumperZombies[j].onPlay=false;
+						//zombies.splice(j,j+1); // Remove it from the zombies array.
+						killCounter++;
+						if (killCounter >= 10)
+						{
+							gameIsWon = true;
+						}
+					}
+				}
+			}
+		}
+    }
+}

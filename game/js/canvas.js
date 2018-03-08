@@ -9,6 +9,8 @@ var ground = {};
 var loseImage = {};
 var winImage = {};
 var zombie = {};
+var jumperZombie = {};
+var flyingZombie = {};
 var slime = {};
 var loadedResources = 0;
 const NUM_RESOURCES = 9;
@@ -75,6 +77,14 @@ function loadResources(callback){
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
     zombie.img.onload = function(){loadCounter(callback);}
+	
+	jumperZombie.img = new Image();
+    jumperZombie.img.src = "img/jumperRight.png";
+    jumperZombie.img.onload = function(){loadCounter(callback);}
+	
+	flyingZombie.img = new Image();
+    flyingZombie.img.src = "img/FlyingZombieRight.png";
+    flyingZombie.img.onload = function(){loadCounter(callback);}
 
     pad1.img = new Image();
     pad1.img.src = "img/pad.png";

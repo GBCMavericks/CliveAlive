@@ -1,24 +1,16 @@
 // ZOMBIE RELATED VARIABLES **********************************************************************************************************
 const FPS = 60;
 const ZOMBIE_SPEED = 60 / FPS;
-const FLYING_ZOMBIE_SPEED = 90 / FPS
-const SLIME_SPEED = 100 / FPS
+const FLYING_ZOMBIE_SPEED = 90 / FPS;
+const SLIME_SPEED = 100 / FPS;
+const JUMPER_ZOMBIE_SPEED = 120 / FPS;
 
 var zombies = []; // The array of zombies.
-var zombie = {img:null,lives:null,x:null,y:null}
 var zombieDamageSound = document.createElement("AUDIO"); // Played when the zombie takes damage.
-var flyingZombie = // Flying Zombie 
-{
-	img:null,  // The image of the flying zombie.
-	lives:null, // Number of lives.
-	x:null,   // X-coordinate of the flying zombie.
-	y:null, // Y-coordinate of the flying zombie.
-	onPlay:null, // True = draw the flying zombie. False = do not draw the flying zombie.
-	currentDirection:null // True = Zombie is going right. False = Zombie is going left.
-}
 var slime = {img:null, x:null, y:null, onPlay:null};
 var slimes = [];
 var flyingZombies = []; // The array of flying zombies.
+var jumperZombies = []; // The array of jumper zombies.
 // END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
 
 function drawZombies(surface)
@@ -197,3 +189,53 @@ function moveSlime()
 		slimes[i].y += SLIME_SPEED;
 	}
 }
+
+function drawJumperZombies(surface)
+{
+    for (var i = 0; i < jumperZombies.length; i++)
+    { 
+        if(jumperZombies[i].onPlay)
+            surface.drawImage(jumperZombies[i].img,jumperZombies[i].x,jumperZombies[i].y);
+    }
+}
+
+function spawnJumperZombie()
+{
+	var currentJumperZombie = Object.create(jumperZombie);
+	currentJumperZombie.img = new Image();
+	if (Math.random() > 0.5)
+	{
+		currentJumperZombie.x = -currentJumperZombie.img.width;
+		currentJumperZombie.img.src = "img/jumperRight.png";
+	}
+	else
+	{
+		currentJumperZombie.x = background.img.width;
+		currentJumperZombie.img.src = "img/jumperLeft.png";
+	}
+	currentJumperZombie.y = ground.y - jumperZombie.img.height;
+	currentJumperZombie.lives = 2;
+	currentJumperZombie.onPlay = true;
+	jumperZombies.push(currentJumperZombie);
+}
+
+function moveJumperZombie()
+{
+	for (var i = 0; i < jumperZombies.length; i++)
+	{
+		if(jumperZombies[i].onPlay)
+		{
+			if (player.x > jumperZombies[i].x)
+			{
+				jumperZombies[i].img.src = "img/jumperRight.png";
+				jumperZombies[i].x += JUMPER_ZOMBIE_SPEED;
+			}
+			else
+			{
+				jumperZombies[i].img.src = "img/jumperLeft.png";
+				jumperZombies[i].x -= JUMPER_ZOMBIE_SPEED;
+			}	
+		}
+	}
+}
+

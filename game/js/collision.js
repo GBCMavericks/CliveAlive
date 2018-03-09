@@ -262,7 +262,14 @@ function collisionBulletJumperZombie()
 				if (bullets[i].y + bullets[i].img.height >= jumperZombies[j].y && bullets[i].y <= jumperZombies[j].y + jumperZombies[j].img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					jumperZombies[j].lives--;
-					bullets[i].onPlay = false;
+					var imgString = bullets[i].img.src
+                    var subString = imgString.substring(imgString.length-14,imgString.length)
+                    if (subString == "img/bullet.png")
+                    {
+                        bullets[i].onPlay = false;
+                        console.log('wheeeeee')
+                    }
+                    // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
 					zombieDamageSound.load();
 					zombieDamageSound.play();
 					if (jumperZombies[j].lives == 0)

@@ -39,7 +39,6 @@ function collisionBulletZombie()
 					if (subString == "img/bullet.png")
 					{
 						bullets[i].onPlay = false;
-						console.log('wheeeeee')
 					}
 					// Checking whether the image source is a regular or diamond bullet, deleting it if the former.
 					//bullets.splice(i,i+1);
@@ -127,7 +126,6 @@ function collisionBulletGround()
             continue;
         if (bullets[i].y + bullets[i].img.height + bullets[i].ySpeed > ground.y)
         {
-        	console.log("ASD");
 			bullets[i].y = ground.y - bullets[i].img.height;
             bullets[i].ySpeed = -bullets[i].ySpeed;
         }
@@ -158,7 +156,6 @@ function collisionBulletFlyingZombie()
                     if (subString == "img/bullet.png")
                     {
                         bullets[i].onPlay = false;
-                        console.log('wheeeeee')
                     }
                     // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
 					//bullets.splice(i,i+1);
@@ -267,7 +264,6 @@ function collisionBulletJumperZombie()
                     if (subString == "img/bullet.png")
                     {
                         bullets[i].onPlay = false;
-                        console.log('wheeeeee')
                     }
                     // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
 					zombieDamageSound.load();

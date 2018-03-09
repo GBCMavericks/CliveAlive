@@ -86,7 +86,6 @@ function createMap() // Initialize all the variables here.
 	crate.onPad = false;
 	crate.hide = true;
     currentDirection = true;
-    // Cleaning enemy []
 	zombies = [];
     zombie.lives = 3;
     zombie.x = -zombie.img.width;
@@ -96,6 +95,7 @@ function createMap() // Initialize all the variables here.
     bullets = [];
     bulletSpeedMultiplier = 10;
     pads = [];
+	jumperZombies = [];
     pad1.x = 300;
     pad1.y = 600;
 	pads.push(pad1);
@@ -133,12 +133,9 @@ function createMap() // Initialize all the variables here.
 	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
 
     //buttons values
-    restartImg.x = 230;
-    restartImg.y = 220;
+    restartImg.x = 635;
+    restartImg.y = 330;
     restartImg.onPlay = false;
-    options.x = 230;
-    options.y = 300;
-    options.onPlay = false;
 
     update();
 }
@@ -183,7 +180,6 @@ function render()
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
     surface.drawImage(background.img, background.x, background.y); // Draw the background.
     surface.drawImage(ground.img, ground.x, ground.y); // Draw the ground.
-    surface.drawImage(options.img, 745, -5); //Draw options/pause button.
     for (var i = 0; i < pads.length; i++)
     { // For each pad in the pads array, draw it on the canvas.
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
@@ -206,12 +202,12 @@ function render()
         canvas.removeEventListener("click", fire);
         if (gameIsLost) {
             canvas.addEventListener("click", restartGame);
-            surface.drawImage(loseImage, 200, 100);
+            surface.drawImage(loseImage, 602, 220);
             restartImg.onPlay = true;
         }
         if (gameIsWon) 
 		{
-			surface.drawImage(winImage, 200, 100);
+			surface.drawImage(winImage, 602, 220);
 		}
         //clearInterval(uInt);
         clearInterval(crateInt);
@@ -467,7 +463,7 @@ function restartGame(event)
 {
     var mouseX = event.clientX - surface.canvas.offsetLeft;
     var mouseY = event.clientY - surface.canvas.offsetTop;
-	// detectimg mouse click
+	// detecting mouse click
 	if(mouseX >= restartImg.x && mouseX <= restartImg.x + restartImg.img.width)
 	{
 		if(mouseY >= restartImg.y && mouseY <= restartImg.y + restartImg.img.height)

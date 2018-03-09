@@ -116,4 +116,8 @@ function loadResources(callback){
 	pad6.img = new Image();
 	pad6.img.src = "img/pad.png";
 	pad6.img.onload = function(){loadCounter(callback);}
+	
+	restartImg.img = new Image();
+	restartImg.img.src = "img/restart.png";
+	restartImg.img.onload = function(){loadCounter(callback);}
 }

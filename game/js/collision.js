@@ -154,7 +154,7 @@ function collisionBulletFlyingZombie()
 						flyingZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 10)
+						if (killCounter >= 30)
 						{
 							gameIsWon = true;
 						}

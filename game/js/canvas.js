@@ -1,6 +1,6 @@
 var canvas = document.querySelector("canvas");
-canvas.width = 800; 	
-canvas.height = 400;
+canvas.width = 1600;
+canvas.height = 800;
 var surface;
 
 // External File Variables
@@ -9,6 +9,8 @@ var ground = {};
 var loseImage = {};
 var winImage = {};
 var zombie = {};
+var jumperZombie = {};
+var flyingZombie = {};
 var slime = {};
 var loadedResources = 0;
 const NUM_RESOURCES = 9;
@@ -27,7 +29,7 @@ window.onload = function()
     });
 };
 
-function onSpaceDown(){
+function onSpaceDown(event) {
     switch (event.keyCode)
     {
         case 32:
@@ -75,12 +77,36 @@ function loadResources(callback){
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
     zombie.img.onload = function(){loadCounter(callback);}
-
-    pad1.img = new Image();
-    pad1.img.src = "img/pad.png";
-    pad1.img.onload = function(){loadCounter(callback);}
-
-    pad2.img = new Image();
-    pad2.img.src = "img/pad.png";
-    pad2.img.onload = function(){loadCounter(callback);}
+	
+	jumperZombie.img = new Image();
+    jumperZombie.img.src = "img/jumperRight.png";
+    jumperZombie.img.onload = function(){loadCounter(callback);}
+	
+	flyingZombie.img = new Image();
+    flyingZombie.img.src = "img/FlyingZombieRight.png";
+    flyingZombie.img.onload = function(){loadCounter(callback);}
+	
+	pad1.img = new Image();
+	pad1.img.src = "img/pad.png";
+	pad1.img.onload = function(){loadCounter(callback);}
+	
+	pad2.img = new Image();
+	pad2.img.src = "img/pad.png";
+	pad2.img.onload = function(){loadCounter(callback);}
+	
+	pad3.img = new Image();
+	pad3.img.src = "img/pad.png";
+	pad3.img.onload = function(){loadCounter(callback);}
+	
+	pad4.img = new Image();
+	pad4.img.src = "img/pad.png";
+	pad4.img.onload = function(){loadCounter(callback);}
+	
+	pad5.img = new Image();
+	pad5.img.src = "img/pad.png";
+	pad5.img.onload = function(){loadCounter(callback);}
+	
+	pad6.img = new Image();
+	pad6.img.src = "img/pad.png";
+	pad6.img.onload = function(){loadCounter(callback);}
 }

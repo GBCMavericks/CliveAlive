@@ -5,7 +5,6 @@ var pad1 = {img:null,x:null,y:null,onPad:null}; // The two
 var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
-var bulletsD; // array for diamond bullets
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
 
 // INTERVALS ************************************************************************************************************************
@@ -48,7 +47,8 @@ var crate =
 const CRATE_SPEED = 120 / FPS;
 var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
-var currentPowerUp = 0; // 0: normal, 1: spray
+var currentPowerUp = 0; // 0: normal, 1: spray, 2: diamond
+const POWERUP_USES = 5
 var powerUpAmmo; // Number of uses of the power-up
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
@@ -80,7 +80,6 @@ function createMap() // Initialize all the variables here.
     zombie.x = -zombie.img.width;
     zombie.y = ground.y - zombie.img.height;
     bullets = [];
-    bulletsD = [];
     bulletSpeedMultiplier = 10;
     pads = [];
     pad1.x = 100;
@@ -217,8 +216,8 @@ function collisionCratePlayer()
 		{ // Then the x coordinates collide.
 			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
 			{ // Then the y coordinates collide. We have a collision!
-				currentPowerUp = 2;
-				powerUpAmmo = 5;
+				currentPowerUp = Math.floor((Math.random() * 2) + 1);
+				powerUpAmmo = POWERUP_USES;
 				crate.hide = true;
 				crateSound.play();
 			}

@@ -38,10 +38,7 @@ function cleanBulletArray()
 			newBullets.push(bullets[i]);
 		}
 	}
-    var newBulletsD = []
-
     bullets = newBullets;
-    bulletsD = newBullets;
 }
 
 function fire(event)
@@ -118,7 +115,7 @@ function fire(event)
     }
     if (currentPowerUp == 2)
     {
-        bulletsD.push(
+        bullets.push(
             {
                 img: bulletImageD,
                 x: player.x,
@@ -127,6 +124,11 @@ function fire(event)
                 ySpeed: finalSpeedY,
                 onPlay: true,
             });
+        powerUpAmmo = powerUpAmmo - 1;
+        if (powerUpAmmo == 0)
+        {
+            currentPowerUp = 0;
+        }
 
     }
 }

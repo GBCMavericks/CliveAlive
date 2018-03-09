@@ -1,8 +1,8 @@
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
-var pad1 = {img:null,x:null,y:null,onPad:null}; // The two 
-var pad2 = {img:null,x:null,y:null,onPad:null}; // pad classes.
+var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; // The two 
+var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; // pad classes.
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
@@ -73,7 +73,7 @@ function createMap() // Initialize all the variables here.
 	crate.y = -crate.img.height;
 	crate.onGround = false;
 	crate.onPad = false;
-	crate.hide = false;
+	crate.hide = true;
     currentDirection = true;
 	zombies = [];
     zombie.lives = 3;
@@ -85,10 +85,12 @@ function createMap() // Initialize all the variables here.
     pad1.x = 100;
     pad1.y = 250;
     pad1.onPad = false;
+	pad1.onPadZombie = false;
     pads.push(pad1);
     pad2.x = 450;
     pad2.y = 250;
     pad2.onPad = false;
+	pad2.onPadZombie = false;
     pads.push(pad2);
     gameIsLost = false;
     gameIsWon = false;
@@ -97,7 +99,6 @@ function createMap() // Initialize all the variables here.
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
 	crateSound.setAttribute("src","aud/pickup.wav");
-    //uInt = setInterval(update, 15.34);
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
 	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
@@ -129,14 +130,15 @@ function update()
 	collisionSlimePlayer();
 	collisionPlayerJumperZombie();
 	collisionBulletJumperZombie();
+	collisionJumperZombiePad();
     playerGravity();
+	zombieGravity();
     render();
     cleanZombieArray();
 	cleanFlyingZombieArray();
     cleanBulletArray();
 	cleanSlimesArray();
-
-
+	cleanJumperZombieArray();
 }
 
 
@@ -370,6 +372,11 @@ function resetJump()
     player.verticalVelocity = 0;
 }
 
+function resetJumpZombie(thisZombie)
+{
+	thisZombie.inAir = false;
+	thisZombie.verticalVelocity = 0;
+}
 
 function onKeyDown(event)
 {

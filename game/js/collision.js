@@ -265,3 +265,43 @@ function collisionBulletJumperZombie()
 		}
     }
 }
+
+function collisionJumperZombiePad()
+{
+	for ( var j = 0; j < jumperZombies.length; j++)
+	{
+		for ( var i = 0; i < pads.length; i++)
+		{ // For each pad in the pads array:
+			if (jumperZombies[j].inAir) // We only want to check collision between the pad and the zombie when the zombie is falling down.
+			{
+				if (jumperZombies[j].y + jumperZombies[j].img.height <= pads[i].y - jumperZombies[j].verticalVelocity && jumperZombies[j].y + jumperZombies[j].img.height >= pads[i].y + jumperZombies[j].verticalVelocity)
+				{ // Then there is a collision between the y coordinates of the zombie and the pad.
+					if (jumperZombies[j].x + jumperZombies[j].img.width >= pads[i].x && jumperZombies[j].x <= pads[i].x + pads[i].img.width)
+					{ // Then the x coordinates collide as well. We have a collision!
+						jumperZombies[j].onPad = true;
+						pads[i].onPadZombie = true;
+						jumperZombies[j].y = pads[i].y - jumperZombies[j].img.height; // Make sure the zombie is exactly on the pad.
+						resetJumpZombie(jumperZombies[j]); // Reset the jump variables so the next jump is not screwed up.
+						/*if(currentDirection)
+						{
+							player.img.src = "img/playerRight.png";
+						}
+						else
+						{
+							player.img.src = "img/playerLeft.png";
+						}*/
+					}
+				}
+			}
+			if (pads[i].onPadZombie) // This part captures the moment when the player leaves the pad, so the fall animation can start.
+			{
+				if (jumperZombies[j].x > pads[i].x + pads[i].img.width || jumperZombies[j].x + jumperZombies[j].img.width < pads[i].x)
+				{ // Then the player left the pad, time to apply gravity.
+					jumperZombies[j].inAir = true;
+					jumperZombies[j].onPad = false;
+					pads[i].onPadZombie = false;
+				}
+			}
+		}
+	}
+}

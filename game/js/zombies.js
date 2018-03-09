@@ -202,6 +202,7 @@ function drawJumperZombies(surface)
 function spawnJumperZombie()
 {
 	var currentJumperZombie = Object.create(jumperZombie);
+	currentJumperZombie.y = ground.y - jumperZombie.img.height;
 	currentJumperZombie.img = new Image();
 	if (Math.random() > 0.5)
 	{
@@ -213,9 +214,11 @@ function spawnJumperZombie()
 		currentJumperZombie.x = background.img.width;
 		currentJumperZombie.img.src = "img/jumperLeft.png";
 	}
-	currentJumperZombie.y = ground.y - jumperZombie.img.height;
 	currentJumperZombie.lives = 2;
 	currentJumperZombie.onPlay = true;
+	currentJumperZombie.verticalVelocity = 0;
+	currentJumperZombie.inAir = false;
+	currentJumperZombie.onPad = false;
 	jumperZombies.push(currentJumperZombie);
 }
 
@@ -235,7 +238,78 @@ function moveJumperZombie()
 				jumperZombies[i].img.src = "img/jumperLeft.png";
 				jumperZombies[i].x -= JUMPER_ZOMBIE_SPEED;
 			}	
+			if (player.y < jumperZombies[i].y && !jumperZombies[i].inAir)
+			{
+				for (var j = 0; j < pads.length; j++)
+				{
+					pads[j].onPadZombie = false; // Player is NOT on any of the pads while jumping.
+				}
+				jumperZombies[i].verticalVelocity = JUMP_INITIAL_VELOCITY;
+				jumperZombies[i].inAir = true;
+				jumperZombies[i].onPad = false;
+			}
 		}
 	}
 }
 
+function zombieGravity()
+{
+	for (var i = 0; i < jumperZombies.length; i++)
+	{
+		if (typeof jumperZombies[i] != 'undefined')
+		{
+			jumperZombies[i].y -= jumperZombies[i].verticalVelocity; // Move the zombie up or down according to the vertical velocity.
+			jumperZombies[i].verticalVelocity -= GRAVITY; // Decelerate the zombie due to gravity.
+			/*if(currentDirection)
+			{
+				player.img.src = "img/playerRightJump.png";
+			}
+			else
+			{
+				player.img.src = "img/playerLeftJump.png";
+			}*/
+			for (var j = 0; j < pads.length; j++)
+			{ // For all the pads in the pads array:
+				if (pads[j].onPadZombie)
+				{ // Then the zombie landed on one of the pads.
+					jumperZombies[i].y = pads[j].y - jumperZombies[i].img.height; // Make sure the zombie is exactly on the pad.
+					resetJumpZombie(jumperZombies[i]); // Reset the jump variables so the next jump is not screwed up.
+					/*if(currentDirection)
+					{
+						player.img.src = "img/playerRight.png";
+					}
+					else
+					{
+						player.img.src = "img/playerLeft.png";
+					}*/
+				}
+			}
+			if (jumperZombies[i].y + jumperZombies[i].img.height >= ground.y)
+			{ // Then the zombie reached the ground, time to stop.
+				jumperZombies[i].y = ground.y - jumperZombies[i].img.height; // Make sure the zombie does not go below ground.
+				resetJumpZombie(jumperZombies[i]); // Reset the jump variables so the next jump is not screwed up.
+				/*if(currentDirection)
+				{
+					player.img.src = "img/playerRight.png";
+				}
+				else
+				{
+					player.img.src = "img/playerLeft.png";
+				}*/
+			}
+		}
+	}
+}
+
+function cleanJumperZombieArray()
+{
+	var newJumpers = [];
+	for (var i = 0; i < jumperZombies.length; i++)
+	{
+		if(jumperZombies[i].onPlay)
+		{
+			newJumpers.push(jumperZombies[i]);
+		}
+	}
+	jumperZombies = newJumpers;
+}

@@ -43,7 +43,7 @@ function collisionBulletZombie()
 						zombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 10)
+						if (killCounter >= maxKillCount)
 						{
 							gameIsWon = true;
 						}
@@ -255,7 +255,7 @@ function collisionBulletJumperZombie()
 						jumperZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 10)
+						if (killCounter >= maxKillCount)
 						{
 							gameIsWon = true;
 						}

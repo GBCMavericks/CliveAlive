@@ -11,12 +11,14 @@ var winImage = {};
 var zombie = {};
 var jumperZombie = {};
 var flyingZombie = {};
+var cloud = {};
 var slime = {};
 var loadedResources = 0;
 const NUM_RESOURCES = 9;
 var glow = 0;
 var startZombieInterval; 
 var startAnimation;
+const cloudSprites = ["img/cloud1.png", "img/cloud2.png"];
 
 window.onload = function()
 {
@@ -52,45 +54,53 @@ function loadCounter(callback){
 function loadResources(callback){
     background.img = new Image();
     background.img.src = "img/background.jpg";
-    background.img.onload = function(){loadCounter(callback);}
+    background.img.onload = function(){loadCounter(callback);};
 
     ground.img = new Image();
     ground.img.src = "img/ground.png";
-    ground.img.onload = function(){loadCounter(callback);}
+    ground.img.onload = function(){loadCounter(callback);};
     
     loseImage = new Image();
     loseImage.src = "img/lose.png";
-    loseImage.onload = function(){loadCounter(callback);}
+    loseImage.onload = function(){loadCounter(callback);};
 
     winImage = new Image();
     winImage.src = "img/win.png";
-    winImage.onload = function(){loadCounter(callback);}
+    winImage.onload = function(){loadCounter(callback);};
 
     player.img = new Image();
     player.img.src = "img/playerRight.png";
-    player.img.onload = function(){loadCounter(callback);}
+    player.img.onload = function(){loadCounter(callback);};
 
 	crate.img = new Image();
     crate.img.src = "img/crate.png";
-    crate.img.onload = function(){loadCounter(callback);}
-    
+    crate.img.onload = function(){loadCounter(callback);};
+
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
-    zombie.img.onload = function(){loadCounter(callback);}
+    zombie.img.onload = function(){loadCounter(callback);};
 	
 	jumperZombie.img = new Image();
     jumperZombie.img.src = "img/jumperRight.png";
-    jumperZombie.img.onload = function(){loadCounter(callback);}
+    jumperZombie.img.onload = function(){loadCounter(callback);};
 	
 	flyingZombie.img = new Image();
     flyingZombie.img.src = "img/FlyingZombieRight.png";
-    flyingZombie.img.onload = function(){loadCounter(callback);}
+    flyingZombie.img.onload = function(){loadCounter(callback);};
 
     pad1.img = new Image();
     pad1.img.src = "img/pad.png";
-    pad1.img.onload = function(){loadCounter(callback);}
+    pad1.img.onload = function(){loadCounter(callback);};
 
     pad2.img = new Image();
     pad2.img.src = "img/pad.png";
-    pad2.img.onload = function(){loadCounter(callback);}
+    pad2.img.onload = function(){loadCounter(callback);};
+
+    cloud.img = new Image();
+    cloud.img.src = "img/cloud1.png";
+    cloud.img.onload = function(){loadCounter(callback);};
+
+    cloud.img = new Image();
+    cloud.img.src = "img/cloud2.png";
+    cloud.img.onload = function(){loadCounter(callback);};
 }

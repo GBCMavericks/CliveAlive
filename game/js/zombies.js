@@ -11,7 +11,7 @@ var slime = {img:null, x:null, y:null, onPlay:null};
 var slimes = [];
 var flyingZombies = []; // The array of flying zombies.
 var jumperZombies = []; // The array of jumper zombies.
-// END OF ZONBIE RELATED VARIABLES ***************************************************************************************************
+// END OF ZOMBIE RELATED VARIABLES ***************************************************************************************************
 
 function drawZombies(surface)
 {

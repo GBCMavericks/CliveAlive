@@ -25,16 +25,22 @@ function collisionBulletZombie()
 				continue;
 			if(!zombies[j].onPlay)
 				continue;
-            if (typeof bullets[i] == 'undefined')
-                console.log('bullet undefined!!!');
-            if(typeof zombies[j] == 'undefined')
-                console.log('zombie undefined!!!');
+			if (typeof bullets[i] == 'undefined')
+				console.log('bullet undefined!!!');
+			if(typeof zombies[j] == 'undefined')
+				console.log('zombie undefined!!!');
 			if (bullets[i].x + bullets[i].img.width >= zombies[j].x && bullets[i].x <= zombies[j].x + zombie.img.width)
 			{ // Then the x coordinates collide.
 				if (bullets[i].y + bullets[i].img.height >= zombies[j].y && bullets[i].y <= zombies[j].y + zombie.img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					zombies[j].lives--;
-					bullets[i].onPlay = false;
+					var imgString = bullets[i].img.src
+					var subString = imgString.substring(imgString.length-14,imgString.length)
+					if (subString == "img/bullet.png")
+					{
+						bullets[i].onPlay = false;
+					}
+					// Checking whether the image source is a regular or diamond bullet, deleting it if the former.
 					//bullets.splice(i,i+1);
 					zombieDamageSound.load();
 					zombieDamageSound.play();
@@ -145,7 +151,13 @@ function collisionBulletFlyingZombie()
 				if (bullets[i].y + bullets[i].img.height >= flyingZombies[j].y && bullets[i].y <= flyingZombies[j].y + flyingZombies[j].img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					flyingZombies[j].lives--;
-					bullets[i].onPlay = false;
+                    var imgString = bullets[i].img.src
+                    var subString = imgString.substring(imgString.length-14,imgString.length)
+                    if (subString == "img/bullet.png")
+                    {
+                        bullets[i].onPlay = false;
+                    }
+                    // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
 					//bullets.splice(i,i+1);
 					zombieDamageSound.load();
 					zombieDamageSound.play();
@@ -154,7 +166,7 @@ function collisionBulletFlyingZombie()
 						flyingZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 10)
+						if (killCounter >= 30)
 						{
 							gameIsWon = true;
 						}
@@ -247,7 +259,13 @@ function collisionBulletJumperZombie()
 				if (bullets[i].y + bullets[i].img.height >= jumperZombies[j].y && bullets[i].y <= jumperZombies[j].y + jumperZombies[j].img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					jumperZombies[j].lives--;
-					bullets[i].onPlay = false;
+					var imgString = bullets[i].img.src
+                    var subString = imgString.substring(imgString.length-14,imgString.length)
+                    if (subString == "img/bullet.png")
+                    {
+                        bullets[i].onPlay = false;
+                    }
+                    // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
 					zombieDamageSound.load();
 					zombieDamageSound.play();
 					if (jumperZombies[j].lives == 0)
@@ -255,7 +273,7 @@ function collisionBulletJumperZombie()
 						jumperZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 10)
+						if (killCounter >= maxKillCount)
 						{
 							gameIsWon = true;
 						}

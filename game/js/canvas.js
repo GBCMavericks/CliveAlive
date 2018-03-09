@@ -7,7 +7,14 @@ var surface;
 var background = {};
 var ground = {};
 var loseImage = {};
+var restartImg = { x: null, y: null, onPlay: null };
+var options = { x: null, y: null, onPlay: null };
+var resume = { x: null, y: null, onPlay: null };
 var winImage = {};
+
+//var player = {};
+var crate = {};
+
 var zombie = {};
 var jumperZombie = {};
 var flyingZombie = {};
@@ -31,7 +38,7 @@ window.onload = function()
     });
 };
 
-function onSpaceDown(event) {
+function onSpaceDown(event){
     switch (event.keyCode)
     {
         case 32:
@@ -79,7 +86,7 @@ function loadResources(callback){
     zombie.img = new Image();
     zombie.img.src = "img/zombieRight.png";
     zombie.img.onload = function(){loadCounter(callback);};
-	
+
 	jumperZombie.img = new Image();
     jumperZombie.img.src = "img/jumperRight.png";
     jumperZombie.img.onload = function(){loadCounter(callback);};
@@ -88,19 +95,36 @@ function loadResources(callback){
     flyingZombie.img.src = "img/FlyingZombieRight.png";
     flyingZombie.img.onload = function(){loadCounter(callback);};
 
-    pad1.img = new Image();
-    pad1.img.src = "img/pad.png";
-    pad1.img.onload = function(){loadCounter(callback);};
-
-    pad2.img = new Image();
-    pad2.img.src = "img/pad.png";
-    pad2.img.onload = function(){loadCounter(callback);};
-
     cloud.img = new Image();
     cloud.img.src = "img/cloud1.png";
     cloud.img.onload = function(){loadCounter(callback);};
-
-    cloud.img = new Image();
-    cloud.img.src = "img/cloud2.png";
-    cloud.img.onload = function(){loadCounter(callback);};
+	
+	pad1.img = new Image();
+	pad1.img.src = "img/pad.png";
+	pad1.img.onload = function(){loadCounter(callback);}
+	
+	pad2.img = new Image();
+	pad2.img.src = "img/pad.png";
+	pad2.img.onload = function(){loadCounter(callback);}
+	
+	pad3.img = new Image();
+	pad3.img.src = "img/pad.png";
+	pad3.img.onload = function(){loadCounter(callback);}
+	
+	pad4.img = new Image();
+	pad4.img.src = "img/pad.png";
+	pad4.img.onload = function(){loadCounter(callback);}
+	
+	pad5.img = new Image();
+	pad5.img.src = "img/pad.png";
+	pad5.img.onload = function(){loadCounter(callback);}
+	
+	pad6.img = new Image();
+	pad6.img.src = "img/pad.png";
+	pad6.img.onload = function(){loadCounter(callback);}
+	
+	restartImg.img = new Image();
+	restartImg.img.src = "img/restart.png";
+	restartImg.img.onload = function(){loadCounter(callback);}
+	
 }

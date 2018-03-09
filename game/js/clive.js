@@ -1,8 +1,12 @@
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
-var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; // The two 
-var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; // pad classes.
+var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
@@ -29,8 +33,9 @@ const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at th
 const GRAVITY_MULTIPLIER = 40;
 const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
 const PLAYER_SPEED = 240 / FPS;
-const BULLET_SPEED_MULTIPLIER = 600 / FPS; // A vairable used to determine the value of bullet speed.
 const CLOUD_VELOCITY_MULTIPLIER = 30 / FPS;
+const BULLET_SPEED_MULTIPLIER = 1200 / FPS; // A variable used to determine the value of bullet speed.
+const maxKillCount = 30;
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
@@ -49,20 +54,29 @@ var crate =
 const CRATE_SPEED = 120 / FPS;
 var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
-var currentPowerUp = 0; // 0: normal, 1: spray
+var currentPowerUp = 0; // 0: normal, 1: spray, 2: diamond
+const POWERUP_USES = 5
 var powerUpAmmo; // Number of uses of the power-up
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
 var clouds = [];
-
 var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
+/*var leftPressed; // These flags are used  
+var rightPressed;// to keep track of which
+var upPressed;   // keyboard button the
+var downPressed; // player presses.*/
 
+var isPaused = false;
 
 function createMap() // Initialize all the variables here.
 { 
+	leftPressed = false; 
+	rightPressed = false;
+	upPressed = false;   
+	downPressed = false; 
 	background.x = 0;
 	background.y = 0;
 	ground.offset = 40;
@@ -82,19 +96,35 @@ function createMap() // Initialize all the variables here.
     zombie.lives = 3;
     zombie.x = -zombie.img.width;
     zombie.y = ground.y - zombie.img.height;
+    flyingZombies = [];
+    slimes = [];
     bullets = [];
     bulletSpeedMultiplier = 10;
     pads = [];
+	jumperZombies = [];
     pad1.x = 300;
     pad1.y = 600;
-    pad1.onPad = false;
-	pad1.onPadZombie = false;
-    pads.push(pad1);
-    pad2.x = 1100;
+	pads.push(pad1);
+	pad2.x = 1100;
     pad2.y = 600;
-    pad2.onPad = false;
-	pad2.onPadZombie = false;
-    pads.push(pad2);
+	pads.push(pad2);
+	pad3.x = 500;
+	pad3.y = 450;
+	pads.push(pad3);
+	pad4.x = 900;
+	pad4.y = 450;
+	pads.push(pad4);
+	pad5.x = 300;
+	pad5.y = 300;
+	pads.push(pad5);
+	pad6.x = 1100;
+	pad6.y = 300;
+	pads.push(pad6);
+	for (var i = 0; i < pads.length; i++)
+	{
+		pads[i].onPad = false;
+		pads[i].onPadZombie = false;
+	}
     gameIsLost = false;
     gameIsWon = false;
 	killCounter = 0;
@@ -107,10 +137,17 @@ function createMap() // Initialize all the variables here.
 	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
 	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
+	
 	for(var i = 0; i < 4; i++)
     {
         spawnCloud();
     }
+
+    //buttons values
+    restartImg.x = 635;
+    restartImg.y = 330;
+    restartImg.onPlay = false;
+
     update();
 }
 
@@ -164,7 +201,6 @@ function render()
     { // For each pad in the pads array, draw it on the canvas.
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
     }
-    drawBullets(surface);
     drawZombies(surface);
 	drawFlyingZombies(surface);
 	drawJumperZombies(surface);
@@ -174,26 +210,43 @@ function render()
 	{
 		surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
 	}
-    if (gameIsLost || gameIsWon)
-    {
+	
+	drawBullets(surface);
+	
+    if (gameIsLost || gameIsWon) {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);
         canvas.removeEventListener("click", fire);
-        if (gameIsLost)
-        {
-            surface.drawImage(loseImage,600,400);
+        if (gameIsLost) {
+            canvas.addEventListener("click", restartGame);
+            surface.drawImage(loseImage, 602, 220);
+            restartImg.onPlay = true;
         }
-        if (gameIsWon)
-        {
-            surface.drawImage(winImage,600,400);
-        }
+        if (gameIsWon) 
+		{
+			surface.drawImage(winImage, 602, 220);
+		}
         //clearInterval(uInt);
-		clearInterval(crateInt);
-		clearInterval(zombieInt);
+        clearInterval(crateInt);
+        clearInterval(zombieInt);
+        clearInterval(flyingZombieInt);
+        clearInterval(flyingZombieFireInt);
     }
-    else{
+    else if (!isPaused) {
         requestAnimationFrame(update);
     }
+    else if (isPaused)
+    {
+        surface.drawImage(resume.img, 230, 300);
+        clearInterval(crateInt);
+        clearInterval(zombieInt);
+        clearInterval(flyingZombieInt);
+        clearInterval(flyingZombieFireInt);
+    }
+	if(restartImg.onPlay == true)
+	{
+		surface.drawImage(restartImg.img, restartImg.x, restartImg.y);
+	}
 }
 
 function moveCrate()
@@ -237,8 +290,8 @@ function collisionCratePlayer()
 		{ // Then the x coordinates collide.
 			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
 			{ // Then the y coordinates collide. We have a collision!
-				currentPowerUp = 1;
-				powerUpAmmo = 5;
+				currentPowerUp = Math.floor((Math.random() * 2) + 1);
+				powerUpAmmo = POWERUP_USES;
 				crate.hide = true;
 				crateSound.play();
 			}
@@ -445,4 +498,24 @@ function onKeyUp(event)
         case 119:
             upPressed = false;
     }
+}
+
+function restartGame(event)
+{
+    var mouseX = event.clientX - surface.canvas.offsetLeft;
+    var mouseY = event.clientY - surface.canvas.offsetTop;
+	// detecting mouse click
+	if(mouseX >= restartImg.x && mouseX <= restartImg.x + restartImg.img.width)
+	{
+		if(mouseY >= restartImg.y && mouseY <= restartImg.y + restartImg.img.height)
+		{
+			//add listeneres back and removing listener for restart button
+			window.addEventListener("keydown", onKeyDown);
+			window.addEventListener("keyup", onKeyUp);
+			canvas.removeEventListener("click", restartGame);
+			canvas.addEventListener("click", fire);
+			//generating the game again
+			createMap();
+		}	
+	}
 }

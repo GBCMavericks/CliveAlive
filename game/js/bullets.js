@@ -65,6 +65,7 @@ function fire(event)
     bulletImage.src = "img/bullet.png";
     bulletImageD.src = "img/diBullet.png";
     if (currentPowerUp == 0) {
+        /* normal bullets */
         bullets.push(
             {
                 img: bulletImage,
@@ -75,9 +76,7 @@ function fire(event)
                 onPlay: true,
             });
     }
-
-    if (currentPowerUp == 1) {
-
+    else if (currentPowerUp == 1) {
         bullets.push(
             {
                 img: bulletImage,
@@ -111,12 +110,15 @@ function fire(event)
                 onPlay: true,
             });
         powerUpAmmo = powerUpAmmo - 1;
+        /*
+         * At the end of the bullets reverts to original ammo
+         */
         if (powerUpAmmo == 0)
         {
             currentPowerUp = 0;
         }
     }
-    if (currentPowerUp == 2)
+    else if (currentPowerUp == 2)
     {
         bullets.push(
             {
@@ -128,6 +130,9 @@ function fire(event)
                 onPlay: true,
             });
         powerUpAmmo = powerUpAmmo - 1;
+        /*
+         * At the end reverts to original ammo 
+         */
         if (powerUpAmmo == 0)
         {
             currentPowerUp = 0;

@@ -1,5 +1,7 @@
+
+
 var canvas = document.querySelector("canvas");
-canvas.width = 1600;
+canvas.width = 800;
 canvas.height = 800;
 var surface;
 

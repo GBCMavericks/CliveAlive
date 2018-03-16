@@ -5,6 +5,14 @@ const BLACK = '#000000';
 const BLOOD_RED = '#B10610';
 const YELLOW = '#FED631';
 const MAX_NUM_ZOMBIES = 6;
+var titleOffset = {
+    width: 300,
+    height: 200
+};
+var messageOffset = {
+    width: 175,
+    height: 100
+};
 
 function startScreen() {
     drawStartBackground(surface);
@@ -20,7 +28,7 @@ function drawStartBackground(ctx){
 	background.y = 0;
 	ground.offset = 20;
 	ground.x = 0;
-	ground.y = background.img.height - ground.img.height + ground.offset;
+	ground.y = canvas.height - ground.img.height + ground.offset;
     ctx.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
     ctx.rect(0,0, ctx.width,ctx.height);
     ctx.fillStyle="black";
@@ -35,7 +43,7 @@ function drawStartBackground(ctx){
 function drawStartTitle(ctx){
     ctx.font = "120px zombieSlayer";
     ctx.fillStyle = BLOOD_RED;
-    ctx.fillText("Clive Alive",525,360);
+    ctx.fillText("Clive Alive",(canvas.width / 2)-titleOffset.width,(canvas.height/2)-titleOffset.height);
 };
 
 function drawStartInstructions(ctx){
@@ -53,7 +61,7 @@ function drawStartInstructions(ctx){
     }
     if(glow > TOTAL_INTERVAL)
         glow = 0;
-    ctx.fillText("PRESS SPACE TO START",660,600);
+    ctx.fillText("PRESS SPACE TO START",(canvas.width / 2)-messageOffset.width,(canvas.height/2)-messageOffset.height);
 };
 
 function moveStartZombies(){

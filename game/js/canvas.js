@@ -1,8 +1,7 @@
 
-
 var canvas = document.querySelector("canvas");
-canvas.width = 800;
-canvas.height = 800;
+canvas.height = resolution.height;
+canvas.width = resolution.width;
 var surface;
 
 // External File Variables

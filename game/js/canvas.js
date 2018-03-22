@@ -24,7 +24,6 @@ var slime = {};
 var loadedResources = 0;
 const NUM_RESOURCES = 9;
 var glow = 0;
-var startZombieInterval; 
 var startAnimation;
 const cloudSprites = ["img/cloud1.png", "img/cloud2.png"];
 
@@ -33,7 +32,6 @@ window.onload = function()
     // gets the context to draw on canvas
     surface = canvas.getContext("2d");
     loadResources(function(){
-        startZombieInterval = setInterval(spawnZombie,1000);
         window.addEventListener("keydown", onSpaceDown);
         startScreen();
     });

@@ -4,7 +4,14 @@ const TOTAL_INTERVAL = 70;
 const BLACK = '#000000';
 const BLOOD_RED = '#B10610';
 const YELLOW = '#FED631';
-const MAX_NUM_ZOMBIES = 6;
+const MAX_NUM_ZOMBIES = 3;
+const MAX_NUM_FLYING_ZOMBIES = 5;
+const MAX_NUM_JUMPING_ZOMBIES = 3;
+
+var startZombieInterval = null; 
+var startJumpingZombieInterval = null;
+var startFlyingZombieInterval = null;
+
 var titleOffset = {
     width: 300,
     height: 200
@@ -18,8 +25,17 @@ function startScreen() {
     drawStartBackground(surface);
     drawStartTitle(surface);
     drawStartInstructions(surface);
+    if(startZombieInterval == null){
+        startZombieInterval = setInterval(spawnZombie,1000);
+    }
+    //if(startJumpingZombieInterval == null)
+    if(startFlyingZombieInterval == null){
+        console.log('starting fying zombies');
+        startFlyingZombieInterval = setInterval(spawnFlyingZombie,1500);
+    }
     moveStartZombies();
     drawZombies(surface);
+    drawFlyingZombies(surface);
     startAnimation = requestAnimationFrame(startScreen);
 };
 
@@ -45,6 +61,10 @@ function drawStartTitle(ctx){
     ctx.fillStyle = BLOOD_RED;
     ctx.fillText("Clive Alive",(canvas.width / 2)-titleOffset.width,(canvas.height/2)-titleOffset.height);
 };
+function drawStartMenu()
+{
+
+};
 
 function drawStartInstructions(ctx){
     glow++;
@@ -65,8 +85,13 @@ function drawStartInstructions(ctx){
 };
 
 function moveStartZombies(){
-    if(zombies.length >= MAX_NUM_ZOMBIES)
+    if(zombies.length >= MAX_NUM_ZOMBIES){
         clearInterval(startZombieInterval);
+    }
+    if(flyingZombies.length >= MAX_NUM_FLYING_ZOMBIES){
+        clearInterval(startFlyingZombieInterval);        
+    }
+    moveFlyingZombie();
     for (var i = 0; i < zombies.length; i++)
 	{
         var zombieAtHand = zombies[i];

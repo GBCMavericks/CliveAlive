@@ -97,6 +97,7 @@ function spawnFlyingZombie()
 
 function moveFlyingZombie()
 {
+	console.log('fly away', flyingZombies.length);
 	for (var i = 0; i < flyingZombies.length; i++)
 	{
 		if (flyingZombies[i].x <= 0)

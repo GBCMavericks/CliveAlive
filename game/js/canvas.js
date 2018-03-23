@@ -12,6 +12,7 @@ var restartImg = { x: null, y: null, onPlay: null };
 var options = { x: null, y: null, onPlay: null };
 var resume = { x: null, y: null, onPlay: null };
 var winImage = {};
+var playerPortraitBackground = {x:null, y:null, img:null, onPlay:null};
 
 //var player = {};
 var crateImage = {};
@@ -161,4 +162,7 @@ function loadResources(callback){
 	restartImg.img.src = "img/restart.png";
 	restartImg.img.onload = function(){loadCounter(callback);}
 	
+	playerPortraitBackground.img = new Image();
+	playerPortraitBackground.img.src = "img/playerPortraitBackground.png";
+	playerPortraitBackground.img.onload = function(){loadCounter(callback);}
 }

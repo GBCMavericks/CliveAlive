@@ -115,16 +115,14 @@ function createMap() // Initialize all the variables here.
 	flyingZombieInt = setInterval(spawnFlyingZombie, 2000);
 	//flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
 	//jumperZombieInt = setInterval (spawnJumperZombie, 9000);
-	
 	for(var i = 0; i < 4; i++)
-    {
         spawnCloud();
-    }
-
-    //buttons values
     restartImg.x = 635;
     restartImg.y = 330;
     restartImg.onPlay = false;
+	playerPortraitBackground.x = canvas.width/50;
+	playerPortraitBackground.y = canvas.height/30;
+	playerPortraitBackground.onPlay = true;
 
     update();
 }
@@ -181,9 +179,8 @@ function render()
 	drawJumperZombies(surface);
 	drawSlimes(surface);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
-	
 	drawBullets(surface);
-	
+	surface.drawImage(playerPortraitBackground.img,playerPortraitBackground.x,playerPortraitBackground.y);
     if (gameIsLost || gameIsWon) {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);

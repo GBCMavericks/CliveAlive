@@ -115,13 +115,13 @@ function loadResources(callback){
 	pad4.img.src = "img/pad.png";
 	pad4.img.onload = function(){loadCounter(callback);}
 	
-	pad5.img = new Image();
-	pad5.img.src = "img/pad.png";
-	pad5.img.onload = function(){loadCounter(callback);}
+	//pad5.img = new Image();
+	//pad5.img.src = "img/pad.png";
+	//pad5.img.onload = function(){loadCounter(callback);}
 	
-	pad6.img = new Image();
-	pad6.img.src = "img/pad.png";
-	pad6.img.onload = function(){loadCounter(callback);}
+	//pad6.img = new Image();
+	//pad6.img.src = "img/pad.png";
+	//pad6.img.onload = function(){loadCounter(callback);}
 	
 	restartImg.img = new Image();
 	restartImg.img.src = "img/restart.png";

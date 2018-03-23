@@ -5,8 +5,8 @@ var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
 var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+//var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+//var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
@@ -114,12 +114,12 @@ function createMap() // Initialize all the variables here.
 	pad4.x = 900;
 	pad4.y = 450;
 	pads.push(pad4);
-	pad5.x = 300;
-	pad5.y = 300;
-	pads.push(pad5);
-	pad6.x = 1100;
-	pad6.y = 300;
-	pads.push(pad6);
+	//pad5.x = 300;
+	//pad5.y = 300;
+	//pads.push(pad5);
+	//pad6.x = 1100;
+	//pad6.y = 300;
+	//pads.push(pad6);
 	for (var i = 0; i < pads.length; i++)
 	{
 		pads[i].onPad = false;
@@ -133,10 +133,10 @@ function createMap() // Initialize all the variables here.
     zombieDamageSound.setAttribute("src","aud/damage.wav");
 	crateSound.setAttribute("src","aud/pickup.wav");
 	crateInt = setInterval(spawnCrate,20000);
-    zombieInt = setInterval(spawnZombie,3000);
-	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
-	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
+    //zombieInt = setInterval(spawnZombie,5000);
+	flyingZombieInt = setInterval(spawnFlyingZombie, 2000);
+	//flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
+	//jumperZombieInt = setInterval (spawnJumperZombie, 9000);
 	
 	for(var i = 0; i < 4; i++)
     {

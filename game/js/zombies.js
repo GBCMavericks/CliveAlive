@@ -89,7 +89,7 @@ function spawnFlyingZombie()
 		currentFlyingZombie.x = canvas.width;
 		currentFlyingZombie.currentDirection = false;
 	}
-	currentFlyingZombie.y = 0;
+	currentFlyingZombie.y = canvas.height/5;
 	currentFlyingZombie.lives = 1;
 	currentFlyingZombie.onPlay = true;
 	flyingZombies.push(currentFlyingZombie);

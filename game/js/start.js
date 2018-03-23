@@ -61,8 +61,6 @@ function drawStartBackground(ctx){
     ctx.rect(0,0, ctx.width,ctx.height);
     ctx.fillStyle = BLACK;
     ctx.fill();
-    ctx.save();
-    ctx.globalAlpha = 0.7;
     ctx.drawImage(background.img, background.x, background.y); // Draw the background.
     drawClouds(ctx);
 	ctx.drawImage(ground.img, ground.x, ground.y); // Draw the ground.

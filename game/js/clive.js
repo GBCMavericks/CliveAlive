@@ -40,24 +40,6 @@ var jumpSound = document.createElement("AUDIO"); // This is the jump sound effec
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 // END OF PLAYER RELATED VARIABLES ***************************************************************************************************
 
-// PICKUP RELATED VARIABLES **********************************************************************************************************
-var crate = 
-{
-	img:null, // Image of the crate.
-	x:null, // X-coordinate of the crate.
-	y:null, // Y-coordinate of the crate.
-	onGround:null, // True: crate is on the ground. False: crate is nit on the ground.
-	onPad:null, // True: crate is on a pad. False: crate is not on a pad.
-	hide:null // True: hide the crate image. False: render the crate image.
-};  
-const CRATE_SPEED = 120 / FPS;
-var crateCounter; // Spawn timer of the crate.
-var crateSound = document.createElement("AUDIO");
-var currentPowerUp = 0; // 0: normal, 1: spray, 2: diamond
-const POWERUP_USES = 5
-var powerUpAmmo; // Number of uses of the power-up
-// END OF PICKUP RELATED VARIABLES ***************************************************************************************************
-
 var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
@@ -83,12 +65,8 @@ function createMap() // Initialize all the variables here.
     player.x = 600;
     player.y = ground.y - player.img.height;
 	player.onPad = false;
-	player.currentPowerUp = 0;
-	crate.x = Math.random() * (canvas.width - crate.img.width);;
-	crate.y = -crate.img.height;
-	crate.onGround = false;
-	crate.onPad = false;
-	crate.hide = true;
+    player.currentPowerUp = 0;    
+    initializeCrate();
     currentDirection = true;
     zombies = [];
     /*
@@ -130,12 +108,13 @@ function createMap() // Initialize all the variables here.
 	jumpSound.setAttribute("src","aud/jump.wav");
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
-	crateSound.setAttribute("src","aud/pickup.wav");
+    crateSound.setAttribute("src","aud/pickup.wav");
+    spawnCrate();
 	crateInt = setInterval(spawnCrate,20000);
     zombieInt = setInterval(spawnZombie,3000);
 	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
+	//jumperZombieInt = setInterval (spawnJumperZombie, 3000);
 	
 	for(var i = 0; i < 4; i++)
     {
@@ -196,15 +175,12 @@ function render()
     { // For each pad in the pads array, draw it on the canvas.
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
     }
+    drawCrate(surface);
     drawZombies(surface);
 	drawFlyingZombies(surface);
 	drawJumperZombies(surface);
 	drawSlimes(surface);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
-	if (!crate.hide)
-	{
-		surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
-	}
 	
 	drawBullets(surface);
 	
@@ -244,21 +220,13 @@ function render()
 	}
 }
 
-function moveCrate()
-{
-	if (!crate.onGround || !crate.onPad)
-	{
-		crate.y += CRATE_SPEED;
-	}
-}
-
 function collisionCrateGround()
 {
-	if (crate.y + crate.img.height >= ground.y)
+	if (crate.y + crateImage.height >= ground.y)
 	{
 		crate.onGround = true;
 		crate.onPad = false;
-		crate.y = ground.y - crate.img.height;
+		crate.y = ground.y - crateImage.height;
 	}
 }
 
@@ -266,9 +234,11 @@ function collisionCratePad()
 {
 	for ( var i = 0; i < pads.length; i++)
     { // For each pad in the pads array:
-		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - CRATE_SPEED && crate.y + crate.img.height >= pads[i].y + CRATE_SPEED)
+        if (crate.y + crateImage.height <= pads[i].y + pads[i].img.height - CRATE_SPEED 
+            && crate.y + crateImage.height >= pads[i].y + CRATE_SPEED)
 		{ // Then there is a collision between the y coordinates of the crate and the pad.
-			if (crate.x + crate.img.width >= pads[i].x && crate.x <= pads[i].x + pads[i].img.width)
+            if (crate.x + crateImage.width >= pads[i].x 
+                && crate.x <= pads[i].x + pads[i].img.width)
 			{
 				crate.onPad = true;
 				crate.y = pads[i].y - crate.img.height; // Make sure the crate is exactly on the pad.
@@ -281,9 +251,11 @@ function collisionCratePlayer()
 {
 	if (!crate.hide)
 	{
-		if (player.x + player.img.width >= crate.x && player.x <= crate.x + crate.img.width)
+        if (player.x + player.img.width >= crate.x 
+            && player.x <= crate.x + crateImage.width)
 		{ // Then the x coordinates collide.
-			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
+            if (player.y + player.img.height >= crate.y 
+                && player.y <= crate.y + crateImage.height)
 			{ // Then the y coordinates collide. We have a collision!
 				currentPowerUp = Math.floor((Math.random() * 2) + 1);
 				powerUpAmmo = POWERUP_USES;
@@ -292,15 +264,6 @@ function collisionCratePlayer()
 			}
 		}
 	}
-}
-
-function spawnCrate()
-{
-	crate.x = Math.random() * (canvas.width - crate.img.width);
-	crate.y = -crate.img.height;
-	crate.onGround = false;
-	crate.onPad = false;
-	crate.hide = false;
 }
 
 function movePlayer()

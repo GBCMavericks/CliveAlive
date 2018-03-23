@@ -14,7 +14,7 @@ var resume = { x: null, y: null, onPlay: null };
 var winImage = {};
 
 //var player = {};
-var crate = {};
+var crateImage = {};
 
 var zombie = {};
 var jumperZombie = {};
@@ -91,9 +91,9 @@ function loadResources(callback){
     player.img.src = "img/playerRight.png";
     player.img.onload = function(){loadCounter(callback);};
 
-	crate.img = new Image();
-    crate.img.src = "img/crate.png";
-    crate.img.onload = function(){loadCounter(callback);};
+	crateImage = new Image();
+    crateImage.src = "img/crate.png";
+    crateImage.onload = function(){loadCounter(callback);};
 
     zombieRight = new Image();
     zombieRight.src = "img/zombieRight.png";

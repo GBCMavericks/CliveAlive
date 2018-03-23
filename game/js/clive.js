@@ -1,12 +1,6 @@
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
-var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
@@ -34,25 +28,32 @@ const GRAVITY_MULTIPLIER = 40;
 const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
 const PLAYER_SPEED = 240 / FPS;
 const BULLET_SPEED_MULTIPLIER = 1200 / FPS; // A variable used to determine the value of bullet speed.
-const maxKillCount = 30;
+const NULL_PAD = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var maxKillCount;
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
+var currentLevel;
 // END OF PLAYER RELATED VARIABLES ***************************************************************************************************
 
 var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
-/*var leftPressed; // These flags are used  
-var rightPressed;// to keep track of which
-var upPressed;   // keyboard button the
-var downPressed; // player presses.*/
-
 var isPaused = false;
 
+function loadLevel(level)
+{
+    currentLevel = level;
+    createMap();
+}
+
 function createMap() // Initialize all the variables here.
-{ 
+{
+    pads = currentLevel.pads;
+    for(var i = 0; i < pads.length; i++)
+        pads[i].img = padSprite;
+    maxKillCount = currentLevel.maxKillCount;
 	leftPressed = false; 
 	rightPressed = false;
 	upPressed = false;   
@@ -77,30 +78,11 @@ function createMap() // Initialize all the variables here.
     slimes = [];
     bullets = [];
     bulletSpeedMultiplier = 10;
-    pads = [];
 	jumperZombies = [];
-    pad1.x = 300;
-    pad1.y = 600;
-	pads.push(pad1);
-	pad2.x = 1100;
-    pad2.y = 600;
-	pads.push(pad2);
-	pad3.x = 500;
-	pad3.y = 450;
-	pads.push(pad3);
-	pad4.x = 900;
-	pad4.y = 450;
-	pads.push(pad4);
-	pad5.x = 300;
-	pad5.y = 300;
-	pads.push(pad5);
-	pad6.x = 1100;
-	pad6.y = 300;
-	pads.push(pad6);
-	for (var i = 0; i < pads.length; i++)
+	for (var pad in pads)
 	{
-		pads[i].onPad = false;
-		pads[i].onPadZombie = false;
+		pad.onPad = false;
+		pad.onPadZombie = false;
 	}
     gameIsLost = false;
     gameIsWon = false;
@@ -110,16 +92,11 @@ function createMap() // Initialize all the variables here.
     zombieDamageSound.setAttribute("src","aud/damage.wav");
     crateSound.setAttribute("src","aud/pickup.wav");
     spawnCrate();
-	crateInt = setInterval(spawnCrate,20000);
-    zombieInt = setInterval(spawnZombie,3000);
-	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
-	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
-	
-	for(var i = 0; i < 4; i++)
-    {
-        spawnCloud();
-    }
+	crateInt = setInterval(spawnCrate, currentLevel.crateInterval);
+    zombieInt = setInterval(spawnZombie, currentLevel.zombieInterval);
+	flyingZombieInt = setInterval(spawnFlyingZombie, currentLevel.flyingZombieInterval);
+	flyingZombieFireInt = setInterval(fireFlyingZombie, currentLevel.flyingZombieFireInterval);
+	jumperZombieInt = setInterval (spawnJumperZombie, currentLevel.jumperZombieInterval);
 
     //buttons values
     restartImg.x = 635;
@@ -449,7 +426,7 @@ function restartGame(event)
 			canvas.removeEventListener("click", restartGame);
 			canvas.addEventListener("click", fire);
 			//generating the game again
-			createMap();
+			loadLevel(FINAL_LEVEL);
 		}	
 	}
 }

@@ -34,7 +34,7 @@ function startScreen() {
         startFlyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
     }
     if(clouds.length == 0){
-        for(var i = 0; i < 4; i++)
+        for(var i = 0; i < 16; i++)
         {
             spawnCloud();
         }
@@ -49,7 +49,7 @@ function startScreen() {
     cleanSlimesArray();
     console.log(slimes.length);
     startAnimation = requestAnimationFrame(startScreen);
-};
+}
 
 function drawStartBackground(ctx){
 	background.x = 0;

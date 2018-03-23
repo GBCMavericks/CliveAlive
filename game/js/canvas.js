@@ -32,10 +32,11 @@ var slime = {};
 var loadedResources = 0;
 
 
-const NUM_RESOURCES = 21;
+const NUM_RESOURCES = 17;
 var glow = 0;
 var startAnimation;
 var cloudSprites = [];
+var padSprite;
 
 window.onload = function()
 {
@@ -60,7 +61,7 @@ function onSpaceDown(event){
             clearInterval(startFlyingZombieInterval);
             clearInterval(startFlyingZombieFireInt);
             cancelAnimationFrame(startAnimation);
-            createMap();
+            loadLevel(FINAL_LEVEL);
     }
 };
 
@@ -132,30 +133,12 @@ function loadResources(callback){
     cloud2.onload = function(){loadCounter(callback);};
 
     cloudSprites = [cloud1, cloud2];
-	
-	pad1.img = new Image();
-	pad1.img.src = "img/pad.png";
-	pad1.img.onload = function(){loadCounter(callback);}
-	
-	pad2.img = new Image();
-	pad2.img.src = "img/pad.png";
-	pad2.img.onload = function(){loadCounter(callback);}
-	
-	pad3.img = new Image();
-	pad3.img.src = "img/pad.png";
-	pad3.img.onload = function(){loadCounter(callback);}
-	
-	pad4.img = new Image();
-	pad4.img.src = "img/pad.png";
-	pad4.img.onload = function(){loadCounter(callback);}
-	
-	pad5.img = new Image();
-	pad5.img.src = "img/pad.png";
-	pad5.img.onload = function(){loadCounter(callback);}
-	
-	pad6.img = new Image();
-	pad6.img.src = "img/pad.png";
-	pad6.img.onload = function(){loadCounter(callback);}
+
+
+    padSprite = new Image();
+    padSprite.src = "img/pad.png";
+    padSprite.onload = function() { loadCounter(callback); };
+
 	
 	restartImg.img = new Image();
 	restartImg.img.src = "img/restart.png";

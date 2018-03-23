@@ -1,3 +1,49 @@
+function collisionCrateGround()
+{
+	if (crate.y + crateImage.height >= ground.y)
+	{
+		crate.onGround = true;
+		crate.onPad = false;
+		crate.y = ground.y - crateImage.height;
+	}
+}
+
+function collisionCratePad()
+{
+	for ( var i = 0; i < pads.length; i++)
+    { // For each pad in the pads array:
+        if (crate.y + crateImage.height <= pads[i].y + pads[i].img.height - CRATE_SPEED 
+            && crate.y + crateImage.height >= pads[i].y + CRATE_SPEED)
+		{ // Then there is a collision between the y coordinates of the crate and the pad.
+            if (crate.x + crateImage.width >= pads[i].x 
+                && crate.x <= pads[i].x + pads[i].img.width)
+			{
+				crate.onPad = true;
+				crate.y = pads[i].y - crate.img.height; // Make sure the crate is exactly on the pad.
+			}
+		}
+    }
+}
+
+function collisionCratePlayer()
+{
+	if (!crate.hide)
+	{
+        if (player.x + player.img.width >= crate.x 
+            && player.x <= crate.x + crateImage.width)
+		{ // Then the x coordinates collide.
+            if (player.y + player.img.height >= crate.y 
+                && player.y <= crate.y + crateImage.height)
+			{ // Then the y coordinates collide. We have a collision!
+				player.currentPowerUp = Math.floor((Math.random() * 2) + 1);
+				powerUpAmmo = POWERUP_USES;
+				crate.hide = true;
+				crateSound.play();
+			}
+		}
+	}
+}
+
 function collisionPlayerZombie()
 {
 	for (var i = 0; i < zombies.length; i++)
@@ -10,7 +56,9 @@ function collisionPlayerZombie()
 				if (player.y + player.img.height >= zombies[i].y + 12 
 					&& player.y <= zombies[i].y + zombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
-					gameIsLost = true;
+					player.livesLeft--;
+					if (player.livesLeft == 0)
+						gameIsLost = true;
 				}
 			}	
 		}
@@ -195,7 +243,9 @@ function collisionPlayerFlyingZombie()
 				if (player.y + player.img.height >= flyingZombies[i].y + 12 
 					&& player.y <= flyingZombies[i].y + flyingZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
-					gameIsLost = true;
+					player.livesLeft--;
+					if (player.livesLeft == 0)
+						gameIsLost = true;
 				}
 			}	
 		}
@@ -225,7 +275,9 @@ function collisionSlimePlayer()
 		{
 			if (slimes[i].y + slimes[i].img.height >= player.y && slimes[i].y <= player.y + player.img.height)
 			{ 
-				gameIsLost = true;
+				player.livesLeft--;
+				if (player.livesLeft == 0)
+					gameIsLost = true;
 			}
 		}
 	}
@@ -243,7 +295,9 @@ function collisionPlayerJumperZombie()
 				if (player.y + player.img.height >= jumperZombies[i].y + 12 
 					&& player.y <= jumperZombies[i].y + jumperZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
-					gameIsLost = true;
+					player.livesLeft--;
+					if (player.livesLeft == 0)
+						gameIsLost = true;
 				}
 			}	
 		}

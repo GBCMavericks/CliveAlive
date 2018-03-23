@@ -1,4 +1,3 @@
-
 var canvas = document.querySelector("canvas");
 canvas.height = resolution.height;
 canvas.width = resolution.width;
@@ -13,10 +12,13 @@ var options = { x: null, y: null, onPlay: null };
 var resume = { x: null, y: null, onPlay: null };
 var winImage = {};
 var playerPortraitBackground = {x:null, y:null, img:null, onPlay:null};
-
-//var player = {};
+var playerLives = {x1:null, x2:null, x3:null, y:null, img:null, onPlay:null};
+var powerupPortraitBackground = {x:null, y:null, img:null, onPlay:null};
+var hud_sprayGun = {x:null, y:null, img:null, onPlay:null};
+var hud_sprayGunBullets = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
+var hud_diamondGun = {x:null, y:null, img:null, onPlay:null};
+var hud_diamondGunBullets = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
 var crateImage = {};
-
 var zombie = {};
 var jumperZombie = {};
 var flyingZombie = {};
@@ -150,19 +152,35 @@ function loadResources(callback){
 	pad4.img.src = "img/pad.png";
 	pad4.img.onload = function(){loadCounter(callback);}
 	
-	//pad5.img = new Image();
-	//pad5.img.src = "img/pad.png";
-	//pad5.img.onload = function(){loadCounter(callback);}
-	
-	//pad6.img = new Image();
-	//pad6.img.src = "img/pad.png";
-	//pad6.img.onload = function(){loadCounter(callback);}
-	
 	restartImg.img = new Image();
 	restartImg.img.src = "img/restart.png";
 	restartImg.img.onload = function(){loadCounter(callback);}
 	
 	playerPortraitBackground.img = new Image();
-	playerPortraitBackground.img.src = "img/playerPortraitBackground.png";
+	playerPortraitBackground.img.src = "img/hud_playerBackground.png";
 	playerPortraitBackground.img.onload = function(){loadCounter(callback);}
+	
+	playerLives.img = new Image();
+	playerLives.img.src = "img/hud_live.png";
+	playerLives.img.onload = function(){loadCounter(callback);}
+	
+	powerupPortraitBackground.img = new Image();
+	powerupPortraitBackground.img.src = "img/hud_powerupBackground.png";
+	powerupPortraitBackground.img.onload = function(){loadCounter(callback);}
+	
+	hud_sprayGun.img = new Image();
+	hud_sprayGun.img.src = "img/hud_sprayGun.png";
+	hud_sprayGun.img.onload = function(){loadCounter(callback);}
+	
+	hud_sprayGunBullets.img = new Image();
+	hud_sprayGunBullets.img.src = "img/hud_sprayGunBullet.png";
+	hud_sprayGunBullets.img.onload = function(){loadCounter(callback);}
+	
+	hud_diamondGun.img = new Image();
+	hud_diamondGun.img.src = "img/hud_diamondGun.png";
+	hud_diamondGun.img.onload = function(){loadCounter(callback);}
+	
+	hud_diamondGunBullets.img = new Image();
+	hud_diamondGunBullets.img.src = "img/hud_diamondGunBullet.png";
+	hud_diamondGunBullets.img.onload = function(){loadCounter(callback);}
 }

@@ -114,7 +114,7 @@ function createMap() // Initialize all the variables here.
     zombieInt = setInterval(spawnZombie,3000);
 	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	//jumperZombieInt = setInterval (spawnJumperZombie, 3000);
+	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
 	
 	for(var i = 0; i < 4; i++)
     {

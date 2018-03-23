@@ -26,7 +26,8 @@ var zombieLeft = {};
 var jumperZombieLeft = {};
 var flyingZombieLeft = {};
 var slimeImage = {};
-var cloud = {};
+var cloud1 = {};
+var cloud2 = {};
 var slime = {};
 var loadedResources = 0;
 
@@ -34,7 +35,7 @@ var loadedResources = 0;
 const NUM_RESOURCES = 21;
 var glow = 0;
 var startAnimation;
-const cloudSprites = ["img/cloud1.png", "img/cloud2.png"];
+var cloudSprites = [];
 
 window.onload = function()
 {
@@ -122,9 +123,15 @@ function loadResources(callback){
     slimeImage.src = "img/slime.png";
     slimeImage.onload = function(){loadCounter(callback);};
 
-    cloud.img = new Image();
-    cloud.img.src = "img/cloud1.png";
-    cloud.img.onload = function(){loadCounter(callback);};
+    cloud1 = new Image();
+    cloud1.src = "img/cloud1.png";
+    cloud1.onload = function(){loadCounter(callback);};
+
+    cloud2 = new Image();
+    cloud2.src = "img/cloud2.png";
+    cloud2.onload = function(){loadCounter(callback);};
+
+    cloudSprites = [cloud1, cloud2];
 	
 	pad1.img = new Image();
 	pad1.img.src = "img/pad.png";

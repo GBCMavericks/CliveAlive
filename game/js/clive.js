@@ -33,7 +33,6 @@ const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at th
 const GRAVITY_MULTIPLIER = 40;
 const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
 const PLAYER_SPEED = 240 / FPS;
-const CLOUD_VELOCITY_MULTIPLIER = 30 / FPS;
 const BULLET_SPEED_MULTIPLIER = 1200 / FPS; // A variable used to determine the value of bullet speed.
 const maxKillCount = 30;
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
@@ -59,7 +58,6 @@ const POWERUP_USES = 5
 var powerUpAmmo; // Number of uses of the power-up
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 
-var clouds = [];
 var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
@@ -192,11 +190,7 @@ function render()
 {
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
     surface.drawImage(background.img, background.x, background.y); // Draw the background.
-    // Draw clouds next, since they should be behind everything else.
-    for(var i = 0; i < clouds.length; i++)
-    {
-        surface.drawImage(clouds[i].img, clouds[i].x, clouds[i].y);
-    }
+    drawClouds(surface);
 	surface.drawImage(ground.img, ground.x, ground.y); // Draw the ground.
     for (var i = 0; i < pads.length; i++)
     { // For each pad in the pads array, draw it on the canvas.
@@ -437,30 +431,6 @@ function resetJump()
 {
     player.inAir = false;
     player.verticalVelocity = 0;
-}
-
-function spawnCloud()
-{
-    var currentCloud = Object.create(cloud);
-    currentCloud.img = new Image();
-    currentCloud.img.src = cloudSprites[Math.random() > 0.5 ? 0 : 1];
-    currentCloud.x = canvas.width; // Spawn on the right side of the screen.
-    currentCloud.y = Math.ceil(Math.random() * canvas.height); // Spawn at a random height.
-    currentCloud.parallaxLayer = Math.ceil(Math.random() * 4 % 4); // Indexed starting at one so that we can multiply the layer by a velocity constant.
-    clouds.push(currentCloud);
-}
-
-function moveClouds()
-{
-    for(var i = 0; i < clouds.length; i++)
-    {
-        clouds[i].x -= clouds[i].parallaxLayer * CLOUD_VELOCITY_MULTIPLIER;
-        if(clouds[i].x < 0 -200) // If the cloud moves far off-screen,
-        {
-            clouds.splice(i, 1); // delete the cloud,
-            spawnCloud(); // and then spawn a new one to replace it.
-        }
-    }
 }
 
 function resetJumpZombie(thisZombie)

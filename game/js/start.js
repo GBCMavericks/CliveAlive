@@ -33,6 +33,13 @@ function startScreen() {
         startFlyingZombieInterval = setInterval(spawnFlyingZombie,1500);
         startFlyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
     }
+    if(clouds.length == 0){
+        for(var i = 0; i < 4; i++)
+        {
+            spawnCloud();
+        }
+    }
+    moveClouds();
     moveStartZombies();
     moveSlime();
     drawZombies(surface);
@@ -57,9 +64,11 @@ function drawStartBackground(ctx){
     ctx.save();
     ctx.globalAlpha = 0.7;
     ctx.drawImage(background.img, background.x, background.y); // Draw the background.
+    drawClouds(ctx);
 	ctx.drawImage(ground.img, ground.x, ground.y); // Draw the ground.
     ctx.restore();
 }
+
 
 function drawStartTitle(ctx){
     ctx.font = titleFontSize + "px zombieSlayer";

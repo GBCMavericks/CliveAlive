@@ -92,10 +92,11 @@ function createMap() // Initialize all the variables here.
 	crate.onPad = false;
 	crate.hide = true;
     currentDirection = true;
-	zombies = [];
+    zombies = [];
+    /*
     zombie.lives = 3;
-    zombie.x = -zombie.img.width;
-    zombie.y = ground.y - zombie.img.height;
+    zombie.x = -zombieRight.width;
+    zombie.y = ground.y - zombieRight.height;*/
     flyingZombies = [];
     slimes = [];
     bullets = [];

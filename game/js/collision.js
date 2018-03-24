@@ -101,7 +101,8 @@ function collisionBulletZombie()
 						zombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 10)
+						updateProgressHUD();
+						if (killCounter >= waveSize)
 						{
 							gameIsWon = true;
 						}
@@ -220,7 +221,8 @@ function collisionBulletFlyingZombie()
 						flyingZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 30)
+						updateProgressHUD();
+						if (killCounter >= waveSize)
 						{
 							gameIsWon = true;
 						}
@@ -339,7 +341,8 @@ function collisionBulletJumperZombie()
 						jumperZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= maxKillCount)
+						updateProgressHUD();
+						if (killCounter >= waveSize)
 						{
 							gameIsWon = true;
 						}

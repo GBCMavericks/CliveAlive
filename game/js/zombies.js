@@ -46,8 +46,6 @@ function moveZombie()
 function spawnZombie()
 {
 	var currentZombie = Object.create(zombie);
-	console.log(zombieRight);
-	console.log(zombieRight.height);
 	currentZombie.img = zombieRight;
 	if (Math.random() > 0.5)
 	{

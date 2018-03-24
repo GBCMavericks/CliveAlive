@@ -12,12 +12,15 @@ var options = { x: null, y: null, onPlay: null };
 var resume = { x: null, y: null, onPlay: null };
 var winImage = {};
 var playerPortraitBackground = {x:null, y:null, img:null, onPlay:null};
-var playerLives = {x1:null, x2:null, x3:null, y:null, img:null, onPlay:null};
+var playerLives = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
 var powerupPortraitBackground = {x:null, y:null, img:null, onPlay:null};
 var hud_sprayGun = {x:null, y:null, img:null, onPlay:null};
 var hud_sprayGunBullets = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
 var hud_diamondGun = {x:null, y:null, img:null, onPlay:null};
 var hud_diamondGunBullets = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
+var hud_progressFrame = {x:null, y:null, img:null, onPlay:null};
+var hud_progressBackground1 = {x:null, y:null, img:null, onPlay:null};
+var hud_progressBackground2 = {x:null, y:null, img:null, onPlay:null};
 var crateImage = {};
 var zombie = {};
 var jumperZombie = {};
@@ -183,4 +186,16 @@ function loadResources(callback){
 	hud_diamondGunBullets.img = new Image();
 	hud_diamondGunBullets.img.src = "img/hud_diamondGunBullet.png";
 	hud_diamondGunBullets.img.onload = function(){loadCounter(callback);}
+	
+	hud_progressFrame.img = new Image();
+	hud_progressFrame.img.src = "img/hud_progressFrame.png";
+	hud_progressFrame.img.onload = function(){loadCounter(callback);}
+	
+	hud_progressBackground1.img = new Image();
+	hud_progressBackground1.img.src = "img/hud_progressBackground1.png";
+	hud_progressBackground1.img.onload = function(){loadCounter(callback);}
+	
+	hud_progressBackground2.img = new Image();
+	hud_progressBackground2.img.src = "img/hud_progressBackground2.png";
+	hud_progressBackground2.img.onload = function(){loadCounter(callback);}
 }

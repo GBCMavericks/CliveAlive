@@ -29,7 +29,6 @@ function initializeCrate()
 
 function spawnCrate()
 {
-	console.log('creating crate');
 	crate.x = Math.random() * (canvas.width - crateImage.width);
 	crate.y = -crateImage.height;
 	crate.onGround = false;

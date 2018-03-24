@@ -47,7 +47,7 @@ function startScreen() {
     drawSlimes(surface);
     drawButtons(surface);
     cleanSlimesArray();
-    console.log(slimes.length);
+    //console.log(slimes.length);
     startAnimation = requestAnimationFrame(startScreen);
 };
 

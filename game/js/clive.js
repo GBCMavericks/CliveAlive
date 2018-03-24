@@ -1,12 +1,6 @@
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
-var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.

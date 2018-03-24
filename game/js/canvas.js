@@ -22,11 +22,21 @@ var flyingZombie = {};
 var cloud = {};
 var slime = {};
 var loadedResources = 0;
-const NUM_RESOURCES = 9;
+const NUM_RESOURCES = 11;
 var glow = 0;
 var startZombieInterval; 
 var startAnimation;
 const cloudSprites = ["img/cloud1.png", "img/cloud2.png"];
+
+var bulletImage; //= new Image();
+var bulletImageD;// = new Image();
+var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+
 
 window.onload = function()
 {
@@ -60,6 +70,15 @@ function loadCounter(callback){
 }
 
 function loadResources(callback){
+
+    bulletImage = new Image();
+    bulletImage.src = "img/bullet.png";
+    bulletImage.onload = function(){loadCounter(callback);};
+
+    bulletImageD = new Image();
+    bulletImageD.src = "img/diBullet.png";
+    bulletImageD.onload = function(){loadCounter(callback);};
+
     background.img = new Image();
     background.img.src = "img/background.jpg";
     background.img.onload = function(){loadCounter(callback);};

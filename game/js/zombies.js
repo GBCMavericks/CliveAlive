@@ -260,42 +260,18 @@ function zombieGravity()
 		{
 			jumperZombies[i].y -= jumperZombies[i].verticalVelocity; // Move the zombie up or down according to the vertical velocity.
 			jumperZombies[i].verticalVelocity -= GRAVITY; // Decelerate the zombie due to gravity.
-			/*if(currentDirection)
-			{
-				player.img.src = "img/playerRightJump.png";
-			}
-			else
-			{
-				player.img.src = "img/playerLeftJump.png";
-			}*/
 			for (var j = 0; j < pads.length; j++)
 			{ // For all the pads in the pads array:
 				if (pads[j].onPadZombie)
 				{ // Then the zombie landed on one of the pads.
 					jumperZombies[i].y = pads[j].y - jumperZombies[i].img.height; // Make sure the zombie is exactly on the pad.
 					resetJumpZombie(jumperZombies[i]); // Reset the jump variables so the next jump is not screwed up.
-					/*if(currentDirection)
-					{
-						player.img.src = "img/playerRight.png";
-					}
-					else
-					{
-						player.img.src = "img/playerLeft.png";
-					}*/
 				}
 			}
 			if (jumperZombies[i].y + jumperZombies[i].img.height >= ground.y)
 			{ // Then the zombie reached the ground, time to stop.
 				jumperZombies[i].y = ground.y - jumperZombies[i].img.height; // Make sure the zombie does not go below ground.
 				resetJumpZombie(jumperZombies[i]); // Reset the jump variables so the next jump is not screwed up.
-				/*if(currentDirection)
-				{
-					player.img.src = "img/playerRight.png";
-				}
-				else
-				{
-					player.img.src = "img/playerLeft.png";
-				}*/
 			}
 		}
 	}

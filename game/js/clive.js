@@ -2,10 +2,10 @@ var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
 var waveSize; // Total number of zombies in the wave.
-var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad1 = {img:null,x:null,y:null,onPad:null}; 
+var pad2 = {img:null,x:null,y:null,onPad:null}; 
+var pad3 = {img:null,x:null,y:null,onPad:null};
+var pad4 = {img:null,x:null,y:null,onPad:null};
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
@@ -95,7 +95,6 @@ function createMap() // Initialize all the variables here.
 	for (var i = 0; i < pads.length; i++)
 	{
 		pads[i].onPad = false;
-		pads[i].onPadZombie = false;
 	}
     gameIsLost = false;
     gameIsWon = false;
@@ -107,7 +106,7 @@ function createMap() // Initialize all the variables here.
     crateSound.setAttribute("src","aud/pickup.wav");
     spawnCrate();
 	crateInt = setInterval(spawnCrate,20000);
-    zombieInt = setInterval(spawnZombie,5000);
+    zombieInt = setInterval(spawnZombie,4000);
 	flyingZombieInt = setInterval(spawnFlyingZombie, 7000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
 	jumperZombieInt = setInterval (spawnJumperZombie, 10000);
@@ -239,6 +238,7 @@ function render()
         clearInterval(zombieInt);
         clearInterval(flyingZombieInt);
         clearInterval(flyingZombieFireInt);
+		clearInterval(jumperZombieInt);
     }
     else if (!isPaused) {
         requestAnimationFrame(update);
@@ -250,10 +250,10 @@ function render()
         clearInterval(zombieInt);
         clearInterval(flyingZombieInt);
         clearInterval(flyingZombieFireInt);
+		clearInterval(jumperZombieInt);
     }
 	if(restartImg.onPlay == true)
 	{
-		console.log("HERELOL");
 		surface.drawImage(restartImg.img, restartImg.x, restartImg.y);
 	}
 }
@@ -329,7 +329,7 @@ function collisionPlayerPad()
         {
             if (player.x > pads[i].x + pads[i].img.width || player.x + player.img.width < pads[i].x)
             { // Then the player left the pad, time to apply gravity.
-                inAir = true;
+                player.inAir = true;
                 player.onPad = false;
 				pads[i].onPad = false;
             }

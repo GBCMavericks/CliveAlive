@@ -1,9 +1,22 @@
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
+var waveSize; // Total number of zombies in the wave.
+var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
+
+// Variables related to level progress HUD
+var hud_clipX;
+var hud_clipY;
+var hud_clipXLength;
+var hud_clipYHeight;
+var hud_slotWidth;
+// ***************************************
 
 // INTERVALS ************************************************************************************************************************
 var crateInt;    // Crate spawn interval.
@@ -21,47 +34,23 @@ var player =
 	inAir:false,
 	onPad:null,
 	verticalVelocity:0, // Vertical velocity of the player.
-	currentPowerUp:null // 0 = no power up, 1 = spray gun
+	currentPowerUp:null, // 0 = no power up, 1 = spray gun
+	livesLeft:null
 };
 const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
 const GRAVITY_MULTIPLIER = 40;
 const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
 const PLAYER_SPEED = 240 / FPS;
-const CLOUD_VELOCITY_MULTIPLIER = 30 / FPS;
 const BULLET_SPEED_MULTIPLIER = 1200 / FPS; // A variable used to determine the value of bullet speed.
-const maxKillCount = 30;
 var currentDirection;// Used to keep track of player's direction. (true=right false=left)
 var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
 var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
 // END OF PLAYER RELATED VARIABLES ***************************************************************************************************
 
-// PICKUP RELATED VARIABLES **********************************************************************************************************
-var crate = 
-{
-	img:null, // Image of the crate.
-	x:null, // X-coordinate of the crate.
-	y:null, // Y-coordinate of the crate.
-	onGround:null, // True: crate is on the ground. False: crate is nit on the ground.
-	onPad:null, // True: crate is on a pad. False: crate is not on a pad.
-	hide:null // True: hide the crate image. False: render the crate image.
-};  
-const CRATE_SPEED = 120 / FPS;
-var crateCounter; // Spawn timer of the crate.
-var crateSound = document.createElement("AUDIO");
-var currentPowerUp = 0; // 0: normal, 1: spray, 2: diamond
-const POWERUP_USES = 5
-var powerUpAmmo; // Number of uses of the power-up
-// END OF PICKUP RELATED VARIABLES ***************************************************************************************************
-
-var clouds = [];
 var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
-/*var leftPressed; // These flags are used  
-var rightPressed;// to keep track of which
-var upPressed;   // keyboard button the
-var downPressed; // player presses.*/
 
 var isPaused = false;
 
@@ -79,22 +68,17 @@ function createMap() // Initialize all the variables here.
     player.x = 600;
     player.y = ground.y - player.img.height;
 	player.onPad = false;
-	player.currentPowerUp = 0;
-	crate.x = Math.random() * (canvas.width - crate.img.width);;
-	crate.y = -crate.img.height;
-	crate.onGround = false;
-	crate.onPad = false;
-	crate.hide = true;
+    player.currentPowerUp = 0;   
+	player.livesLeft = 1;	
+    initializeCrate();
     currentDirection = true;
-	zombies = [];
-    zombie.lives = 3;
-    zombie.x = -zombie.img.width;
-    zombie.y = ground.y - zombie.img.height;
+    zombies = [];
     flyingZombies = [];
     slimes = [];
     bullets = [];
     bulletSpeedMultiplier = 10;
     pads = [];
+	clouds = [];
 	jumperZombies = [];
     pad1.x = 300;
     pad1.y = 600;
@@ -108,12 +92,6 @@ function createMap() // Initialize all the variables here.
 	pad4.x = 900;
 	pad4.y = 450;
 	pads.push(pad4);
-	pad5.x = 300;
-	pad5.y = 300;
-	pads.push(pad5);
-	pad6.x = 1100;
-	pad6.y = 300;
-	pads.push(pad6);
 	for (var i = 0; i < pads.length; i++)
 	{
 		pads[i].onPad = false;
@@ -122,26 +100,70 @@ function createMap() // Initialize all the variables here.
     gameIsLost = false;
     gameIsWon = false;
 	killCounter = 0;
+	waveSize = 10;
 	jumpSound.setAttribute("src","aud/jump.wav");
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
-	crateSound.setAttribute("src","aud/pickup.wav");
+    crateSound.setAttribute("src","aud/pickup.wav");
+    spawnCrate();
 	crateInt = setInterval(spawnCrate,20000);
-    zombieInt = setInterval(spawnZombie,3000);
-	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
+    zombieInt = setInterval(spawnZombie,5000);
+	flyingZombieInt = setInterval(spawnFlyingZombie, 7000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
-	
+	jumperZombieInt = setInterval (spawnJumperZombie, 10000);
 	for(var i = 0; i < 4; i++)
-    {
         spawnCloud();
-    }
-
-    //buttons values
     restartImg.x = 635;
     restartImg.y = 330;
     restartImg.onPlay = false;
-
+	playerPortraitBackground.x = canvas.width/50;
+	playerPortraitBackground.y = canvas.height/30;
+	playerPortraitBackground.onPlay = true;
+	playerLives.x1 = canvas.width/50;
+	playerLives.x2 = canvas.width/50 + 35;
+	playerLives.x3 = canvas.width/50 + 2*35;
+	playerLives.x2 = canvas.width/50 + 3*35;
+	playerLives.x3 = canvas.width/50 + 4*35;
+	playerLives.y = canvas.height/30;
+	playerLives.onPlay = true;
+	powerupPortraitBackground.x = canvas.width/50;
+	powerupPortraitBackground.y = canvas.height/30;
+	powerupPortraitBackground.onPlay = true;
+	hud_sprayGun.x = canvas.width/50;
+	hud_sprayGun.y = canvas.height/30;
+	hud_sprayGun.onPlay = true;
+	hud_sprayGunBullets.x1 = canvas.width/50;
+	hud_sprayGunBullets.x2 = canvas.width/50 + 15;
+	hud_sprayGunBullets.x3 = canvas.width/50 + 2*15;
+	hud_sprayGunBullets.x4 = canvas.width/50 + 3*15;
+	hud_sprayGunBullets.x5 = canvas.width/50 + 4*15;
+	hud_sprayGunBullets.y = canvas.height/30;
+	hud_sprayGun.onPlay = true;
+	hud_diamondGun.x = canvas.width/50;
+	hud_diamondGun.y = canvas.height/30;
+	hud_diamondGun.onPlay = true;
+	hud_diamondGunBullets.x1 = canvas.width/50;
+	hud_diamondGunBullets.x2 = canvas.width/50 + 15;
+	hud_diamondGunBullets.x3 = canvas.width/50 + 2*15;
+	hud_diamondGunBullets.x4 = canvas.width/50 + 3*15;
+	hud_diamondGunBullets.x5 = canvas.width/50 + 4*15;
+	hud_diamondGunBullets.y = canvas.height/30;
+	hud_diamondGunBullets.onPlay = true;
+	hud_progressFrame.x = canvas.width/50 + 410;
+	hud_progressFrame.y = canvas.height/30;
+	hud_progressFrame.onPlay = true;
+	hud_progressBackground1.x = canvas.width/50 + 410;
+	hud_progressBackground1.y = canvas.height/30;
+	hud_progressBackground1.onPlay = true;
+	hud_progressBackground2.x = canvas.width/50 + 410;
+	hud_progressBackground2.y = canvas.height/30;
+	hud_progressBackground2.onPlay = true;
+	hud_clipX = 0;
+	hud_clipY = 0;
+	hud_clipXLength = 0;
+	hud_clipYHeight = 0;
+	hud_slotWidth = 0;
+	
     update();
 }
 
@@ -180,33 +202,25 @@ function update()
 	cleanJumperZombieArray();
 }
 
-
 function render()
 {
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
     surface.drawImage(background.img, background.x, background.y); // Draw the background.
-    // Draw clouds next, since they should be behind everything else.
-    for(var i = 0; i < clouds.length; i++)
-    {
-        surface.drawImage(clouds[i].img, clouds[i].x, clouds[i].y);
-    }
+    drawClouds(surface);
 	surface.drawImage(ground.img, ground.x, ground.y); // Draw the ground.
     for (var i = 0; i < pads.length; i++)
     { // For each pad in the pads array, draw it on the canvas.
         surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
     }
+    drawCrate(surface);
     drawZombies(surface);
 	drawFlyingZombies(surface);
 	drawJumperZombies(surface);
 	drawSlimes(surface);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
-	if (!crate.hide)
-	{
-		surface.drawImage(crate.img,crate.x,crate.y); // Draw the crate.
-	}
-	
 	drawBullets(surface);
-	
+	drawPlayerHUD(surface);
+	drawProgressHUD(surface);
     if (gameIsLost || gameIsWon) {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);
@@ -239,67 +253,9 @@ function render()
     }
 	if(restartImg.onPlay == true)
 	{
+		console.log("HERELOL");
 		surface.drawImage(restartImg.img, restartImg.x, restartImg.y);
 	}
-}
-
-function moveCrate()
-{
-	if (!crate.onGround || !crate.onPad)
-	{
-		crate.y += CRATE_SPEED;
-	}
-}
-
-function collisionCrateGround()
-{
-	if (crate.y + crate.img.height >= ground.y)
-	{
-		crate.onGround = true;
-		crate.onPad = false;
-		crate.y = ground.y - crate.img.height;
-	}
-}
-
-function collisionCratePad()
-{
-	for ( var i = 0; i < pads.length; i++)
-    { // For each pad in the pads array:
-		if (crate.y + crate.img.height <= pads[i].y + pads[i].img.height - CRATE_SPEED && crate.y + crate.img.height >= pads[i].y + CRATE_SPEED)
-		{ // Then there is a collision between the y coordinates of the crate and the pad.
-			if (crate.x + crate.img.width >= pads[i].x && crate.x <= pads[i].x + pads[i].img.width)
-			{
-				crate.onPad = true;
-				crate.y = pads[i].y - crate.img.height; // Make sure the crate is exactly on the pad.
-			}
-		}
-    }
-}
-
-function collisionCratePlayer()
-{
-	if (!crate.hide)
-	{
-		if (player.x + player.img.width >= crate.x && player.x <= crate.x + crate.img.width)
-		{ // Then the x coordinates collide.
-			if (player.y + player.img.height >= crate.y && player.y <= crate.y + crate.img.height)
-			{ // Then the y coordinates collide. We have a collision!
-				currentPowerUp = Math.floor((Math.random() * 2) + 1);
-				powerUpAmmo = POWERUP_USES;
-				crate.hide = true;
-				crateSound.play();
-			}
-		}
-	}
-}
-
-function spawnCrate()
-{
-	crate.x = Math.random() * (canvas.width - crate.img.width);
-	crate.y = -crate.img.height;
-	crate.onGround = false;
-	crate.onPad = false;
-	crate.hide = false;
 }
 
 function movePlayer()
@@ -344,7 +300,6 @@ function movePlayer()
     }
 }
 
-
 function collisionPlayerPad()
 {
     for ( var i = 0; i < pads.length; i++)
@@ -381,7 +336,6 @@ function collisionPlayerPad()
         }
     }
 }
-
 
 function playerGravity()
 {
@@ -430,30 +384,6 @@ function resetJump()
 {
     player.inAir = false;
     player.verticalVelocity = 0;
-}
-
-function spawnCloud()
-{
-    var currentCloud = Object.create(cloud);
-    currentCloud.img = new Image();
-    currentCloud.img.src = cloudSprites[Math.random() > 0.5 ? 0 : 1];
-    currentCloud.x = canvas.width; // Spawn on the right side of the screen.
-    currentCloud.y = Math.ceil(Math.random() * canvas.height); // Spawn at a random height.
-    currentCloud.parallaxLayer = Math.ceil(Math.random() * 4 % 4); // Indexed starting at one so that we can multiply the layer by a velocity constant.
-    clouds.push(currentCloud);
-}
-
-function moveClouds()
-{
-    for(var i = 0; i < clouds.length; i++)
-    {
-        clouds[i].x -= clouds[i].parallaxLayer * CLOUD_VELOCITY_MULTIPLIER;
-        if(clouds[i].x < 0 -200) // If the cloud moves far off-screen,
-        {
-            clouds.splice(i, 1); // delete the cloud,
-            spawnCloud(); // and then spawn a new one to replace it.
-        }
-    }
 }
 
 function resetJumpZombie(thisZombie)
@@ -512,4 +442,74 @@ function restartGame(event)
 			createMap();
 		}	
 	}
+}
+
+function drawPlayerHUD(surface)
+{
+	if (player.currentPowerUp == 1)
+	{
+		surface.drawImage(powerupPortraitBackground.img,powerupPortraitBackground.x,powerupPortraitBackground.y);
+		surface.drawImage(hud_sprayGun.img,hud_sprayGun.x,hud_sprayGun.y);
+		if (powerUpAmmo >= 1)
+			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x1,hud_sprayGunBullets.y);
+		if (powerUpAmmo >= 2)
+			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x2,hud_sprayGunBullets.y);
+		if (powerUpAmmo >= 3)
+			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x3,hud_sprayGunBullets.y);
+		if (powerUpAmmo >= 4)
+			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x4,hud_sprayGunBullets.y);
+		if (powerUpAmmo >= 5)
+			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x5,hud_sprayGunBullets.y);
+	}
+	else if (player.currentPowerUp == 2)
+	{
+		surface.drawImage(powerupPortraitBackground.img,powerupPortraitBackground.x,powerupPortraitBackground.y);
+		surface.drawImage(hud_diamondGun.img,hud_diamondGun.x,hud_diamondGun.y);
+		if (powerUpAmmo >= 1)
+			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x1,hud_diamondGunBullets.y);
+		if (powerUpAmmo >= 2)
+			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x2,hud_diamondGunBullets.y);
+		if (powerUpAmmo >= 3)
+			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x3,hud_diamondGunBullets.y);
+		if (powerUpAmmo >= 4)
+			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x4,hud_diamondGunBullets.y);
+		if (powerUpAmmo >= 5)
+			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x5,hud_diamondGunBullets.y);
+	}
+	surface.drawImage(playerPortraitBackground.img,playerPortraitBackground.x,playerPortraitBackground.y);
+	if (player.livesLeft >= 1)
+		surface.drawImage(playerLives.img,playerLives.x1,playerLives.y);
+	if (player.livesLeft >= 2)
+		surface.drawImage(playerLives.img,playerLives.x2,playerLives.y);
+	if (player.livesLeft >= 3)
+		surface.drawImage(playerLives.img,playerLives.x3,playerLives.y);
+}
+
+function drawProgressHUD(surface)
+{
+	surface.drawImage(hud_progressBackground1.img, hud_progressBackground1.x, hud_progressBackground1.y);
+	surface.drawImage(  hud_progressBackground2.img, 
+						hud_clipX,
+						hud_clipY,
+						hud_clipXLength,
+						hud_clipYHeight,
+						hud_progressBackground2.x, 
+						hud_progressBackground2.y, 
+						hud_clipXLength,
+						hud_clipYHeight);
+	surface.drawImage(hud_progressFrame.img, hud_progressFrame.x, hud_progressFrame.y);
+	var currentProgress = killCounter + " / " + waveSize;
+	surface.font = "34px Arial";
+	surface.fillStyle = '#000000';
+	surface.fillText(currentProgress, 770, 90);
+}
+
+function updateProgressHUD()
+{
+	var totalWidth = hud_progressBackground2.img.width;
+	hud_slotWidth = totalWidth / waveSize;
+	hud_clipX = 0;
+	hud_clipY = 0;
+	hud_clipXLength = hud_slotWidth * killCounter;
+	hud_clipYHeight = hud_progressBackground2.img.height;
 }

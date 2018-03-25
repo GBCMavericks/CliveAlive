@@ -367,20 +367,22 @@ function collisionJumperZombiePad()
 					if (jumperZombies[j].x + jumperZombies[j].img.width >= pads[i].x 
 						&& jumperZombies[j].x <= pads[i].x + pads[i].img.width)
 					{ // Then the x coordinates collide as well. We have a collision!
-						jumperZombies[j].onPad = true;
-						pads[i].onPadZombie = true;
+						jumperZombies[j].onPad = i + 1;
 						jumperZombies[j].y = pads[i].y - jumperZombies[j].img.height; // Make sure the zombie is exactly on the pad.
-						resetJumpZombie(jumperZombies[j]); // Reset the jump variables so the next jump is not screwed up.
+						jumperZombies[j].inAir = false;
+						jumperZombies[j].verticalVelocity = 0;
+						//resetJumpZombie(jumperZombies[j]); // Reset the jump variables so the next jump is not screwed up.
+						//console.log(jumperZombies[j].inAir, jumperZombies[j].verticalVelocity);
 					}
 				}
 			}
-			if (pads[i].onPadZombie) // This part captures the moment when the player leaves the pad, so the fall animation can start.
+			if (jumperZombies[j].onPad > 0) // This part captures the moment when the player leaves the pad, so the fall animation can start.
 			{
-				if (jumperZombies[j].x > pads[i].x + pads[i].img.width || jumperZombies[j].x + jumperZombies[j].img.width < pads[i].x)
-				{ // Then the player left the pad, time to apply gravity.
+				var padIndex = jumperZombies[j].onPad - 1;
+				if (jumperZombies[j].x > pads[padIndex].x + pads[padIndex].img.width || jumperZombies[j].x + jumperZombies[j].img.width < pads[padIndex].x)
+				{ // Then the zombie left the pad, time to apply gravity.
 					jumperZombies[j].inAir = true;
 					jumperZombies[j].onPad = false;
-					pads[i].onPadZombie = false;
 				}
 			}
 		}

@@ -6,10 +6,14 @@ body
 
 #stage
 {
+	position: absolute;
+	width:100%;
+	height: 100%;
+	/*
 	margin-left: auto;
 	margin-right: auto;	
 	width: 800px;
-	height: 600px;
+	height: 600px;*/
 	background-color: white;
 }
 

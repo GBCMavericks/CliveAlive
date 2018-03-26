@@ -64,8 +64,8 @@ function createMap() // Initialize all the variables here.
 	background.y = 0;
 	ground.offset = 40;
 	ground.x = 0;
-	ground.y = background.img.height - ground.img.height + ground.offset;
-    player.x = 600;
+	ground.y = canvas.height - ground.img.height + ground.offset;
+    player.x = canvas.width/2;
     player.y = ground.y - player.img.height;
 	player.onPad = false;
     player.currentPowerUp = 0;   
@@ -81,16 +81,16 @@ function createMap() // Initialize all the variables here.
 	clouds = [];
 	jumperZombies = [];
     pad1.x = 300;
-    pad1.y = 600;
+    pad1.y = 640;
 	pads.push(pad1);
 	pad2.x = 1100;
-    pad2.y = 600;
+    pad2.y = 640;
 	pads.push(pad2);
 	pad3.x = 500;
-	pad3.y = 450;
+	pad3.y = 490;
 	pads.push(pad3);
 	pad4.x = 900;
-	pad4.y = 450;
+	pad4.y = 490;
 	pads.push(pad4);
 	for (var i = 0; i < pads.length; i++)
 	{

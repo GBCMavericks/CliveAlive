@@ -1,14 +1,64 @@
+function collisionCrateGround()
+{
+	if (crate.y + crateImage.height >= ground.y)
+	{
+		crate.onGround = true;
+		crate.onPad = false;
+		crate.y = ground.y - crateImage.height;
+	}
+}
+
+function collisionCratePad()
+{
+	for ( var i = 0; i < pads.length; i++)
+    { // For each pad in the pads array:
+        if (crate.y + crateImage.height <= pads[i].y + pads[i].img.height - CRATE_SPEED 
+            && crate.y + crateImage.height >= pads[i].y + CRATE_SPEED)
+		{ // Then there is a collision between the y coordinates of the crate and the pad.
+            if (crate.x + crateImage.width >= pads[i].x 
+                && crate.x <= pads[i].x + pads[i].img.width)
+			{
+				crate.onPad = true;
+				crate.y = pads[i].y - crate.img.height; // Make sure the crate is exactly on the pad.
+			}
+		}
+    }
+}
+
+function collisionCratePlayer()
+{
+	if (!crate.hide)
+	{
+        if (player.x + player.img.width >= crate.x 
+            && player.x <= crate.x + crateImage.width)
+		{ // Then the x coordinates collide.
+            if (player.y + player.img.height >= crate.y 
+                && player.y <= crate.y + crateImage.height)
+			{ // Then the y coordinates collide. We have a collision!
+				player.currentPowerUp = Math.floor((Math.random() * 2) + 1);
+				powerUpAmmo = POWERUP_USES;
+				crate.hide = true;
+				crateSound.play();
+			}
+		}
+	}
+}
+
 function collisionPlayerZombie()
 {
 	for (var i = 0; i < zombies.length; i++)
 	{
 		if(zombies[i].onPlay)
 		{
-			if (player.x + player.img.width - 12 >= zombies[i].x && player.x <= zombies[i].x + zombie.img.width - 12)
+			if (player.x + player.img.width - 12 >= zombies[i].x 
+				&& player.x <= zombies[i].x + zombieRight.width - 12)
 			{ // Then the x coordinates collide.
-				if (player.y + player.img.height >= zombies[i].y + 12 && player.y <= zombies[i].y + zombie.img.height)
+				if (player.y + player.img.height >= zombies[i].y + 12 
+					&& player.y <= zombies[i].y + zombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
-					gameIsLost = true;
+					player.livesLeft--;
+					if (player.livesLeft == 0)
+						gameIsLost = true;
 				}
 			}	
 		}
@@ -29,9 +79,11 @@ function collisionBulletZombie()
 				console.log('bullet undefined!!!');
 			if(typeof zombies[j] == 'undefined')
 				console.log('zombie undefined!!!');
-			if (bullets[i].x + bullets[i].img.width >= zombies[j].x && bullets[i].x <= zombies[j].x + zombie.img.width)
+			if (bullets[i].x + bullets[i].img.width >= zombies[j].x 
+				&& bullets[i].x <= zombies[j].x + zombieRight.width)
 			{ // Then the x coordinates collide.
-				if (bullets[i].y + bullets[i].img.height >= zombies[j].y && bullets[i].y <= zombies[j].y + zombie.img.height)
+				if (bullets[i].y + bullets[i].img.height >= zombies[j].y 
+					&& bullets[i].y <= zombies[j].y + zombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
 					zombies[j].lives--;
 					var imgString = bullets[i].img.src
@@ -49,7 +101,8 @@ function collisionBulletZombie()
 						zombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 10)
+						updateProgressHUD();
+						if (killCounter >= waveSize)
 						{
 							gameIsWon = true;
 						}
@@ -146,9 +199,11 @@ function collisionBulletFlyingZombie()
                 console.log('bullet undefined!!!');
             if(typeof flyingZombies[j] == 'undefined')
                 console.log('zombie undefined!!!');
-			if (bullets[i].x + bullets[i].img.width >= flyingZombies[j].x && bullets[i].x <= flyingZombies[j].x + flyingZombies[j].img.width)
+			if (bullets[i].x + bullets[i].img.width >= flyingZombies[j].x 
+				&& bullets[i].x <= flyingZombies[j].x + flyingZombies[j].img.width)
 			{ // Then the x coordinates collide.
-				if (bullets[i].y + bullets[i].img.height >= flyingZombies[j].y && bullets[i].y <= flyingZombies[j].y + flyingZombies[j].img.height)
+				if (bullets[i].y + bullets[i].img.height >= flyingZombies[j].y 
+					&& bullets[i].y <= flyingZombies[j].y + flyingZombies[j].img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					flyingZombies[j].lives--;
                     var imgString = bullets[i].img.src
@@ -166,7 +221,8 @@ function collisionBulletFlyingZombie()
 						flyingZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= 30)
+						updateProgressHUD();
+						if (killCounter >= waveSize)
 						{
 							gameIsWon = true;
 						}
@@ -183,11 +239,15 @@ function collisionPlayerFlyingZombie()
 	{
 		if(flyingZombies[i].onPlay)
 		{
-			if (player.x + player.img.width - 12 >= flyingZombies[i].x && player.x <= flyingZombies[i].x + flyingZombies[i].img.width - 12)
+			if (player.x + player.img.width - 12 >= flyingZombies[i].x 
+				&& player.x <= flyingZombies[i].x + flyingZombies[i].img.width - 12)
 			{ // Then the x coordinates collide.
-				if (player.y + player.img.height >= flyingZombies[i].y + 12 && player.y <= flyingZombies[i].y + flyingZombies[i].img.height)
+				if (player.y + player.img.height >= flyingZombies[i].y + 12 
+					&& player.y <= flyingZombies[i].y + flyingZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
-					gameIsLost = true;
+					player.livesLeft--;
+					if (player.livesLeft == 0)
+						gameIsLost = true;
 				}
 			}	
 		}
@@ -217,7 +277,9 @@ function collisionSlimePlayer()
 		{
 			if (slimes[i].y + slimes[i].img.height >= player.y && slimes[i].y <= player.y + player.img.height)
 			{ 
-				gameIsLost = true;
+				player.livesLeft--;
+				if (player.livesLeft == 0)
+					gameIsLost = true;
 			}
 		}
 	}
@@ -229,11 +291,15 @@ function collisionPlayerJumperZombie()
 	{
 		if(jumperZombies[i].onPlay)
 		{
-			if (player.x + player.img.width - 12 >= jumperZombies[i].x && player.x <= jumperZombies[i].x + jumperZombies[i].img.width - 12)
+			if (player.x + player.img.width - 12 >= jumperZombies[i].x 
+				&& player.x <= jumperZombies[i].x + jumperZombies[i].img.width - 12)
 			{ // Then the x coordinates collide.
-				if (player.y + player.img.height >= jumperZombies[i].y + 12 && player.y <= jumperZombies[i].y + jumperZombies[i].img.height)
+				if (player.y + player.img.height >= jumperZombies[i].y + 12 
+					&& player.y <= jumperZombies[i].y + jumperZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
-					gameIsLost = true;
+					player.livesLeft--;
+					if (player.livesLeft == 0)
+						gameIsLost = true;
 				}
 			}	
 		}
@@ -254,9 +320,11 @@ function collisionBulletJumperZombie()
                 console.log('bullet undefined!!!');
             if(typeof jumperZombies[j] == 'undefined')
                 console.log('jumper zombie undefined!!!');
-			if (bullets[i].x + bullets[i].img.width >= jumperZombies[j].x && bullets[i].x <= jumperZombies[j].x + jumperZombies[j].img.width)
+			if (bullets[i].x + bullets[i].img.width >= jumperZombies[j].x 
+				&& bullets[i].x <= jumperZombies[j].x + jumperZombies[j].img.width)
 			{ // Then the x coordinates collide.
-				if (bullets[i].y + bullets[i].img.height >= jumperZombies[j].y && bullets[i].y <= jumperZombies[j].y + jumperZombies[j].img.height)
+				if (bullets[i].y + bullets[i].img.height >= jumperZombies[j].y 
+					&& bullets[i].y <= jumperZombies[j].y + jumperZombies[j].img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					jumperZombies[j].lives--;
 					var imgString = bullets[i].img.src
@@ -273,7 +341,8 @@ function collisionBulletJumperZombie()
 						jumperZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
-						if (killCounter >= maxKillCount)
+						updateProgressHUD();
+						if (killCounter >= waveSize)
 						{
 							gameIsWon = true;
 						}
@@ -292,32 +361,28 @@ function collisionJumperZombiePad()
 		{ // For each pad in the pads array:
 			if (jumperZombies[j].inAir) // We only want to check collision between the pad and the zombie when the zombie is falling down.
 			{
-				if (jumperZombies[j].y + jumperZombies[j].img.height <= pads[i].y - jumperZombies[j].verticalVelocity && jumperZombies[j].y + jumperZombies[j].img.height >= pads[i].y + jumperZombies[j].verticalVelocity)
+				if (jumperZombies[j].y + jumperZombies[j].img.height <= pads[i].y - jumperZombies[j].verticalVelocity 
+					&& jumperZombies[j].y + jumperZombies[j].img.height >= pads[i].y + jumperZombies[j].verticalVelocity)
 				{ // Then there is a collision between the y coordinates of the zombie and the pad.
-					if (jumperZombies[j].x + jumperZombies[j].img.width >= pads[i].x && jumperZombies[j].x <= pads[i].x + pads[i].img.width)
+					if (jumperZombies[j].x + jumperZombies[j].img.width >= pads[i].x 
+						&& jumperZombies[j].x <= pads[i].x + pads[i].img.width)
 					{ // Then the x coordinates collide as well. We have a collision!
-						jumperZombies[j].onPad = true;
-						pads[i].onPadZombie = true;
+						jumperZombies[j].onPad = i + 1;
 						jumperZombies[j].y = pads[i].y - jumperZombies[j].img.height; // Make sure the zombie is exactly on the pad.
-						resetJumpZombie(jumperZombies[j]); // Reset the jump variables so the next jump is not screwed up.
-						/*if(currentDirection)
-						{
-							player.img.src = "img/playerRight.png";
-						}
-						else
-						{
-							player.img.src = "img/playerLeft.png";
-						}*/
+						jumperZombies[j].inAir = false;
+						jumperZombies[j].verticalVelocity = 0;
+						//resetJumpZombie(jumperZombies[j]); // Reset the jump variables so the next jump is not screwed up.
+						//console.log(jumperZombies[j].inAir, jumperZombies[j].verticalVelocity);
 					}
 				}
 			}
-			if (pads[i].onPadZombie) // This part captures the moment when the player leaves the pad, so the fall animation can start.
+			if (jumperZombies[j].onPad > 0) // This part captures the moment when the player leaves the pad, so the fall animation can start.
 			{
-				if (jumperZombies[j].x > pads[i].x + pads[i].img.width || jumperZombies[j].x + jumperZombies[j].img.width < pads[i].x)
-				{ // Then the player left the pad, time to apply gravity.
+				var padIndex = jumperZombies[j].onPad - 1;
+				if (jumperZombies[j].x > pads[padIndex].x + pads[padIndex].img.width || jumperZombies[j].x + jumperZombies[j].img.width < pads[padIndex].x)
+				{ // Then the zombie left the pad, time to apply gravity.
 					jumperZombies[j].inAir = true;
 					jumperZombies[j].onPad = false;
-					pads[i].onPadZombie = false;
 				}
 			}
 		}

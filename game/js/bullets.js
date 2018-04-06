@@ -1,4 +1,5 @@
 const sprayCoef = 0.6;
+var powerupAmmo;
 
 function moveBullet()
 {
@@ -12,7 +13,6 @@ function moveBullet()
         { // Then the current bullet is out of the canvas. Time to delete it from the bullets array.
             bullets.splice(i,i+1); // Removes the current bullet from the bullet array.
         }
-
         currentBullet.x += currentBullet.xSpeed;
         currentBullet.y += currentBullet.ySpeed;
     }
@@ -25,7 +25,6 @@ function drawBullets(surface)
         if(bullets[i].onPlay)
             surface.drawImage(bullets[i].img,bullets[i].x,bullets[i].y); // Draw the bullet on the canvas.
     }
-
 }
 
 function cleanBulletArray()
@@ -46,9 +45,7 @@ function fire(event)
     shootSound.play(); // Play the shooting sound effect. Pew pew pew!
     var mouseX = event.clientX - surface.canvas.offsetLeft; // You have to subtract the offset value
     var mouseY = event.clientY - surface.canvas.offsetTop;  // to get the mouse coordinate inside the canvas.
-
     shootSound.play(); // Play the shooting sound effect. Pew pew pew!
-
     // THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
     var xCoef = mouseX - player.x;
     var yCoef = mouseY - player.y;
@@ -64,74 +61,77 @@ function fire(event)
     var bulletImageD = new Image();
     bulletImage.src = "img/bullet.png";
     bulletImageD.src = "img/diBullet.png";
-    if (currentPowerUp == 0) {
+    if (player.currentPowerUp == 0){
+        /* normal bullets */
         bullets.push(
-            {
-                img: bulletImage,
-                x: player.x,
-                y: player.y,
-                xSpeed: finalSpeedX,
-                ySpeed: finalSpeedY,
-                onPlay: true,
-            });
+		{
+			img: bulletImage,
+			x: player.x,
+			y: player.y,
+			xSpeed: finalSpeedX,
+			ySpeed: finalSpeedY,
+			onPlay: true,
+		});
     }
-
-    if (currentPowerUp == 1) {
-
+    else if (player.currentPowerUp == 1) {
         bullets.push(
-            {
-                img: bulletImage,
-                x: player.x,
-                y: player.y,
-                xSpeed: finalSpeedX,
-                ySpeed: finalSpeedY,
-                onPlay: true,
-            });
-
+		{
+			img: bulletImage,
+			x: player.x,
+			y: player.y,
+			xSpeed: finalSpeedX,
+			ySpeed: finalSpeedY,
+			onPlay: true,
+		});
         var finalSpeedX2 = commonSpeedVariable * xCoefB * BULLET_SPEED_MULTIPLIER;
         var finalSpeedY2 = commonSpeedVariable * yCoefB * BULLET_SPEED_MULTIPLIER;
         var finalSpeedX3 = commonSpeedVariable * xCoefC * BULLET_SPEED_MULTIPLIER;
         var finalSpeedY3 = commonSpeedVariable * yCoefC * BULLET_SPEED_MULTIPLIER;
         bullets.push(
-            {
-                img: bulletImage,
-                x: player.x,
-                y: player.y,
-                xSpeed: finalSpeedX2,
-                ySpeed: finalSpeedY2,
-                onPlay: true,
-            });
+		{
+			img: bulletImage,
+			x: player.x,
+			y: player.y,
+			xSpeed: finalSpeedX2,
+			ySpeed: finalSpeedY2,
+			onPlay: true,
+		});
         bullets.push(
-            {
-                img: bulletImage,
-                x: player.x,
-                y: player.y,
-                xSpeed: finalSpeedX3,
-                ySpeed: finalSpeedY3,
-                onPlay: true,
-            });
+		{
+			img: bulletImage,
+			x: player.x,
+			y: player.y,
+			xSpeed: finalSpeedX3,
+			ySpeed: finalSpeedY3,
+			onPlay: true,
+		});
         powerUpAmmo = powerUpAmmo - 1;
+        /*
+         * At the end of the bullets reverts to original ammo
+         */
         if (powerUpAmmo == 0)
         {
-            currentPowerUp = 0;
+            player.currentPowerUp = 0;
         }
     }
-    if (currentPowerUp == 2)
+    else if (player.currentPowerUp == 2)
     {
         bullets.push(
-            {
-                img: bulletImageD,
-                x: player.x,
-                y: player.y,
-                xSpeed: finalSpeedX,
-                ySpeed: finalSpeedY,
-                onPlay: true,
-            });
+		{
+			img: bulletImageD,
+			x: player.x,
+			y: player.y,
+			xSpeed: finalSpeedX,
+			ySpeed: finalSpeedY,
+			onPlay: true,
+		});
         powerUpAmmo = powerUpAmmo - 1;
+        /*
+         * At the end reverts to original ammo 
+         */
         if (powerUpAmmo == 0)
         {
-            currentPowerUp = 0;
+            player.currentPowerUp = 0;
         }
-
     }
 }

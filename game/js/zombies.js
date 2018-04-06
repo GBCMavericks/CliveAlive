@@ -55,7 +55,7 @@ function spawnZombie()
 	}
 	else
 	{
-		currentZombie.x = background.img.width;
+		currentZombie.x = canvas.width;
 	}
 	currentZombie.y = ground.y - zombieRight.height;
 	currentZombie.lives = 1;
@@ -218,7 +218,7 @@ function spawnJumperZombie()
 	else
 	{
 		currentJumperZombie.img = jumperZombieLeft;
-		currentJumperZombie.x = background.img.width;
+		currentJumperZombie.x = canvas.width;
 	}
 	currentJumperZombie.lives = 2;
 	currentJumperZombie.onPlay = true;

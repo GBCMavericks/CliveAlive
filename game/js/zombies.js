@@ -8,11 +8,18 @@ const FLYING_ZOMBIE_Y = 15;
 const SLIME_PROBABILITY = 0.64;
 
 var zombies = []; // The array of zombies.
-var zombieDamageSound = document.createElement("AUDIO"); // Played when the zombie takes damage.
+var zombieDamageSound = document.createElement("audio"); // Played when the zombie takes damage.
 var slime = {img:null, x:null, y:null, onPlay:null};
 var slimes = [];
 var flyingZombies = []; // The array of flying zombies.
 var jumperZombies = []; // The array of jumper zombies.
+
+var reinforcements = {
+    zombies: null,
+    flyingZombies: null,
+    jumperZombies: null
+};
+
 // END OF ZOMBIE RELATED VARIABLES ***************************************************************************************************
 
 function drawZombies(surface)
@@ -46,7 +53,13 @@ function moveZombie()
 
 function spawnZombie()
 {
+    if(reinforcements.zombies <= 0)
+    {
+        clearInterval(intervals.zombie);
+        return;
+    }
 	var currentZombie = Object.create(zombie);
+    currentZombie.type = "zombie";
 	console.log(zombieRight);
 	console.log(zombieRight.height);
 	currentZombie.img = zombieRight;
@@ -62,6 +75,7 @@ function spawnZombie()
 	currentZombie.lives = 1;
 	currentZombie.onPlay = true;
 	zombies.push(currentZombie);
+    reinforcements.zombies--;
 }
 
 function cleanZombieArray()
@@ -79,7 +93,13 @@ function cleanZombieArray()
 
 function spawnFlyingZombie()
 {
+    if(reinforcements.flyingZombies <= 0)
+    {
+        clearInterval(intervals.flyingZombie);
+        return;
+    }
 	var currentFlyingZombie = Object.create(flyingZombie);
+	currentFlyingZombie.type = "flyingZombie";
 	currentFlyingZombie.img = flyingZombieRight;
 	if (Math.random() > 0.5)
 	{
@@ -94,7 +114,9 @@ function spawnFlyingZombie()
 	currentFlyingZombie.y = FLYING_ZOMBIE_Y;
 	currentFlyingZombie.lives = 1;
 	currentFlyingZombie.onPlay = true;
+
 	flyingZombies.push(currentFlyingZombie);
+    reinforcements.flyingZombies--;
 }
 
 function moveFlyingZombie()
@@ -208,7 +230,13 @@ function drawJumperZombies(surface)
 
 function spawnJumperZombie()
 {
+	if(reinforcements.jumperZombies <= 0)
+	{
+		clearInterval(intervals.jumperZombie);
+		return;
+	}
 	var currentJumperZombie = Object.create(jumperZombie);
+	currentJumperZombie.type = "jumperZombie";
 	currentJumperZombie.y = ground.y - jumperZombieRight.height;
 	if (Math.random() > 0.5)
 	{
@@ -226,6 +254,7 @@ function spawnJumperZombie()
 	currentJumperZombie.inAir = false;
 	currentJumperZombie.onPad = false;
 	jumperZombies.push(currentJumperZombie);
+    reinforcements.jumperZombies--;
 }
 
 function moveJumperZombie()

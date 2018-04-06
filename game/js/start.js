@@ -49,7 +49,7 @@ function startScreen() {
     cleanSlimesArray();
     console.log(slimes.length);
     startAnimation = requestAnimationFrame(startScreen);
-};
+}
 
 function drawStartBackground(ctx){
 	background.x = 0;

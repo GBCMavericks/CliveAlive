@@ -1,21 +1,20 @@
 var gameIsLost;  // Set to true when the player dies.
 var gameIsWon;   // Set to true when the game is won.
 var killCounter; // Counts how many zombies are killed.
-var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
 var pads; // This array holds the pads that the player can jump onto.
 var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
+var currentLevel = 0;
+var nextFrame;
 
 // INTERVALS ************************************************************************************************************************
-var crateInt;    // Crate spawn interval.
-var flyingZombieInt; // Flying zombie spawn interval.
-var flyingZombieFireInt; // Flying zombie fire (slime ball) interval.
-var jumperZombieInt; // Jumper zombie spawn interval.
+var intervals = {
+    crate: null,
+    zombie: null,
+    flyingZombie: null,
+    flyingZombieFire: null,
+    jumperZombie: null
+};
 // END OF INTERVALS *****************************************************************************************************************
 
 // PLAYER RELATED VARIABLES **********************************************************************************************************
@@ -34,25 +33,45 @@ const GRAVITY_MULTIPLIER = 40;
 const GRAVITY = (GRAVITY_MULTIPLIER / FPS) / (FPS / 30);
 const PLAYER_SPEED = 240 / FPS;
 const BULLET_SPEED_MULTIPLIER = 1200 / FPS; // A variable used to determine the value of bullet speed.
-const maxKillCount = 30;
-var currentDirection;// Used to keep track of player's direction. (true=right false=left)
-var jumpSound = document.createElement("AUDIO"); // This is the jump sound effect, weeeeeeeee!
-var shootSound = document.createElement("AUDIO"); // Shooting sound effect.
+var currentDirection; // Used to keep track of player's direction. (true=right false=left)
+var jumpSound = document.createElement("audio"); // This is the jump sound effect, weeeeeeeee!
+var shootSound = document.createElement("audio"); // Shooting sound effect.
 // END OF PLAYER RELATED VARIABLES ***************************************************************************************************
 
 var leftPressed = false; // These flags are used  
 var rightPressed = false;// to keep track of which
 var upPressed = false;   // keyboard button the
 var downPressed = false; // player presses.
-/*var leftPressed; // These flags are used  
-var rightPressed;// to keep track of which
-var upPressed;   // keyboard button the
-var downPressed; // player presses.*/
 
 var isPaused = false;
 
+
+function setGameInterval(fn, interval)
+{
+    if(interval != NEVER)
+        return setInterval(fn, interval);
+    else
+        return null;
+}
+
+function loadLevel(levelNumber)
+{
+    var level = LEVELS[levelNumber];
+    currentLevel = levelNumber;
+    pads = level.pads;
+    reinforcements.zombies = level.spawnCounts.zombies;
+    reinforcements.flyingZombies = level.spawnCounts.flyingZombies;
+    reinforcements.jumperZombies = level.spawnCounts.jumperZombies;
+    intervals.crate = setGameInterval(spawnCrate, level.intervals.crate);
+    intervals.zombie = setGameInterval(spawnZombie, level.intervals.zombie);
+    intervals.flyingZombie = setGameInterval(spawnFlyingZombie, level.intervals.flyingZombie);
+    intervals.flyngZombieFire = setGameInterval(fireFlyingZombie, level.intervals.flyingZombieFire);
+    intervals.jumperZombie = setGameInterval (spawnJumperZombie, level.intervals.jumperZombie);
+    createMap();
+}
+
 function createMap() // Initialize all the variables here.
-{ 
+{
 	leftPressed = false; 
 	rightPressed = false;
 	upPressed = false;   
@@ -77,50 +96,24 @@ function createMap() // Initialize all the variables here.
     slimes = [];
     bullets = [];
     bulletSpeedMultiplier = 10;
-    pads = [];
 	jumperZombies = [];
-    pad1.x = 300;
-    pad1.y = 600;
-	pads.push(pad1);
-	pad2.x = 1100;
-    pad2.y = 600;
-	pads.push(pad2);
-	pad3.x = 500;
-	pad3.y = 450;
-	pads.push(pad3);
-	pad4.x = 900;
-	pad4.y = 450;
-	pads.push(pad4);
-	pad5.x = 300;
-	pad5.y = 300;
-	pads.push(pad5);
-	pad6.x = 1100;
-	pad6.y = 300;
-	pads.push(pad6);
 	for (var i = 0; i < pads.length; i++)
 	{
 		pads[i].onPad = false;
 		pads[i].onPadZombie = false;
+		pads[i].img = padImage;
+
 	}
     gameIsLost = false;
     gameIsWon = false;
-	killCounter = 0;
 	jumpSound.setAttribute("src","aud/jump.wav");
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
     crateSound.setAttribute("src","aud/pickup.wav");
     spawnCrate();
-	crateInt = setInterval(spawnCrate,20000);
-    zombieInt = setInterval(spawnZombie,3000);
-	flyingZombieInt = setInterval(spawnFlyingZombie, 3000);
-	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	jumperZombieInt = setInterval (spawnJumperZombie, 3000);
-	
-	for(var i = 0; i < 4; i++)
-    {
+	clouds = [];
+	for (var i = 0; i < 4; i++)
         spawnCloud();
-    }
-
     //buttons values
     restartImg.x = 635;
     restartImg.y = 330;
@@ -131,6 +124,16 @@ function createMap() // Initialize all the variables here.
 
 function update()
 {
+    if(checkForWin())
+    {
+        if(!gameIsWon)
+        {
+            loadLevel(++currentLevel);
+            return; // Let a new loop run for the next level.
+        }
+        else
+            render(); // Render the win screen forever.
+    }
     moveZombie();
     movePlayer();
     moveBullet();
@@ -164,6 +167,11 @@ function update()
 	cleanJumperZombieArray();
 }
 
+function clearAllIntervals()
+{
+    for(var interval in intervals)
+        clearInterval(interval);
+}
 
 function render()
 {
@@ -184,11 +192,13 @@ function render()
 	
 	drawBullets(surface);
 	
-    if (gameIsLost || gameIsWon) {
+    if (gameIsLost || gameIsWon)
+    {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);
         canvas.removeEventListener("click", fire);
-        if (gameIsLost) {
+        if (gameIsLost)
+        {
             canvas.addEventListener("click", restartGame);
             surface.drawImage(loseImage, 602, 220);
             restartImg.onPlay = true;
@@ -197,22 +207,15 @@ function render()
 		{
 			surface.drawImage(winImage, 602, 220);
 		}
-        //clearInterval(uInt);
-        clearInterval(crateInt);
-        clearInterval(zombieInt);
-        clearInterval(flyingZombieInt);
-        clearInterval(flyingZombieFireInt);
+        clearAllIntervals();
     }
     else if (!isPaused) {
-        requestAnimationFrame(update);
+        nextFrame = requestAnimationFrame(update);
     }
     else if (isPaused)
     {
         surface.drawImage(resume.img, 230, 300);
-        clearInterval(crateInt);
-        clearInterval(zombieInt);
-        clearInterval(flyingZombieInt);
-        clearInterval(flyingZombieFireInt);
+        clearAllIntervals();
     }
 	if(restartImg.onPlay == true)
 	{
@@ -232,7 +235,7 @@ function collisionCrateGround()
 
 function collisionCratePad()
 {
-	for ( var i = 0; i < pads.length; i++)
+	for (var i = 0; i < pads.length; i++)
     { // For each pad in the pads array:
         if (crate.y + crateImage.height <= pads[i].y + pads[i].img.height - CRATE_SPEED 
             && crate.y + crateImage.height >= pads[i].y + CRATE_SPEED)
@@ -434,6 +437,19 @@ function onKeyUp(event)
     }
 }
 
+function checkForWin()
+{
+    for(var typeOfZombie in reinforcements)
+        if(reinforcements[typeOfZombie] > 0)
+            return false;
+    if(zombies.length == 0 && flyingZombies.length == 0 && jumperZombies.length == 0)
+    {
+        if (currentLevel == LEVELS.length - 1)
+            gameIsWon = true;
+        return true;
+    }
+}
+
 function restartGame(event)
 {
     var mouseX = event.clientX - surface.canvas.offsetLeft;
@@ -449,7 +465,7 @@ function restartGame(event)
 			canvas.removeEventListener("click", restartGame);
 			canvas.addEventListener("click", fire);
 			//generating the game again
-			createMap();
+			loadLevel(0);
 		}	
 	}
 }

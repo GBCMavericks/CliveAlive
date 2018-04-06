@@ -38,8 +38,8 @@ function collisionBulletZombie()
 					&& bullets[i].y <= zombies[j].y + zombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
 					zombies[j].lives--;
-					var imgString = bullets[i].img.src
-					var subString = imgString.substring(imgString.length-14,imgString.length)
+					var imgString = bullets[i].img.src;
+					var subString = imgString.substring(imgString.length-14,imgString.length);
 					if (subString == "img/bullet.png")
 					{
 						bullets[i].onPlay = false;
@@ -51,12 +51,6 @@ function collisionBulletZombie()
 					if (zombies[j].lives == 0)
 					{ // If the zombie dies:
 						zombies[j].onPlay=false;
-						//zombies.splice(j,j+1); // Remove it from the zombies array.
-						killCounter++;
-						if (killCounter >= 10)
-						{
-							gameIsWon = true;
-						}
 					}
 				}
 			}
@@ -169,13 +163,7 @@ function collisionBulletFlyingZombie()
 					zombieDamageSound.play();
 					if (flyingZombies[j].lives == 0)
 					{ // If the zombie dies:
-						flyingZombies[j].onPlay=false;
-						//zombies.splice(j,j+1); // Remove it from the zombies array.
-						killCounter++;
-						if (killCounter >= 30)
-						{
-							gameIsWon = true;
-						}
+                        flyingZombies[j].onPlay=false;
 					}
 				}
 			}
@@ -282,13 +270,7 @@ function collisionBulletJumperZombie()
 					zombieDamageSound.play();
 					if (jumperZombies[j].lives == 0)
 					{ // If the zombie dies:
-						jumperZombies[j].onPlay=false;
-						//zombies.splice(j,j+1); // Remove it from the zombies array.
-						killCounter++;
-						if (killCounter >= maxKillCount)
-						{
-							gameIsWon = true;
-						}
+                        jumperZombies[j].onPlay=false;
 					}
 				}
 			}

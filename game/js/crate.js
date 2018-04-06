@@ -13,7 +13,7 @@ const CRATE_SPEED = 120 / FPS;
 var crateCounter; // Spawn timer of the crate.
 var crateSound = document.createElement("AUDIO");
 var currentPowerUp = 0; // 0: normal, 1: spray, 2: diamond
-const POWERUP_USES = 5
+const POWERUP_USES = 5;
 var powerUpAmmo; // Number of uses of the power-up
 // END OF PICKUP RELATED VARIABLES ***************************************************************************************************
 

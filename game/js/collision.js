@@ -87,8 +87,8 @@ function collisionBulletZombie()
 					&& bullets[i].y <= zombies[j].y + zombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
 					zombies[j].lives--;
-					var imgString = bullets[i].img.src
-					var subString = imgString.substring(imgString.length-14,imgString.length)
+					var imgString = bullets[i].img.src;
+					var subString = imgString.substring(imgString.length-14,imgString.length);
 					if (subString == "img/bullet.png")
 					{
 						bullets[i].onPlay = false;
@@ -220,6 +220,7 @@ function collisionBulletFlyingZombie()
 					zombieDamageSound.play();
 					if (flyingZombies[j].lives == 0)
 					{ // If the zombie dies:
+                        flyingZombies[j].onPlay=false;
 						flyingZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
@@ -340,6 +341,7 @@ function collisionBulletJumperZombie()
 					zombieDamageSound.play();
 					if (jumperZombies[j].lives == 0)
 					{ // If the zombie dies:
+                        jumperZombies[j].onPlay=false;
 						jumperZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;

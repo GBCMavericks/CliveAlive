@@ -4,7 +4,8 @@ const ZOMBIE_SPEED = 60 / FPS;
 const FLYING_ZOMBIE_SPEED = 90 / FPS;
 const FLYING_ZOMBIE_VERTICAL_INTERVAL = 50;
 const SLIME_SPEED = 100 / FPS;
-const JUMPER_ZOMBIE_SPEED = 120 / FPS;
+const JUMPER_ZOMBIE_SPEED = 150 / FPS;
+const JUMPER_ZOMBIE_AIR_SPEED = 350 / FPS;
 const JUMPER_PROXIMITY_X = 200; // MAX proximity for the jumper to start jumping.
 const JUMPER_PROXIMITY_Y = 100; // Same thing for the y axis.
 const SLIME_PROBABILITY = 0.64;
@@ -229,7 +230,7 @@ function spawnJumperZombie()
 {
 	console.log("HERE");
 	var currentJumperZombie = Object.create(jumperZombie);
-	currentJumperZombie.y = ground.y - jumperZombieRight.height;
+	currentJumperZombie.y = Math.random() * (canvas.height/2);
 	if (Math.random() > 0.5)
 	{
 		currentJumperZombie.img = jumperZombieRight;
@@ -243,7 +244,7 @@ function spawnJumperZombie()
 	currentJumperZombie.lives = 2;
 	currentJumperZombie.onPlay = true;
 	currentJumperZombie.verticalVelocity = 0;
-	currentJumperZombie.inAir = false;
+	currentJumperZombie.inAir = true;
 	currentJumperZombie.onPad = 0;
 	jumperZombies.push(currentJumperZombie);
 }
@@ -259,12 +260,18 @@ function moveJumperZombie()
 				if (player.x > jumperZombies[i].x)
 				{
 					jumperZombies[i].img = jumperZombieRight;
-					jumperZombies[i].x += JUMPER_ZOMBIE_SPEED;
+					if (jumperZombies[i].inAir)
+						jumperZombies[i].x += JUMPER_ZOMBIE_AIR_SPEED;
+					else
+						jumperZombies[i].x += JUMPER_ZOMBIE_SPEED;
 				}
 				else
 				{
 					jumperZombies[i].img = jumperZombieLeft;
-					jumperZombies[i].x -= JUMPER_ZOMBIE_SPEED;
+					if (jumperZombies[i].inAir)
+						jumperZombies[i].x -= JUMPER_ZOMBIE_AIR_SPEED;
+					else
+						jumperZombies[i].x -= JUMPER_ZOMBIE_SPEED;
 				}	
 			}
 			if (jumperZombies[i].y - player.y > JUMPER_PROXIMITY_Y && Math.abs(player.x - jumperZombies[i].x) < JUMPER_PROXIMITY_X &&!jumperZombies[i].inAir)

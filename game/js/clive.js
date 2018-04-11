@@ -170,6 +170,7 @@ function createMap() // Initialize all the variables here.
 
 function update()
 {
+    /* First we move stuff around */
     moveZombie();
     movePlayer();
     moveBullet();
@@ -177,7 +178,9 @@ function update()
 	moveFlyingZombie();
 	moveSlime();
 	moveJumperZombie();
-	moveClouds();
+    moveClouds();
+    
+    /* then we detect if they have collided or not */
 	collisionCrateGround();
 	collisionCratePad();
 	collisionCratePlayer();
@@ -192,13 +195,21 @@ function update()
 	collisionSlimePlayer();
 	collisionPlayerJumperZombie();
 	collisionBulletJumperZombie();
-	collisionJumperZombiePad();
+    collisionJumperZombiePad();
+    
+    /* then we apply some other effects for the next move */
     playerGravity();
-	zombieGravity();
+    zombieGravity();
+
+    /* for each affected object on the scene we change the image to create animation */
+    playerAnimation();
+
+    /* finally we draw the calculated result */
     render();
 
-    indexImageInt = setInterval (playerAnimation, 3000);
-
+    /* and now we clean the data structure belonging to things
+     * which either cannot be animated or are no longer on the scene 
+     */
     cleanZombieArray();
 	cleanFlyingZombieArray();
     cleanBulletArray();
@@ -364,7 +375,7 @@ function playerAnimation()
         else if (index == 11) {player.img.src = "img/Player/Idle_011.png"; index = 0;}
     }
 
-    if(leftPressed == true && rightPressed == true)
+    if(leftPressed == true || rightPressed == true)
     {
         index = 0;
         if(index == 0){player.img.src = "img/Player/Run_000.png"; index++}

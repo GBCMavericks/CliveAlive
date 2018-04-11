@@ -1,7 +1,6 @@
-
 var canvas = document.querySelector("canvas");
-canvas.height = resolution.height;
-canvas.width = resolution.width;
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
 var surface;
 
 // External File Variables
@@ -12,10 +11,17 @@ var restartImg = { x: null, y: null, onPlay: null };
 var options = { x: null, y: null, onPlay: null };
 var resume = { x: null, y: null, onPlay: null };
 var winImage = {};
-
-//var player = {};
+var playerPortraitBackground = {x:null, y:null, img:null, onPlay:null};
+var playerLives = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
+var powerupPortraitBackground = {x:null, y:null, img:null, onPlay:null};
+var hud_sprayGun = {x:null, y:null, img:null, onPlay:null};
+var hud_sprayGunBullets = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
+var hud_diamondGun = {x:null, y:null, img:null, onPlay:null};
+var hud_diamondGunBullets = {x1:null, x2:null, x3:null, x4:null, x5:null, y:null, img:null, onPlay:null};
+var hud_progressFrame = {x:null, y:null, img:null, onPlay:null};
+var hud_progressBackground1 = {x:null, y:null, img:null, onPlay:null};
+var hud_progressBackground2 = {x:null, y:null, img:null, onPlay:null};
 var crateImage = {};
-
 var zombie = {};
 var jumperZombie = {};
 var flyingZombie = {};
@@ -32,11 +38,20 @@ var cloud2 = {};
 var slime = {};
 var loadedResources = 0;
 
-
 const NUM_RESOURCES = 17;
 var glow = 0;
 var startAnimation;
 var cloudSprites = [];
+
+var bulletImage; //= new Image();
+var bulletImageD;// = new Image();
+var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+
 
 window.onload = function()
 {
@@ -69,6 +84,15 @@ function loadCounter(callback){
 }
 
 function loadResources(callback){
+
+    bulletImage = new Image();
+    bulletImage.src = "img/bullet.png";
+    bulletImage.onload = function(){loadCounter(callback);};
+
+    bulletImageD = new Image();
+    bulletImageD.src = "img/diBullet.png";
+    bulletImageD.onload = function(){loadCounter(callback);};
+
     background.img = new Image();
     background.img.src = "img/background.jpg";
     background.img.onload = function(){loadCounter(callback);};
@@ -139,4 +163,43 @@ function loadResources(callback){
 	restartImg.img.src = "img/restart.png";
 	restartImg.img.onload = function(){loadCounter(callback);}
 	
+	playerPortraitBackground.img = new Image();
+	playerPortraitBackground.img.src = "img/hud_playerBackground.png";
+	playerPortraitBackground.img.onload = function(){loadCounter(callback);}
+	
+	playerLives.img = new Image();
+	playerLives.img.src = "img/hud_live.png";
+	playerLives.img.onload = function(){loadCounter(callback);}
+	
+	powerupPortraitBackground.img = new Image();
+	powerupPortraitBackground.img.src = "img/hud_powerupBackground.png";
+	powerupPortraitBackground.img.onload = function(){loadCounter(callback);}
+	
+	hud_sprayGun.img = new Image();
+	hud_sprayGun.img.src = "img/hud_sprayGun.png";
+	hud_sprayGun.img.onload = function(){loadCounter(callback);}
+	
+	hud_sprayGunBullets.img = new Image();
+	hud_sprayGunBullets.img.src = "img/hud_sprayGunBullet.png";
+	hud_sprayGunBullets.img.onload = function(){loadCounter(callback);}
+	
+	hud_diamondGun.img = new Image();
+	hud_diamondGun.img.src = "img/hud_diamondGun.png";
+	hud_diamondGun.img.onload = function(){loadCounter(callback);}
+	
+	hud_diamondGunBullets.img = new Image();
+	hud_diamondGunBullets.img.src = "img/hud_diamondGunBullet.png";
+	hud_diamondGunBullets.img.onload = function(){loadCounter(callback);}
+	
+	hud_progressFrame.img = new Image();
+	hud_progressFrame.img.src = "img/hud_progressFrame.png";
+	hud_progressFrame.img.onload = function(){loadCounter(callback);}
+	
+	hud_progressBackground1.img = new Image();
+	hud_progressBackground1.img.src = "img/hud_progressBackground1.png";
+	hud_progressBackground1.img.onload = function(){loadCounter(callback);}
+	
+	hud_progressBackground2.img = new Image();
+	hud_progressBackground2.img.src = "img/hud_progressBackground2.png";
+	hud_progressBackground2.img.onload = function(){loadCounter(callback);}
 }

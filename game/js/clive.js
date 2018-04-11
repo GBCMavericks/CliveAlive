@@ -23,6 +23,7 @@ var crateInt;    // Crate spawn interval.
 var flyingZombieInt; // Flying zombie spawn interval.
 var flyingZombieFireInt; // Flying zombie fire (slime ball) interval.
 var jumperZombieInt; // Jumper zombie spawn interval.
+var indexImageInt; //Player Sprites interval;
 // END OF INTERVALS *****************************************************************************************************************
 
 // PLAYER RELATED VARIABLES **********************************************************************************************************
@@ -35,7 +36,8 @@ var player =
 	onPad:null,
 	verticalVelocity:0, // Vertical velocity of the player.
 	currentPowerUp:null, // 0 = no power up, 1 = spray gun
-	livesLeft:null
+	livesLeft:null,
+    indexImg:0 //Memory for Player Sprites;
 };
 const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
 const GRAVITY_MULTIPLIER = 40;
@@ -194,6 +196,9 @@ function update()
     playerGravity();
 	zombieGravity();
     render();
+
+    indexImageInt = setInterval (playerAnimation, 3000);
+
     cleanZombieArray();
 	cleanFlyingZombieArray();
     cleanBulletArray();
@@ -256,6 +261,7 @@ function render()
 	{
 		surface.drawImage(restartImg.img, restartImg.x, restartImg.y);
 	}
+
 }
 
 function movePlayer()
@@ -265,7 +271,7 @@ function movePlayer()
         if (upPressed)
             player.img.src = "img/playerLeftJump.png";
         else
-            player.img.src = "img/playerLeft.png";
+            //player.img.src = "img/playerLeft.png";
         player.x = player.x - PLAYER_SPEED;
         currentDirection = false;
     }
@@ -274,7 +280,7 @@ function movePlayer()
         if (upPressed)
             player.img.src = "img/playerRightJump.png";
         else
-            player.img.src = "img/playerRight.png";
+            //player.img.src = "img/playerRight.png";
         player.x = player.x + PLAYER_SPEED;
         currentDirection = true;
     }
@@ -334,6 +340,42 @@ function collisionPlayerPad()
 				pads[i].onPad = false;
             }
         }
+    }
+}
+
+function playerAnimation()
+{
+    var index = 0;
+    if(leftPressed == false && rightPressed == false)
+    {
+        index = 0;
+        if(index == 0){player.img.src = "img/Player/Idle_000.png"; index++}
+        else if (index == 1) {player.img.src = "img/Player/Idle_001.png"; index++;}
+        else if (index == 2) {player.img.src = "img/Player/Idle_002.png"; index++;}
+        else if (index == 3) {player.img.src = "img/Player/Idle_003.png"; index++;}
+        else if (index == 4) {player.img.src = "img/Player/Idle_004.png"; index++;}
+        else if (index == 5) {player.img.src = "img/Player/Idle_005.png"; index++;}
+        else if (index == 6) {player.img.src = "img/Player/Idle_006.png"; index++;}
+        else if (index == 7) {player.img.src = "img/Player/Idle_007.png"; index++;}
+        else if (index == 8) {player.img.src = "img/Player/Idle_008.png"; index++;}
+        else if (index == 9) {player.img.src = "img/Player/Idle_009.png"; index++;}
+        else if (index == 10) {player.img.src = "img/Player/Idle_010.png"; index++;}
+        else if (index == 11) {player.img.src = "img/Player/Idle_011.png"; index = 0;}
+    }
+
+    if(leftPressed == true && rightPressed == true)
+    {
+        index = 0;
+        if(index == 0){player.img.src = "img/Player/Run_000.png"; index++}
+        else if (index == 1) {player.img.src = "img/Player/Run_001.png"; index++;}
+        else if (index == 2) {player.img.src = "img/Player/Run_002.png"; index++;}
+        else if (index == 3) {player.img.src = "img/Player/Run_003.png"; index++;}
+        else if (index == 4) {player.img.src = "img/Player/Run_004.png"; index++;}
+        else if (index == 5) {player.img.src = "img/Player/Run_005.png"; index++;}
+        else if (index == 6) {player.img.src = "img/Player/Run_006.png"; index++;}
+        else if (index == 7) {player.img.src = "img/Player/Run_007.png"; index++;}
+        else if (index == 8) {player.img.src = "img/Player/Run_008.png"; index++;}
+        else if (index == 9) {player.img.src = "img/Player/Run_009.png"; index = 0;}
     }
 }
 

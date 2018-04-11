@@ -83,16 +83,16 @@ function createMap() // Initialize all the variables here.
 	clouds = [];
 	jumperZombies = [];
     pad1.x = 300;
-    pad1.y = 640;
+    pad1.y = 150;
 	pads.push(pad1);
 	pad2.x = 1100;
-    pad2.y = 640;
+    pad2.y = 150;
 	pads.push(pad2);
 	pad3.x = 500;
-	pad3.y = 490;
+	pad3.y = 300;
 	pads.push(pad3);
 	pad4.x = 900;
-	pad4.y = 490;
+	pad4.y = 300;
 	pads.push(pad4);
 	for (var i = 0; i < pads.length; i++)
 	{
@@ -209,12 +209,12 @@ function update()
 function render()
 {
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
-    surface.drawImage(background.img, background.x, background.y); // Draw the background.
+    surface.drawImage(background.img, background.x, background.y, canvas.width, canvas.height); // Draw the background.
     drawClouds(surface);
-	surface.drawImage(ground.img, ground.x, ground.y); // Draw the ground.
+	surface.drawImage(ground.img, ground.x, ground.y, canvas.width, canvas.height); // Draw the ground.
     for (var i = 0; i < pads.length; i++)
     { // For each pad in the pads array, draw it on the canvas.
-        surface.drawImage(pads[i].img,pads[i].x,pads[i].y);
+        surface.drawImage(pads[i].img,pads[i].x,canvas.height - pads[i].y);
     }
     drawCrate(surface);
     drawZombies(surface);
@@ -312,13 +312,14 @@ function collisionPlayerPad()
     { // For each pad in the pads array:
         if (player.inAir) // We only want to check collision between the pad and the player when the player is falling down.
         {
-            if (player.y + player.img.height <= pads[i].y - player.verticalVelocity && player.y + player.img.height >= pads[i].y + player.verticalVelocity)
+            var padY = canvas.height - pads[i].y ;
+            if (player.y + player.img.height <= padY - player.verticalVelocity && player.y + player.img.height >= padY + player.verticalVelocity)
             { // Then there is a collision between the y coordinates of the player and the pad.
                 if (player.x + player.img.width >= pads[i].x && player.x <= pads[i].x + pads[i].img.width)
                 { // Then the x coordinates collide as well. We have a collision!
 					player.onPad = true;
 					pads[i].onPad = true;
-                    player.y = pads[i].y - player.img.height; // Make sure the player is exactly on the pad.
+                    player.y = padY - player.img.height; // Make sure the player is exactly on the pad.
                     resetJump(); // Reset the jump variables so the next jump is not screwed up.
                     if(currentDirection)
                     {
@@ -393,9 +394,10 @@ function playerGravity()
     }
     for (var i = 0; i < pads.length; i++)
     { // For all the pads in the pads array:
+        var padY = canvas.height-pads[i].y;
         if (pads[i].onPad)
         { // Then the player landed on one of the pads.
-            player.y = pads[i].y - player.img.height; // Make sure the player is exactly on the pad.
+            player.y = padY - player.img.height; // Make sure the player is exactly on the pad.
             resetJump(); // Reset the jump variables so the next jump is not screwed up.
             if(currentDirection)
             {

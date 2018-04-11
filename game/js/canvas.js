@@ -1,6 +1,6 @@
 var canvas = document.querySelector("canvas");
-canvas.height = resolution.height;
-canvas.width = resolution.width;
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
 var surface;
 
 // External File Variables
@@ -32,16 +32,26 @@ var zombieLeft = {};
 var jumperZombieLeft = {};
 var flyingZombieLeft = {};
 var slimeImage = {};
+var padImage = {};
 var cloud1 = {};
 var cloud2 = {};
 var slime = {};
 var loadedResources = 0;
 
-
-const NUM_RESOURCES = 21;
+const NUM_RESOURCES = 17;
 var glow = 0;
 var startAnimation;
 var cloudSprites = [];
+
+var bulletImage; //= new Image();
+var bulletImageD;// = new Image();
+var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
+var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
+
 
 window.onload = function()
 {
@@ -61,12 +71,9 @@ function onSpaceDown(event){
             window.addEventListener("keydown", onKeyDown);
             window.addEventListener("keyup", onKeyUp);
             canvas.addEventListener("click", fire);
-            clearInterval(startZombieInterval);
-            clearInterval(startJumpingZombieInterval);
-            clearInterval(startFlyingZombieInterval);
-            clearInterval(startFlyingZombieFireInt);
+            clearAllIntervals();
             cancelAnimationFrame(startAnimation);
-            createMap();
+            loadLevel(0);
     }
 };
 
@@ -77,6 +84,15 @@ function loadCounter(callback){
 }
 
 function loadResources(callback){
+
+    bulletImage = new Image();
+    bulletImage.src = "img/bullet.png";
+    bulletImage.onload = function(){loadCounter(callback);};
+
+    bulletImageD = new Image();
+    bulletImageD.src = "img/diBullet.png";
+    bulletImageD.onload = function(){loadCounter(callback);};
+
     background.img = new Image();
     background.img.src = "img/background.jpg";
     background.img.onload = function(){loadCounter(callback);};
@@ -139,21 +155,9 @@ function loadResources(callback){
 
     cloudSprites = [cloud1, cloud2];
 	
-	pad1.img = new Image();
-	pad1.img.src = "img/pad.png";
-	pad1.img.onload = function(){loadCounter(callback);}
-	
-	pad2.img = new Image();
-	pad2.img.src = "img/pad.png";
-	pad2.img.onload = function(){loadCounter(callback);}
-	
-	pad3.img = new Image();
-	pad3.img.src = "img/pad.png";
-	pad3.img.onload = function(){loadCounter(callback);}
-	
-	pad4.img = new Image();
-	pad4.img.src = "img/pad.png";
-	pad4.img.onload = function(){loadCounter(callback);}
+	padImage = new Image();
+	padImage.src = "img/pad.png";
+	padImage.onload = function(){loadCounter(callback);};
 	
 	restartImg.img = new Image();
 	restartImg.img.src = "img/restart.png";

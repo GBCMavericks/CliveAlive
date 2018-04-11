@@ -35,6 +35,9 @@ var slimeImage = {};
 var cloud1 = {};
 var cloud2 = {};
 var slime = {};
+var shieldZombie = {};
+var shieldZombieRight;
+var shieldZombieLeft;
 var loadedResources = 0;
 
 
@@ -61,6 +64,7 @@ function onSpaceDown(event){
             window.addEventListener("keydown", onKeyDown);
             window.addEventListener("keyup", onKeyUp);
             canvas.addEventListener("click", fire);
+			canvas.addEventListener("mousemove", playerDirection);
             clearInterval(startZombieInterval);
             clearInterval(startJumpingZombieInterval);
             clearInterval(startFlyingZombieInterval);
@@ -124,6 +128,14 @@ function loadResources(callback){
     flyingZombieLeft = new Image();
     flyingZombieLeft.src = "img/FlyingZombieLeft.png";
     flyingZombieLeft.onload = function(){loadCounter(callback);};
+	
+	shieldZombieLeft = new Image();
+    shieldZombieLeft.src = "img/ShieldZombieLeft.png";
+    shieldZombieLeft.onload = function(){loadCounter(callback);};
+	
+	shieldZombieRight = new Image();
+    shieldZombieRight.src = "img/ShieldZombieRight.png";
+    shieldZombieRight.onload = function(){loadCounter(callback);};
     
 	slimeImage = new Image();
     slimeImage.src = "img/slime.png";

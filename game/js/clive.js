@@ -19,10 +19,12 @@ var hud_slotWidth;
 // ***************************************
 
 // INTERVALS ************************************************************************************************************************
-var crateInt;    // Crate spawn interval.
-var flyingZombieInt; // Flying zombie spawn interval.
-var flyingZombieFireInt; // Flying zombie fire (slime ball) interval.
-var jumperZombieInt; // Jumper zombie spawn interval.
+var crateInt;   
+var zombieInt;
+var flyingZombieInt; 
+var flyingZombieFireInt; 
+var jumperZombieInt; 
+var shieldZombieInt;
 // END OF INTERVALS *****************************************************************************************************************
 
 // PLAYER RELATED VARIABLES **********************************************************************************************************
@@ -34,7 +36,7 @@ var player =
 	inAir:false,
 	onPad:null,
 	verticalVelocity:0, // Vertical velocity of the player.
-	currentPowerUp:null, // 0 = no power up, 1 = spray gun
+	currentPowerUp:null, // 0 = no power up, 1 = spray gun, 2 = diamond gun
 	livesLeft:null
 };
 const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
@@ -80,6 +82,7 @@ function createMap() // Initialize all the variables here.
     pads = [];
 	clouds = [];
 	jumperZombies = [];
+	shieldZombies = [];
     pad1.x = 300;
     pad1.y = 600;
 	pads.push(pad1);
@@ -99,17 +102,17 @@ function createMap() // Initialize all the variables here.
     gameIsLost = false;
     gameIsWon = false;
 	killCounter = 0;
-	waveSize = 10;
+	waveSize = 100;
 	jumpSound.setAttribute("src","aud/jump.wav");
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
     crateSound.setAttribute("src","aud/pickup.wav");
-    spawnCrate();
-	crateInt = setInterval(spawnCrate,20000);
+	crateInt = setInterval(spawnCrate,15000);
     zombieInt = setInterval(spawnZombie,4000);
 	flyingZombieInt = setInterval(spawnFlyingZombie, 7000);
 	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
 	jumperZombieInt = setInterval (spawnJumperZombie, 10000);
+	shieldZombieInt = setInterval(spawnShieldZombie, 9000);
 	for(var i = 0; i < 4; i++)
         spawnCloud();
     restartImg.x = 635;
@@ -175,6 +178,7 @@ function update()
 	moveFlyingZombie();
 	moveSlime();
 	moveJumperZombie();
+	moveShieldZombie();
 	moveClouds();
 	collisionCrateGround();
 	collisionCratePad();
@@ -191,6 +195,10 @@ function update()
 	collisionPlayerJumperZombie();
 	collisionBulletJumperZombie();
 	collisionJumperZombiePad();
+	collisionPlayerShieldZombie();
+	collisionBulletShieldZombie();
+	collisionBulletCanvas();
+	collisionBulletPlayer();
     playerGravity();
 	zombieGravity();
     render();
@@ -199,6 +207,7 @@ function update()
     cleanBulletArray();
 	cleanSlimesArray();
 	cleanJumperZombieArray();
+	cleanShieldZombieArray();
 }
 
 function render()
@@ -215,6 +224,7 @@ function render()
     drawZombies(surface);
 	drawFlyingZombies(surface);
 	drawJumperZombies(surface);
+	drawShieldZombies(surface);
 	drawSlimes(surface);
     surface.drawImage(player.img,player.x,player.y); // Draw the player.
 	drawBullets(surface);
@@ -262,12 +272,11 @@ function movePlayer()
 {
     if (leftPressed && player.x > 0)
     {
-        if (upPressed)
+		if (upPressed)
             player.img.src = "img/playerLeftJump.png";
-        else
-            player.img.src = "img/playerLeft.png";
-        player.x = player.x - PLAYER_SPEED;
-        currentDirection = false;
+		else
+			player.img.src = "img/playerLeft.png";
+		player.x = player.x - PLAYER_SPEED;
     }
     if (rightPressed && player.x < (canvas.width - player.img.width))
     {
@@ -276,7 +285,6 @@ function movePlayer()
         else
             player.img.src = "img/playerRight.png";
         player.x = player.x + PLAYER_SPEED;
-        currentDirection = true;
     }
     if (upPressed && !player.inAir)
     {
@@ -428,17 +436,20 @@ function restartGame(event)
 {
     var mouseX = event.clientX - surface.canvas.offsetLeft;
     var mouseY = event.clientY - surface.canvas.offsetTop;
-	// detecting mouse click
 	if(mouseX >= restartImg.x && mouseX <= restartImg.x + restartImg.img.width)
 	{
 		if(mouseY >= restartImg.y && mouseY <= restartImg.y + restartImg.img.height)
 		{
-			//add listeneres back and removing listener for restart button
+			clearInterval(crateInt);   
+			clearInterval(zombieInt);
+			clearInterval(flyingZombieInt); 
+			clearInterval(flyingZombieFireInt); 
+			clearInterval(jumperZombieInt); 
+			clearInterval(shieldZombieInt);
 			window.addEventListener("keydown", onKeyDown);
 			window.addEventListener("keyup", onKeyUp);
 			canvas.removeEventListener("click", restartGame);
 			canvas.addEventListener("click", fire);
-			//generating the game again
 			createMap();
 		}	
 	}
@@ -512,4 +523,14 @@ function updateProgressHUD()
 	hud_clipY = 0;
 	hud_clipXLength = hud_slotWidth * killCounter;
 	hud_clipYHeight = hud_progressBackground2.img.height;
+}
+
+function playerDirection(event)
+{
+	var mouseX = event.clientX - surface.canvas.offsetLeft; 
+    var mouseY = event.clientY - surface.canvas.offsetTop;
+	if (mouseX < player.x)
+		currentDirection = false;
+	else
+		currentDirection = true;
 }

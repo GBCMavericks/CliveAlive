@@ -7,6 +7,7 @@ const JUMPER_ZOMBIE_SPEED = 120 / FPS;
 const JUMPER_PROXIMITY_X = 200; // MAX proximity for the jumper to start jumping.
 const JUMPER_PROXIMITY_Y = 100; // Same thing for the y axis.
 const SLIME_PROBABILITY = 0.64;
+const SHIELD_ZOMBIE_SPEED = 60 / FPS;
 
 var zombies = []; // The array of zombies.
 var zombieDamageSound = document.createElement("AUDIO"); // Played when the zombie takes damage.
@@ -14,6 +15,7 @@ var slime = {img:null, x:null, y:null, onPlay:null};
 var slimes = [];
 var flyingZombies = []; // The array of flying zombies.
 var jumperZombies = []; // The array of jumper zombies.
+var shieldZombies = [];
 // END OF ZOMBIE RELATED VARIABLES ***************************************************************************************************
 
 function drawZombies(surface)
@@ -288,4 +290,72 @@ function cleanJumperZombieArray()
 		}
 	}
 	jumperZombies = newJumpers;
+}
+
+function spawnShieldZombie()
+{
+	var currentZombie = Object.create(shieldZombie);
+	if (Math.random() > 0.5)
+	{
+		currentZombie.x = -shieldZombieRight.width;
+		currentZombie.img = shieldZombieRight;
+		currentZombie.currentDirection = true;
+	}
+	else
+	{
+		currentZombie.x = background.img.width;
+		currentZombie.img = shieldZombieLeft;
+		currentZombie.currentDirection = false;
+	}
+	currentZombie.y = ground.y - shieldZombieRight.height;
+	currentZombie.lives = 1;
+	currentZombie.onPlay = true;
+	shieldZombies.push(currentZombie);
+}
+
+function drawShieldZombies(surface)
+{
+	for (var i = 0; i < shieldZombies.length; i++) // Draw the zombies.
+	{
+		if(shieldZombies[i].onPlay)
+			surface.drawImage(shieldZombies[i].img, shieldZombies[i].x, shieldZombies[i].y);
+	}
+}
+
+function moveShieldZombie()
+{
+	for (var i = 0; i < shieldZombies.length; i++)
+	{
+		if (shieldZombies[i].x <= 0)
+		{
+			shieldZombies[i].currentDirection = true;
+			shieldZombies[i].img = shieldZombieRight;
+		}
+		if (shieldZombies[i].x >= canvas.width - shieldZombies[i].img.width)
+		{
+			shieldZombies[i].currentDirection = false;
+			shieldZombies[i].img = shieldZombieLeft;
+		}
+		if (shieldZombies[i].currentDirection)
+		{
+			shieldZombies[i].x += SHIELD_ZOMBIE_SPEED;
+		}
+		else
+		{
+			shieldZombies[i].x -= SHIELD_ZOMBIE_SPEED;
+		}
+	}
+}
+
+function cleanShieldZombieArray()
+{
+	var newZombies = [];
+	for (var i = 0; i < shieldZombies.length; i++)
+	{
+		if(shieldZombies[i].onPlay)
+		{
+			newZombies.push(shieldZombies[i]);
+		}
+	}
+	shieldZombies = newZombies;
 }

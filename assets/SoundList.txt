@@ -1,0 +1,46 @@
+Player Sounds:
+Jump: slightscream-01.flac
+Shoot: rifle.wav
+Damage: slightscream-06.flac
+Death: slightscream-15.flac
+
+Zombie Sounds:
+Ambient: zombie-1.wav
+Jump: zombie-2.wav
+Attack: zombie-11.wav
+Explosion: rumble.flac
+Damage: zombie-5.wav
+Death: zombie-16.wav
+
+Other Sounds:
+Bullet bounce: explosion_dull.flac
+Crate lands: impactcrunch04.mp3.flac
+Crate opens: equipmentclick-1.wav
+UI button: Menu Selection Click.wav
+Thunder: rock_breaking.flac
+
+Potential Musics
+Title:
+$9: https://audiojungle.net/item/haunted-idle-frightening-soundscape-loop/3327571
+$0: https://freesound.org/people/klankbeeld/sounds/395803/
+$0: https://opengameart.org/content/commando-team-action-loop-cut
+
+Gameplay:
+$9: https://audiojungle.net/item/blear-picture/15449616
+$0: https://www.dl-sounds.com/royalty-free/defense-line/
+
+u died lol:
+$7: https://audiojungle.net/item/classical-set-1-105-loopable/66706
+$0: https://www.newgrounds.com/audio/listen/83408
+$0: https://freesound.org/people/TheZero/sounds/368367/
+
+List:
+Explosion (dull): Iwan Gabovitch, opengameart.org
+Slight Screams: Iwan Gabovitch, opengameart.org
+Zombie pack: artisticdude, opengameart.org
+Menu Selection Click: NenadSimic, opengameart.org
+Equipment Clicks: lfa.com, opengameart.com
+Impact/Crunch sounds: Independent.nu, opengameart.org
+Shots: Michel Baradari, opengameart.org
+Rock Breaking: Blender Foundation, opengameart.org
+Rumble: Michel Baradari, opengameart.org

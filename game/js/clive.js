@@ -96,7 +96,7 @@ function createMap() // Initialize all the variables here.
     player.y = ground.y - player.img.height;
 	player.onPad = false;
     player.currentPowerUp = 0;   
-	player.livesLeft = 1;	
+	player.livesLeft = 5;	
     initializeCrate();
     currentDirection = true;
     zombies = [];

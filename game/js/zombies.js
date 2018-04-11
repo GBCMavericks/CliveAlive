@@ -2,6 +2,7 @@
 const FPS = 60;
 const ZOMBIE_SPEED = 60 / FPS;
 const FLYING_ZOMBIE_SPEED = 90 / FPS;
+const FLYING_ZOMBIE_VERTICAL_INTERVAL = 50;
 const SLIME_SPEED = 100 / FPS;
 const JUMPER_ZOMBIE_SPEED = 120 / FPS;
 const JUMPER_PROXIMITY_X = 200; // MAX proximity for the jumper to start jumping.
@@ -92,7 +93,8 @@ function spawnFlyingZombie()
 		currentFlyingZombie.x = canvas.width;
 		currentFlyingZombie.currentDirection = false;
 	}
-	currentFlyingZombie.y = canvas.height/4;
+	currentFlyingZombie.verticalDirection = true;
+	currentFlyingZombie.y = (Math.random()*2*FLYING_ZOMBIE_VERTICAL_INTERVAL) + canvas.height/4 - FLYING_ZOMBIE_VERTICAL_INTERVAL;
 	currentFlyingZombie.lives = 1;
 	currentFlyingZombie.onPlay = true;
 	flyingZombies.push(currentFlyingZombie);
@@ -119,6 +121,22 @@ function moveFlyingZombie()
 		else
 		{
 			flyingZombies[i].x -= FLYING_ZOMBIE_SPEED;
+		}
+		if (flyingZombies[i].verticalDirection)
+		{
+			flyingZombies[i].y--;
+			if (flyingZombies[i].y <= canvas.height/4 - FLYING_ZOMBIE_VERTICAL_INTERVAL)
+			{
+				flyingZombies[i].verticalDirection = false;
+			}
+		}
+		else if (!flyingZombies[i].verticalDirection)
+		{
+			flyingZombies[i].y++;
+			if (flyingZombies[i].y >= canvas.height/4 + FLYING_ZOMBIE_VERTICAL_INTERVAL)
+			{	
+				flyingZombies[i].verticalDirection = true;
+			}
 		}
 	}
 }

@@ -37,21 +37,20 @@ var cloud1 = {};
 var cloud2 = {};
 var slime = {};
 var loadedResources = 0;
+var playerAnim = {
+    Idle: [],
+    Shooting:[],
+    Running:[],
+    Jumping:[],
+};
 
-const NUM_RESOURCES = 17;
+const NUM_RESOURCES = 61;
 var glow = 0;
 var startAnimation;
 var cloudSprites = [];
 
 var bulletImage; //= new Image();
 var bulletImageD;// = new Image();
-var pad1 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad2 = {img:null,x:null,y:null,onPad:null,onPadZombie:null}; 
-var pad3 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad4 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad5 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-var pad6 = {img:null,x:null,y:null,onPad:null,onPadZombie:null};
-
 
 window.onload = function()
 {
@@ -78,6 +77,7 @@ function onSpaceDown(event){
 };
 
 function loadCounter(callback){
+    console.log(loadedResources);
     if(++loadedResources == NUM_RESOURCES){
         callback();
     }    
@@ -108,10 +108,6 @@ function loadResources(callback){
     winImage = new Image();
     winImage.src = "img/win.png";
     winImage.onload = function(){loadCounter(callback);};
-
-    player.img = new Image();
-    player.img.src = "img/playerRight.png";
-    player.img.onload = function(){loadCounter(callback);};
 
 	crateImage = new Image();
     crateImage.src = "img/crate.png";
@@ -201,5 +197,39 @@ function loadResources(callback){
 	
 	hud_progressBackground2.img = new Image();
 	hud_progressBackground2.img.src = "img/hud_progressBackground2.png";
-	hud_progressBackground2.img.onload = function(){loadCounter(callback);}
+    hud_progressBackground2.img.onload = function(){loadCounter(callback);}
+    
+    for(var idleAnim = 0; idleAnim < 12; idleAnim++){
+        playerAnim.Idle[idleAnim] = new Image();
+        playerAnim.Idle[idleAnim].src = "img/Player/Idle_" + formatNumberLength(idleAnim,3) + ".png";
+        playerAnim.Idle[idleAnim].onload = function(){loadCounter(callback);}
+    }
+    player.img = playerAnim.Idle[0];
+
+    for(var shootingAnim = 0; shootingAnim < 5; shootingAnim++){
+        playerAnim.Shooting[shootingAnim] = new Image();
+        playerAnim.Shooting[shootingAnim].src = "img/Player/Shot_" + formatNumberLength(shootingAnim,3) + ".png";
+        playerAnim.Shooting[shootingAnim].onload = function(){loadCounter(callback);}
+    }
+
+    for(var runningAnim = 0; runningAnim < 10; runningAnim++){
+        playerAnim.Running[runningAnim] = new Image();
+        playerAnim.Running[runningAnim].src = "img/Player/RunWithGun_" + formatNumberLength(runningAnim,3) + ".png";
+        playerAnim.Running[runningAnim].onload = function(){loadCounter(callback);}
+    }
+
+    for(var jumpingAnim = 0; jumpingAnim < 6; jumpingAnim++){
+        playerAnim.Jumping[jumpingAnim] = new Image();
+        playerAnim.Jumping[jumpingAnim].src = "img/Player/Jump_" + formatNumberLength(jumpingAnim,3) + ".png";
+        playerAnim.Jumping[jumpingAnim].onload = function(){loadCounter(callback);}
+    }
+
+}
+
+function formatNumberLength(num, length) {
+    var r = "" + num;
+    while (r.length < length) {
+        r = "0" + r;
+    }
+    return r;
 }

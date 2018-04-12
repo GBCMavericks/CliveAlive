@@ -26,6 +26,13 @@ function startScreen() {
     drawStartTitle(surface);
     drawStartInstructions(surface);
     drawStartMenu(surface);
+    if(reinforcements.zombies == null){
+        reinforcements = {
+            zombies: 6,
+            flyingZombies: 6,
+            jumperZombies: 3
+        };
+    }
     if(startZombieInterval == null){
         startZombieInterval = setInterval(spawnZombie,1000);
     }

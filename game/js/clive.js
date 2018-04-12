@@ -29,15 +29,19 @@ var intervals = {
 // PLAYER RELATED VARIABLES **********************************************************************************************************
 var player = 
 {
-	img:null,
-	x:null,
-	y:null,
-	inAir:false,
-	onPad:null,
-	verticalVelocity:0, // Vertical velocity of the player.
-	currentPowerUp:null, // 0 = no power up, 1 = spray gun
-	livesLeft:null,
-    indexImg:0 //Memory for Player Sprites;
+	img:null,               // Image loaded from file
+	x:null,                 // Coordinates (where we start drawing)
+	y:null,                 //
+	inAir:false,            // is in mid-air? doesn´t jump forever
+	onPad:null,             // is on a Pad?
+	verticalVelocity:0,     // Vertical velocity of the player.
+	currentPowerUp:null,    // 0 = no power up, 1 = spray gun
+	livesLeft:null,         // how many lives does clive have
+    indexImg:0,             //Memory for Player Sprites;
+    height:100,
+    width:56,
+    animationIndex:0,
+    animationTransition: 17,
 };
 const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
 const GRAVITY_MULTIPLIER = 40;
@@ -93,7 +97,7 @@ function createMap() // Initialize all the variables here.
 	ground.x = 0;
 	ground.y = canvas.height - ground.img.height + ground.offset;
     player.x = canvas.width/2;
-    player.y = ground.y - player.img.height;
+    player.y = ground.y - player.height;
 	player.onPad = false;
     player.currentPowerUp = 0;   
 	player.livesLeft = 5;	
@@ -264,7 +268,7 @@ function render()
 	drawFlyingZombies(surface);
 	drawJumperZombies(surface);
 	drawSlimes(surface);
-    surface.drawImage(player.img,player.x,player.y); // Draw the player.
+    surface.drawImage(player.img,player.x,player.y, player.width, player.height); // Draw the player.
 	drawBullets(surface);
 	
 	drawPlayerHUD(surface);
@@ -331,10 +335,10 @@ function collisionCratePlayer()
 {
 	if (!crate.hide)
 	{
-        if (player.x + player.img.width >= crate.x 
+        if (player.x + player.width >= crate.x 
             && player.x <= crate.x + crateImage.width)
 		{ // Then the x coordinates collide.
-            if (player.y + player.img.height >= crate.y 
+            if (player.y + player.height >= crate.y 
                 && player.y <= crate.y + crateImage.height)
 			{ // Then the y coordinates collide. We have a collision!
 				currentPowerUp = Math.floor((Math.random() * 2) + 1);
@@ -350,19 +354,11 @@ function movePlayer()
 {
     if (leftPressed && player.x > 0)
     {
-        if (upPressed)
-            player.img.src = "img/playerLeftJump.png";
-        else
-            //player.img.src = "img/playerLeft.png";
         player.x = player.x - PLAYER_SPEED;
         currentDirection = false;
     }
-    if (rightPressed && player.x < (canvas.width - player.img.width))
+    if (rightPressed && player.x < (canvas.width - player.width))
     {
-        if (upPressed)
-            player.img.src = "img/playerRightJump.png";
-        else
-            //player.img.src = "img/playerRight.png";
         player.x = player.x + PLAYER_SPEED;
         currentDirection = true;
     }
@@ -371,14 +367,6 @@ function movePlayer()
         for (var i = 0; i < pads.length; i++)
         {
             pads[i].onPad = false; // Player is NOT on any of the pads while jumping.
-        }
-        if(currentDirection)
-        {
-            player.img.src = "img/playerRightJump.png";
-        }
-        else
-        {
-            player.img.src = "img/playerLeftJump.png";
         }
 
         player.verticalVelocity = JUMP_INITIAL_VELOCITY;
@@ -395,28 +383,20 @@ function collisionPlayerPad()
         if (player.inAir) // We only want to check collision between the pad and the player when the player is falling down.
         {
             var padY = canvas.height - pads[i].y ;
-            if (player.y + player.img.height <= padY - player.verticalVelocity && player.y + player.img.height >= padY + player.verticalVelocity)
+            if (player.y + player.height <= padY - player.verticalVelocity && player.y + player.height >= padY + player.verticalVelocity)
             { // Then there is a collision between the y coordinates of the player and the pad.
-                if (player.x + player.img.width >= pads[i].x && player.x <= pads[i].x + pads[i].img.width)
+                if (player.x + player.width >= pads[i].x && player.x <= pads[i].x + pads[i].img.width)
                 { // Then the x coordinates collide as well. We have a collision!
 					player.onPad = true;
 					pads[i].onPad = true;
-                    player.y = padY - player.img.height; // Make sure the player is exactly on the pad.
+                    player.y = padY - player.height; // Make sure the player is exactly on the pad.
                     resetJump(); // Reset the jump variables so the next jump is not screwed up.
-                    if(currentDirection)
-                    {
-                        player.img.src = "img/playerRight.png";
-                    }
-                    else
-                    {
-                        player.img.src = "img/playerLeft.png";
-                    }
                 }
             }
         }
         if (pads[i].onPad) // This part captures the moment when the player leaves the pad, so the fall animation can start.
         {
-            if (player.x > pads[i].x + pads[i].img.width || player.x + player.img.width < pads[i].x)
+            if (player.x > pads[i].x + pads[i].img.width || player.x + player.width < pads[i].x)
             { // Then the player left the pad, time to apply gravity.
                 player.inAir = true;
                 player.onPad = false;
@@ -428,81 +408,32 @@ function collisionPlayerPad()
 
 function playerAnimation()
 {
-    var index = 0;
-    if(leftPressed == false && rightPressed == false)
+    var imageIndex = Math.floor((player.animationIndex++)/player.animationTransition);
+    if(imageIndex > 11)
     {
-        index = 0;
-        if(index == 0){player.img.src = "img/Player/Idle_000.png"; index++}
-        else if (index == 1) {player.img.src = "img/Player/Idle_001.png"; index++;}
-        else if (index == 2) {player.img.src = "img/Player/Idle_002.png"; index++;}
-        else if (index == 3) {player.img.src = "img/Player/Idle_003.png"; index++;}
-        else if (index == 4) {player.img.src = "img/Player/Idle_004.png"; index++;}
-        else if (index == 5) {player.img.src = "img/Player/Idle_005.png"; index++;}
-        else if (index == 6) {player.img.src = "img/Player/Idle_006.png"; index++;}
-        else if (index == 7) {player.img.src = "img/Player/Idle_007.png"; index++;}
-        else if (index == 8) {player.img.src = "img/Player/Idle_008.png"; index++;}
-        else if (index == 9) {player.img.src = "img/Player/Idle_009.png"; index++;}
-        else if (index == 10) {player.img.src = "img/Player/Idle_010.png"; index++;}
-        else if (index == 11) {player.img.src = "img/Player/Idle_011.png"; index = 0;}
+        player.animationIndex = 0;
+        imageIndex = 0;
     }
-
-    if(leftPressed == true || rightPressed == true)
-    {
-        index = 0;
-        if(index == 0){player.img.src = "img/Player/Run_000.png"; index++}
-        else if (index == 1) {player.img.src = "img/Player/Run_001.png"; index++;}
-        else if (index == 2) {player.img.src = "img/Player/Run_002.png"; index++;}
-        else if (index == 3) {player.img.src = "img/Player/Run_003.png"; index++;}
-        else if (index == 4) {player.img.src = "img/Player/Run_004.png"; index++;}
-        else if (index == 5) {player.img.src = "img/Player/Run_005.png"; index++;}
-        else if (index == 6) {player.img.src = "img/Player/Run_006.png"; index++;}
-        else if (index == 7) {player.img.src = "img/Player/Run_007.png"; index++;}
-        else if (index == 8) {player.img.src = "img/Player/Run_008.png"; index++;}
-        else if (index == 9) {player.img.src = "img/Player/Run_009.png"; index = 0;}
-    }
+    player.img = playerAnim.Idle[imageIndex];
 }
 
 function playerGravity()
 {
     player.y -= player.verticalVelocity; // Move the player up or down according to the vertical velocity.
     player.verticalVelocity -= GRAVITY; // Decelerate the player due to gravity.
-    if(currentDirection)
-    {
-        player.img.src = "img/playerRightJump.png";
-    }
-    else
-    {
-        player.img.src = "img/playerLeftJump.png";
-    }
     for (var i = 0; i < pads.length; i++)
     { // For all the pads in the pads array:
         var padY = canvas.height-pads[i].y;
         if (pads[i].onPad)
         { // Then the player landed on one of the pads.
-            player.y = padY - player.img.height; // Make sure the player is exactly on the pad.
+            player.y = padY - player.height; // Make sure the player is exactly on the pad.
             resetJump(); // Reset the jump variables so the next jump is not screwed up.
-            if(currentDirection)
-            {
-                player.img.src = "img/playerRight.png";
-            }
-            else
-            {
-                player.img.src = "img/playerLeft.png";
-            }
         }
     }
-    if (player.y + player.img.height >= ground.y)
+    if (player.y + player.height >= ground.y)
     { // Then the player reached the ground, time to stop.
-        player.y = ground.y - player.img.height; // Make sure the player does not go below ground.
+        player.y = ground.y - player.height; // Make sure the player does not go below ground.
         resetJump(); // Reset the jump variables so the next jump is not screwed up.
-        if(currentDirection)
-        {
-            player.img.src = "img/playerRight.png";
-        }
-        else
-        {
-            player.img.src = "img/playerLeft.png";
-        }
     }
 }
 

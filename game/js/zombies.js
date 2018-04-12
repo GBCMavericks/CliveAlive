@@ -54,6 +54,7 @@ function moveZombie()
 
 function spawnZombie()
 {
+	console.log('zombies: ' + reinforcements.zombies);
     if(reinforcements.zombies <= 0)
     {
         clearInterval(intervals.zombie);

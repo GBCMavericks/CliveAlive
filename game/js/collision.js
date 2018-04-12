@@ -30,10 +30,10 @@ function collisionCratePlayer()
 {
 	if (!crate.hide)
 	{
-        if (player.x + player.img.width >= crate.x 
+        if (player.x + player.width >= crate.x 
             && player.x <= crate.x + crateImage.width)
 		{ // Then the x coordinates collide.
-            if (player.y + player.img.height >= crate.y 
+            if (player.y + player.height >= crate.y 
                 && player.y <= crate.y + crateImage.height)
 			{ // Then the y coordinates collide. We have a collision!
 				player.currentPowerUp = Math.floor((Math.random() * 2) + 1);
@@ -51,10 +51,10 @@ function collisionPlayerZombie()
 	{
 		if(zombies[i].onPlay)
 		{
-			if (player.x + player.img.width - 12 >= zombies[i].x 
+			if (player.x + player.width - 12 >= zombies[i].x 
 				&& player.x <= zombies[i].x + zombieRight.width - 12)
 			{ // Then the x coordinates collide.
-				if (player.y + player.img.height >= zombies[i].y + 12 
+				if (player.y + player.height >= zombies[i].y + 12 
 					&& player.y <= zombies[i].y + zombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
 					player.livesLeft--;
@@ -242,10 +242,10 @@ function collisionPlayerFlyingZombie()
 	{
 		if(flyingZombies[i].onPlay)
 		{
-			if (player.x + player.img.width - 12 >= flyingZombies[i].x 
+			if (player.x + player.width - 12 >= flyingZombies[i].x 
 				&& player.x <= flyingZombies[i].x + flyingZombies[i].img.width - 12)
 			{ // Then the x coordinates collide.
-				if (player.y + player.img.height >= flyingZombies[i].y + 12 
+				if (player.y + player.height >= flyingZombies[i].y + 12 
 					&& player.y <= flyingZombies[i].y + flyingZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					player.livesLeft--;
@@ -276,9 +276,9 @@ function collisionSlimePlayer()
 				continue;
 		if (typeof slimes[i] == 'undefined')
                 console.log('slime undefined!!!');
-		if (slimes[i].x + slimes[i].img.width >= player.x && slimes[i].x <= player.x + player.img.width)
+		if (slimes[i].x + slimes[i].img.width >= player.x && slimes[i].x <= player.x + player.width)
 		{
-			if (slimes[i].y + slimes[i].img.height >= player.y && slimes[i].y <= player.y + player.img.height)
+			if (slimes[i].y + slimes[i].img.height >= player.y && slimes[i].y <= player.y + player.height)
 			{ 
 				player.livesLeft--;
 				if (player.livesLeft == 0)
@@ -294,10 +294,10 @@ function collisionPlayerJumperZombie()
 	{
 		if(jumperZombies[i].onPlay)
 		{
-			if (player.x + player.img.width - 12 >= jumperZombies[i].x 
+			if (player.x + player.width - 12 >= jumperZombies[i].x 
 				&& player.x <= jumperZombies[i].x + jumperZombies[i].img.width - 12)
 			{ // Then the x coordinates collide.
-				if (player.y + player.img.height >= jumperZombies[i].y + 12 
+				if (player.y + player.height >= jumperZombies[i].y + 12 
 					&& player.y <= jumperZombies[i].y + jumperZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
 					player.livesLeft--;

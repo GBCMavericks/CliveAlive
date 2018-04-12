@@ -7,6 +7,7 @@ const JUMPER_ZOMBIE_SPEED = 120 / FPS;
 const JUMPER_PROXIMITY_X = 200; // MAX proximity for the jumper to start jumping.
 const JUMPER_PROXIMITY_Y = 100; // Same thing for the y axis.
 const SLIME_PROBABILITY = 0.64;
+zombieAni = setInterval(zombieAnima,1000);
 
 var zombies = []; // The array of zombies.
 var zombieDamageSound = document.createElement("AUDIO"); // Played when the zombie takes damage.
@@ -40,7 +41,7 @@ function moveZombie()
 			{
 				zombies[i].img = zombieLeft;
 				zombies[i].x -= ZOMBIE_SPEED;
-			}	
+			}
 		}
 	}
 }
@@ -289,3 +290,40 @@ function cleanJumperZombieArray()
 	}
 	jumperZombies = newJumpers;
 }
+
+function zombieAnima()
+{
+	var zombieAnimIndex = 0;
+	if (player.x < zombies[i].x) {
+
+        	if (zombieAnimIndex == 0)
+            zombies[i].img = "img/ZombieLeft1.png";
+            if (zombieAnimIndex == 1)
+            zombies[i].img = "img/ZombieLeft2.png";
+            if (zombieAnimIndex == 2)
+            zombies[i].img = "img/ZombieLeft3.png";
+            if (zombieAnimIndex == 3)
+            zombies[i].img = "img/ZombieLeft4.png";
+            if (zombieAnimIndex == 4)
+            zombies[i].img = "img/ZombieLeft5.png";
+            if (zombieAnimIndex == 5)
+            zombies[i].img = "img/ZombieLeft6.png";
+            if (zombieAnimIndex == 6)
+            zombies[i].img = "img/ZombieLeft7.png";
+            if (zombieAnimIndex == 7)
+            zombies[i].img = "img/ZombieLeft8.png";
+            if (zombieAnimIndex == 8)
+            zombies[i].img = "img/ZombieLeft9.png";
+            if (zombieAnimIndex == 9)
+            zombies[i].img = "img/ZombieLeft10.png";
+            if (zombieAnimIndex == 10) {
+                zombieAnimIndex = 0
+			}
+			i++;
+
+        }
+
+
+}
+
+

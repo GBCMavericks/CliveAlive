@@ -35,7 +35,6 @@ var slimeImage = {};
 var padImage = {};
 var cloud1 = {};
 var cloud2 = {};
-var slime = {};
 var loadedResources = 0;
 var playerAnim = {
     Idle: [],
@@ -44,7 +43,10 @@ var playerAnim = {
     Jumping:[],
 };
 
-const NUM_RESOURCES = 61;
+var menuImage = {}
+var buttonImage = {};
+
+const NUM_RESOURCES = 63;
 var glow = 0;
 var startAnimation;
 var cloudSprites = [];
@@ -223,6 +225,14 @@ function loadResources(callback){
         playerAnim.Jumping[jumpingAnim].src = "img/Player/Jump_" + formatNumberLength(jumpingAnim,3) + ".png";
         playerAnim.Jumping[jumpingAnim].onload = function(){loadCounter(callback);}
     }
+
+    menuImage = new Image();
+    menuImage.src = "img/Menu.png";
+    menuImage.onload = function(){loadCounter(callback);}
+
+    buttonImage= new Image();
+    buttonImage.src = "img/Menu.png";
+    buttonImage.onload = function(){loadCounter(callback);}
 
 }
 

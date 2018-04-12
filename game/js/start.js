@@ -13,7 +13,7 @@ var startFlyingZombieFireInt = null;
 
 var titleOffset = {
     width: 300,
-    height: 200
+    height: 150
 };
 var titleFontSize = 120;
 var messageOffset = {
@@ -80,7 +80,7 @@ function drawStartTitle(ctx){
     ctx.fillStyle = BLOOD_RED;
     ctx.fillText("Clive Alive",
                  (canvas.width / 2)-titleOffset.width,
-                 (canvas.height / 2)-titleOffset.height);
+                 titleOffset.height);
 };
 
 function drawStartMenu(ctx){

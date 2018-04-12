@@ -11,15 +11,16 @@ function collisionCrateGround()
 function collisionCratePad()
 {
 	for ( var i = 0; i < pads.length; i++)
-    { // For each pad in the pads array:
-        if (crate.y + crateImage.height <= pads[i].y + pads[i].img.height - CRATE_SPEED 
-            && crate.y + crateImage.height >= pads[i].y + CRATE_SPEED)
+	{ // For each pad in the pads array:
+		var padY = canvas.height - pads[i].y;
+        if (crate.y + crateImage.height <= padY + pads[i].img.height - CRATE_SPEED 
+            && crate.y + crateImage.height >= padY + CRATE_SPEED)
 		{ // Then there is a collision between the y coordinates of the crate and the pad.
             if (crate.x + crateImage.width >= pads[i].x 
                 && crate.x <= pads[i].x + pads[i].img.width)
 			{
 				crate.onPad = true;
-				crate.y = pads[i].y - crate.img.height; // Make sure the crate is exactly on the pad.
+				crate.y = padY - crate.img.height; // Make sure the crate is exactly on the pad.
 			}
 		}
     }
@@ -86,8 +87,8 @@ function collisionBulletZombie()
 					&& bullets[i].y <= zombies[j].y + zombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
 					zombies[j].lives--;
-					var imgString = bullets[i].img.src
-					var subString = imgString.substring(imgString.length-14,imgString.length)
+					var imgString = bullets[i].img.src;
+					var subString = imgString.substring(imgString.length-14,imgString.length);
 					if (subString == "img/bullet.png")
 					{
 						bullets[i].onPlay = false;
@@ -121,7 +122,8 @@ function collisionBulletPad()
         if(!bullets[i].onPlay)
             continue;
         for (var j = 0; j < pads.length; j++)
-        { // For each pad in the pads array:
+		{ // For each pad in the pads array:
+			var padY = canvas.height - pads[j].y;
             var leftCollide = false, rightCollide = false, upCollide = false, downCollide = false;
             if (bullets[i].x + bullets[i].img.width + bullets[i].xSpeed >= pads[j].x)
             { // IMPORTANT: Adding the speed of the bullet to these four if statements is crucial! It prevents the bullet from going inside the pad.
@@ -131,18 +133,18 @@ function collisionBulletPad()
             {
                 rightCollide = true;
             }
-            if (bullets[i].y + bullets[i].img.height + bullets[i].ySpeed>= pads[j].y)
+            if (bullets[i].y + bullets[i].img.height + bullets[i].ySpeed>= padY)
             {
                 upCollide = true;
             }
-            if (bullets[i].y + bullets[i].ySpeed<= pads[j].y + pads[j].img.height)
+            if (bullets[i].y + bullets[i].ySpeed<= padY + pads[j].img.height)
             {
                 downCollide = true;
             }
             if (leftCollide && rightCollide && upCollide && downCollide)
             {// Collision occured!
                 var bulletCenterY = bullets[i].y + bullets[i].img.height/2;
-                if ( bulletCenterY > pads[j].y && bulletCenterY < pads[j].y + pads[j].img.height)
+                if ( bulletCenterY > padY && bulletCenterY < padY + pads[j].img.height)
                 { // Then a horizontal collision occured.
                     if (bullets[i].x < pads[j].x)
                     { // Then the bullet collided with the left side.
@@ -156,13 +158,13 @@ function collisionBulletPad()
                 }
                 else
                 { // Then a vertical collision occured.
-                    if (bullets[i].y < pads[j].y)
+                    if (bullets[i].y < padY)
                     { // Then the bullet collided with the top side.
-                        bullets[i].y = pads[j].y - bullets[i].img.height; // This ensures the bullet ricochet animation is smooth.
+                        bullets[i].y = padY - bullets[i].img.height; // This ensures the bullet ricochet animation is smooth.
                     }
                     else
                     { // Then the bullet collided with the bottom side.
-                        bullets[i].y = pads[j].y + pads[j].img.height; // This ensures the bullet ricochet animation is smooth.
+                        bullets[i].y = padY + pads[j].img.height; // This ensures the bullet ricochet animation is smooth.
                     }
                     bullets[i].ySpeed = -bullets[i].ySpeed;
                 }
@@ -218,6 +220,7 @@ function collisionBulletFlyingZombie()
 					zombieDamageSound.play();
 					if (flyingZombies[j].lives == 0)
 					{ // If the zombie dies:
+                        flyingZombies[j].onPlay=false;
 						flyingZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
@@ -338,6 +341,7 @@ function collisionBulletJumperZombie()
 					zombieDamageSound.play();
 					if (jumperZombies[j].lives == 0)
 					{ // If the zombie dies:
+                        jumperZombies[j].onPlay=false;
 						jumperZombies[j].onPlay=false;
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
@@ -359,16 +363,17 @@ function collisionJumperZombiePad()
 	{
 		for ( var i = 0; i < pads.length; i++)
 		{ // For each pad in the pads array:
+			var padY = canvas.height - pads[i].y;
 			if (jumperZombies[j].inAir) // We only want to check collision between the pad and the zombie when the zombie is falling down.
 			{
-				if (jumperZombies[j].y + jumperZombies[j].img.height <= pads[i].y - jumperZombies[j].verticalVelocity 
-					&& jumperZombies[j].y + jumperZombies[j].img.height >= pads[i].y + jumperZombies[j].verticalVelocity)
+				if (jumperZombies[j].y + jumperZombies[j].img.height <= padY - jumperZombies[j].verticalVelocity 
+					&& jumperZombies[j].y + jumperZombies[j].img.height >= padY + jumperZombies[j].verticalVelocity)
 				{ // Then there is a collision between the y coordinates of the zombie and the pad.
 					if (jumperZombies[j].x + jumperZombies[j].img.width >= pads[i].x 
 						&& jumperZombies[j].x <= pads[i].x + pads[i].img.width)
 					{ // Then the x coordinates collide as well. We have a collision!
 						jumperZombies[j].onPad = i + 1;
-						jumperZombies[j].y = pads[i].y - jumperZombies[j].img.height; // Make sure the zombie is exactly on the pad.
+						jumperZombies[j].y = padY - jumperZombies[j].img.height; // Make sure the zombie is exactly on the pad.
 						jumperZombies[j].inAir = false;
 						jumperZombies[j].verticalVelocity = 0;
 						//resetJumpZombie(jumperZombies[j]); // Reset the jump variables so the next jump is not screwed up.

@@ -25,11 +25,11 @@ var crateImage = {};
 var zombie = {};
 var jumperZombie = {};
 var flyingZombie = {};
-var zombieRight = {};
 var jumperZombieRight = {};
-var flyingZombieRight = {};
-var zombieLeft = {};
+var jumperZombieRightAir = {};
 var jumperZombieLeft = {};
+var jumperZombieLeftAir = {};
+var flyingZombieRight = {};
 var flyingZombieLeft = {};
 var slimeImage = {};
 var cloud1 = {};
@@ -40,8 +40,15 @@ var shieldZombieRight;
 var shieldZombieLeft;
 var loadedResources = 0;
 
+var zombieRightWalk = [];
+var zombieLeftWalk = [];
+var zombieRightIdle = [];
+var zombieLeftIdle = [];
+var zombieRightDead = [];
+var zombieLeftDead = [];
 
-const NUM_RESOURCES = 21;
+
+const NUM_RESOURCES = 72;
 var glow = 0;
 var startAnimation;
 var cloudSprites = [];
@@ -81,6 +88,48 @@ function loadCounter(callback){
 }
 
 function loadResources(callback){
+	for (var i = 0; i < 6; i++)
+	{
+		zombieRightWalk[i] = new Image();
+		zombieRightWalk[i].src = "img/Zombie/WalkRight" + (i+1) + ".png";
+		zombieRightWalk[i].onload = function(){loadCounter(callback);};
+	}
+	
+	for (var i = 0; i < 6; i++)
+	{
+		zombieLeftWalk[i] = new Image();
+		zombieLeftWalk[i].src = "img/Zombie/WalkLeft" + (i+1) + ".png";
+		zombieLeftWalk[i].onload = function(){loadCounter(callback);};
+	}
+	
+	for (var i = 0; i < 7; i++)
+	{
+		zombieRightIdle[i] = new Image();
+		zombieRightIdle[i].src = "img/Zombie/IdleRight" + (i+1) + ".png";
+		zombieRightIdle[i].onload = function(){loadCounter(callback);};
+	}
+	
+	for (var i = 0; i < 7; i++)
+	{
+		zombieLeftIdle[i] = new Image();
+		zombieLeftIdle[i].src = "img/Zombie/IdleLeft" + (i+1) + ".png";
+		zombieLeftIdle[i].onload = function(){loadCounter(callback);};
+	}
+	
+	for (var i = 0; i < 8; i++)
+	{
+		zombieRightDead[i] = new Image();
+		zombieRightDead[i].src = "img/Zombie/DeadRight" + (i+1) + ".png";
+		zombieRightDead[i].onload = function(){loadCounter(callback);};
+	}
+	
+	for (var i = 0; i < 8; i++)
+	{
+		zombieLeftDead[i] = new Image();
+		zombieLeftDead[i].src = "img/Zombie/DeadLeft" + (i+1) + ".png";
+		zombieLeftDead[i].onload = function(){loadCounter(callback);};
+	}
+	
     background.img = new Image();
     background.img.src = "img/background.jpg";
     background.img.onload = function(){loadCounter(callback);};
@@ -105,14 +154,6 @@ function loadResources(callback){
     crateImage.src = "img/crate.png";
     crateImage.onload = function(){loadCounter(callback);};
 
-    zombieRight = new Image();
-    zombieRight.src = "img/zombieRight.png";
-    zombieRight.onload = function(){loadCounter(callback);};
-
-    zombieLeft = new Image();
-    zombieLeft.src = "img/zombieLeft.png";
-    zombieLeft.onload = function(){loadCounter(callback);};
-
     jumperZombieRight = new Image();
     jumperZombieRight.src = "img/jumperRight.png";
     jumperZombieRight.onload = function(){loadCounter(callback);};
@@ -120,6 +161,14 @@ function loadResources(callback){
     jumperZombieLeft = new Image();
     jumperZombieLeft.src = "img/jumperLeft.png";
     jumperZombieLeft.onload = function(){loadCounter(callback);};
+	
+	jumperZombieLeftAir = new Image();
+    jumperZombieLeftAir.src = "img/jumperLeftAir.png";
+    jumperZombieLeftAir.onload = function(){loadCounter(callback);};
+	
+	jumperZombieRightAir = new Image();
+    jumperZombieRightAir.src = "img/jumperRightAir.png";
+    jumperZombieRightAir.onload = function(){loadCounter(callback);};
 
     flyingZombieRight = new Image();
     flyingZombieRight.src = "img/FlyingZombieRight.png";

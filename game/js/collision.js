@@ -48,13 +48,13 @@ function collisionPlayerZombie()
 {
 	for (var i = 0; i < zombies.length; i++)
 	{
-		if(zombies[i].onPlay)
+		if(zombies[i].onPlay && zombies[i].animationState != 2)
 		{
 			if (player.x + player.img.width - 12 >= zombies[i].x 
-				&& player.x <= zombies[i].x + zombieRight.width - 12)
+				&& player.x <= zombies[i].x + zombieRightWalk[zombies[i].animationWalkIndex].width - 12)
 			{ // Then the x coordinates collide.
 				if (player.y + player.img.height >= zombies[i].y + 12 
-					&& player.y <= zombies[i].y + zombieRight.height)
+					&& player.y <= zombies[i].y + zombieRightWalk[zombies[i].animationWalkIndex].height)
 				{ // Then the y coordinates collide. We have a collision!
 					player.livesLeft--;
 					if (player.livesLeft == 0)
@@ -65,46 +65,75 @@ function collisionPlayerZombie()
 	}
 }
 
+function collisionGroundZombie()
+{
+	for (var i = 0; i < zombies.length; i++)
+	{
+		var currentImage;
+		if (zombies[i].direction)
+		{
+			if (zombies[i].animationState == 0)
+				currentImage = zombieRightIdle[zombies[i].animationIdleIndex];
+			else if (zombies[i].animationState == 1)
+				currentImage = zombieRightWalk[zombies[i].animationWalkIndex];
+			else if (zombies[i].animationState == 2)
+				currentImage = zombieRightDead[zombies[i].animationDeadIndex];
+		}
+		else
+		{
+			if (zombies[i].animationState == 0)
+				currentImage = zombieLeftIdle[zombies[i].animationIdleIndex];
+			else if (zombies[i].animationState == 1)
+				currentImage = zombieLeftWalk[zombies[i].animationWalkIndex];
+			else if (zombies[i].animationState == 2)
+				currentImage = zombieLeftDead[zombies[i].animationDeadIndex];
+		}
+		zombies[i].y = ground.y - currentImage.height;
+	}
+}
+
 function collisionBulletZombie()
 {
 	for (var j = 0; j < zombies.length; j++)
 	{ // For all zombies in the zombies array:
-		for (var i = 0; i < bullets.length; i++)
-		{ // For all bullets in bullets array:
-			if(!bullets[i].onPlay)
-				continue;
-			if(!zombies[j].onPlay)
-				continue;
-			if (typeof bullets[i] == 'undefined')
-				console.log('bullet undefined!!!');
-			if(typeof zombies[j] == 'undefined')
-				console.log('zombie undefined!!!');
-			if (bullets[i].x + bullets[i].img.width >= zombies[j].x 
-				&& bullets[i].x <= zombies[j].x + zombieRight.width)
-			{ // Then the x coordinates collide.
-				if (bullets[i].y + bullets[i].img.height >= zombies[j].y 
-					&& bullets[i].y <= zombies[j].y + zombieRight.height)
-				{ // Then the y coordinates collide. We have a collision!
-					zombies[j].lives--;
-					var imgString = bullets[i].img.src
-					var subString = imgString.substring(imgString.length-14,imgString.length)
-					if (subString == "img/bullet.png")
-					{
-						bullets[i].onPlay = false;
-					}
-					// Checking whether the image source is a regular or diamond bullet, deleting it if the former.
-					//bullets.splice(i,i+1);
-					zombieDamageSound.load();
-					zombieDamageSound.play();
-					if (zombies[j].lives == 0)
-					{ // If the zombie dies:
-						zombies[j].onPlay=false;
-						//zombies.splice(j,j+1); // Remove it from the zombies array.
-						killCounter++;
-						updateProgressHUD();
-						if (killCounter >= waveSize)
+		if (zombies[j].animationState != 2)
+		{
+			for (var i = 0; i < bullets.length; i++)
+			{ // For all bullets in bullets array:
+				if(!bullets[i].onPlay)
+					continue;
+				if(!zombies[j].onPlay)
+					continue;
+				if (typeof bullets[i] == 'undefined')
+					console.log('bullet undefined!!!');
+				if(typeof zombies[j] == 'undefined')
+					console.log('zombie undefined!!!');
+				if (bullets[i].x + bullets[i].img.width >= zombies[j].x 
+					&& bullets[i].x <= zombies[j].x + zombieRightWalk[zombies[j].animationWalkIndex].width)
+				{ // Then the x coordinates collide.
+					if (bullets[i].y + bullets[i].img.height >= zombies[j].y 
+						&& bullets[i].y <= zombies[j].y + zombieRightWalk[zombies[j].animationWalkIndex].height)
+					{ // Then the y coordinates collide. We have a collision!
+						zombies[j].lives--;
+						var imgString = bullets[i].img.src
+						var subString = imgString.substring(imgString.length-14,imgString.length)
+						if (subString == "img/bullet.png")
 						{
-							gameIsWon = true;
+							bullets[i].onPlay = false;
+						}
+						// Checking whether the image source is a regular or diamond bullet, deleting it if the former.
+						//bullets.splice(i,i+1);
+						zombieDamageSound.load();
+						zombieDamageSound.play();
+						if (zombies[j].lives == 0)
+						{ // If the zombie dies:
+							zombies[j].animationState = 2;
+							killCounter++;
+							updateProgressHUD();
+							if (killCounter >= waveSize)
+							{
+								gameIsWon = true;
+							}
 						}
 					}
 				}

@@ -33,18 +33,78 @@ function moveZombie()
 {
 	for (var i = 0; i < zombies.length; i++)
 	{
-		if(zombies[i].onPlay && Math.abs(player.x - zombies[i].x) > 5)
+		if (zombies[i].animationState != 2)
 		{
-			if (player.x > zombies[i].x)
+			if(zombies[i].onPlay && Math.abs(player.x - zombies[i].x) > 5)
 			{
-				zombies[i].img = zombieRight;
-				zombies[i].x += ZOMBIE_SPEED;
+				zombies[i].animationState = 1;
+				if (player.x > zombies[i].x)
+				{
+					zombies[i].direction = true;
+					zombies[i].x += ZOMBIE_SPEED;
+				}
+				else
+				{
+					zombies[i].direction = false;
+					zombies[i].x -= ZOMBIE_SPEED;
+				}	
 			}
 			else
 			{
-				zombies[i].img = zombieLeft;
-				zombies[i].x -= ZOMBIE_SPEED;
-			}	
+				zombies[i].animationState = 0;
+			}
+		}
+	}
+}
+
+function animateZombie()
+{
+	for (var i = 0; i < zombies.length; i++)
+	{
+		if (zombies[i].animationState == 0)
+		{
+			if (zombies[i].direction)
+			{
+				zombies[i].img = zombieRightIdle[zombies[i].animationIdleIndex];
+			}
+			else
+			{
+				zombies[i].img = zombieLeftIdle[zombies[i].animationIdleIndex];
+			}
+			zombies[i].animationIdleIndex++;
+			if (zombies[i].animationIdleIndex == 7)
+				zombies[i].animationIdleIndex = 0;
+		}
+		if (zombies[i].animationState == 1)
+		{
+			if (zombies[i].direction)
+			{
+				zombies[i].img = zombieRightWalk[zombies[i].animationWalkIndex];
+			}
+			else
+			{
+				zombies[i].img = zombieLeftWalk[zombies[i].animationWalkIndex];
+			}
+			zombies[i].animationWalkIndex++;
+			if (zombies[i].animationWalkIndex == 6)
+				zombies[i].animationWalkIndex = 0;
+		}
+		if (zombies[i].animationState == 2)
+		{
+			if (zombies[i].direction)
+			{
+				zombies[i].img = zombieRightDead[zombies[i].animationDeadIndex];
+			}
+			else
+			{
+				zombies[i].img = zombieLeftDead[zombies[i].animationDeadIndex];
+			}
+			zombies[i].animationDeadIndex++;
+			if (zombies[i].animationDeadIndex == 8)
+			{
+				zombies[i].animationDeadIndex = 7;
+				zombies[i].onPlay = false;
+			}
 		}
 	}
 }
@@ -52,18 +112,24 @@ function moveZombie()
 function spawnZombie()
 {
 	var currentZombie = Object.create(zombie);
-	currentZombie.img = zombieRight;
+	currentZombie.img = zombieRightWalk[0];
 	if (Math.random() > 0.5)
 	{
-		currentZombie.x = -zombieRight.width;
+		currentZombie.x = -zombieRightWalk[0].width;
+		currentZombie.direction = true;
 	}
 	else
 	{
 		currentZombie.x = background.img.width;
+		currentZombie.direction = false;
 	}
-	currentZombie.y = ground.y - zombieRight.height;
+	currentZombie.y = ground.y - zombieRightWalk[0].height + 2;
 	currentZombie.lives = 1;
 	currentZombie.onPlay = true;
+	currentZombie.animationWalkIndex = 0;
+	currentZombie.animationIdleIndex = 0;
+	currentZombie.animationDeadIndex = 0;
+	currentZombie.animationState = 1; // 0 = Idle, 1 = Walk, 2 = Die
 	zombies.push(currentZombie);
 }
 
@@ -261,17 +327,29 @@ function moveJumperZombie()
 				{
 					jumperZombies[i].img = jumperZombieRight;
 					if (jumperZombies[i].inAir)
+					{
+						//jumperZombies[i].img = jumperZombieRightAir;
 						jumperZombies[i].x += JUMPER_ZOMBIE_AIR_SPEED;
+					}
 					else
+					{
+						//jumperZombies[i].img = jumperZombieRight;
 						jumperZombies[i].x += JUMPER_ZOMBIE_SPEED;
+					}
 				}
 				else
 				{
 					jumperZombies[i].img = jumperZombieLeft;
 					if (jumperZombies[i].inAir)
+					{
+						//jumperZombies[i].img = jumperZombieLeftAir;
 						jumperZombies[i].x -= JUMPER_ZOMBIE_AIR_SPEED;
+					}
 					else
+					{
+						//jumperZombies[i].img = jumperZombieLeft;
 						jumperZombies[i].x -= JUMPER_ZOMBIE_SPEED;
+					}
 				}	
 			}
 			if (jumperZombies[i].y - player.y > JUMPER_PROXIMITY_Y && Math.abs(player.x - jumperZombies[i].x) < JUMPER_PROXIMITY_X &&!jumperZombies[i].inAir)

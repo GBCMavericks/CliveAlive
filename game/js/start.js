@@ -123,14 +123,14 @@ function moveStartZombies(){
         if (zombieAtHand.img.src.indexOf('Right') >= 0){
             zombieAtHand.x += ZOMBIE_SPEED;
             if(zombieAtHand.x >= (canvas.width - zombieAtHand.img.width)){
-                zombieAtHand.img = zombieLeft;
+                zombieAtHand.img = zombieLeftWalk[0];
                 zombieAtHand.x -= ZOMBIE_SPEED;                    
             }
         }
         else{
             zombieAtHand.x -= ZOMBIE_SPEED;                    
             if(zombieAtHand.x <= 0){
-                zombieAtHand.img = zombieRight;
+                zombieAtHand.img = zombieRightWalk[0];
                 zombieAtHand.x += ZOMBIE_SPEED;                    
             }            
         }

@@ -21,6 +21,7 @@ var hud_slotWidth;
 // INTERVALS ************************************************************************************************************************
 var crateInt;   
 var zombieInt;
+var zombieAnimationInt;
 var flyingZombieInt; 
 var flyingZombieFireInt; 
 var jumperZombieInt; 
@@ -107,12 +108,14 @@ function createMap() // Initialize all the variables here.
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
     crateSound.setAttribute("src","aud/pickup.wav");
-	crateInt = setInterval(spawnCrate,15000);
-    zombieInt = setInterval(spawnZombie,4000);
-	flyingZombieInt = setInterval(spawnFlyingZombie, 7000);
-	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	jumperZombieInt = setInterval (spawnJumperZombie, 10000);
-	shieldZombieInt = setInterval(spawnShieldZombie, 9000);
+	//crateInt = setInterval(spawnCrate,15000);
+    //zombieInt = setInterval(spawnZombie,1000);
+	spawnZombie();
+	zombieAnimationInt = setInterval(animateZombie, 150);
+	//flyingZombieInt = setInterval(spawnFlyingZombie, 7000);
+	//flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
+	//jumperZombieInt = setInterval (spawnJumperZombie, 1000);
+	//shieldZombieInt = setInterval(spawnShieldZombie, 9000);
 	for(var i = 0; i < 4; i++)
         spawnCloud();
     restartImg.x = 635;
@@ -185,6 +188,7 @@ function update()
 	collisionCratePlayer();
     collisionBulletZombie();
     collisionPlayerZombie();
+	collisionGroundZombie();
     collisionPlayerPad();
     collisionBulletPad();
     collisionBulletGround();
@@ -442,6 +446,7 @@ function restartGame(event)
 		{
 			clearInterval(crateInt);   
 			clearInterval(zombieInt);
+			clearInterval(zombieAnimationInt);
 			clearInterval(flyingZombieInt); 
 			clearInterval(flyingZombieFireInt); 
 			clearInterval(jumperZombieInt); 

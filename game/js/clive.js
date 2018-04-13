@@ -311,6 +311,24 @@ function collisionCrateGround()
 	}
 }
 
+function collisionCratePad()
+{    
+	for (var i = 0; i < pads.length; i++)
+    { // For each pad in the pads array:
+        var padY = canvas.height - pads[i].Y;
+        if (crate.y + crateImage.height <= padY + pads[i].img.height - CRATE_SPEED 
+            && crate.y + crateImage.height >= padY + CRATE_SPEED)
+		{ // Then there is a collision between the y coordinates of the crate and the pad.
+            if (crate.x + crateImage.width >= pads[i].x 
+                && crate.x <= pads[i].x + pads[i].img.width)
+			{
+				crate.onPad = true;
+				crate.y = padY - crate.img.height; // Make sure the crate is exactly on the pad.
+			}
+		}
+    }
+}
+
 function collisionCratePlayer()
 {
 	if (!crate.hide)

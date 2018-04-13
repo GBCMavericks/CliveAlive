@@ -15,6 +15,7 @@ function drawPads(surface){
     }
 }
 
+
 function collisionBulletPad()
 {
     for (var i = 0; i < bullets.length; i++)

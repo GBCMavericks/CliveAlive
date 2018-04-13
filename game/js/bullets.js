@@ -9,10 +9,10 @@ function moveBullet()
         if(!bullets[i].onPlay)
             continue;
         currentBullet = bullets[i];
-        if (currentBullet.x > canvas.width || currentBullet.x < 0 || currentBullet.y > canvas.height || currentBullet.y < 0)
+        /*if (currentBullet.x > canvas.width || currentBullet.x < 0 || currentBullet.y > canvas.height || currentBullet.y < 0)
         { // Then the current bullet is out of the canvas. Time to delete it from the bullets array.
             bullets.splice(i,i+1); // Removes the current bullet from the bullet array.
-        }
+        }*/
         currentBullet.x += currentBullet.xSpeed;
         currentBullet.y += currentBullet.ySpeed;
     }
@@ -46,9 +46,18 @@ function fire(event)
     var mouseX = event.clientX - surface.canvas.offsetLeft; // You have to subtract the offset value
     var mouseY = event.clientY - surface.canvas.offsetTop;  // to get the mouse coordinate inside the canvas.
     shootSound.play(); // Play the shooting sound effect. Pew pew pew!
-    // THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
-    var xCoef = mouseX - player.x;
-    var yCoef = mouseY - player.y;
+    var bulletImage = new Image();
+    var bulletImageD = new Image();
+	var bulletX, bulletY;
+	var bulletMargin = PLAYER_SPEED + 15;
+	if (currentDirection)
+		bulletX = player.x + player.img.width + bulletMargin;
+	else
+		bulletX = player.x - bulletImage.width - bulletMargin;
+	bulletY = player.y + player.img.height/2;
+	// THIS IS WHERE THE TRAJECTORY OF THE BULLET IS CALCULATED. CONTACT ME (EKIN) IF YOU HAVE ANY QUESTIONS ABOUT THIS**
+    var xCoef = mouseX - bulletX;
+    var yCoef = mouseY - bulletY;
 	var xCoefB = xCoef * Math.cos(sprayCoef) - yCoef * Math.sin(sprayCoef)
 	var yCoefB = yCoef * Math.cos(sprayCoef) + xCoef * Math.sin(sprayCoef)
 	var xCoefC = xCoef * Math.cos(-sprayCoef) - yCoef * Math.sin(-sprayCoef)
@@ -62,22 +71,24 @@ function fire(event)
         bullets.push(
 		{
 			img: bulletImage,
-			x: player.x,
-			y: player.y,
+			x: bulletX,
+			y: bulletY,
 			xSpeed: finalSpeedX,
 			ySpeed: finalSpeedY,
 			onPlay: true,
+			bounceCount: 3
 		});
     }
     else if (player.currentPowerUp == 1) {
         bullets.push(
 		{
 			img: bulletImage,
-			x: player.x,
-			y: player.y,
+			x: bulletX,
+			y: bulletY,
 			xSpeed: finalSpeedX,
 			ySpeed: finalSpeedY,
 			onPlay: true,
+			bounceCount: 3
 		});
         var finalSpeedX2 = commonSpeedVariable * xCoefB * BULLET_SPEED_MULTIPLIER;
         var finalSpeedY2 = commonSpeedVariable * yCoefB * BULLET_SPEED_MULTIPLIER;
@@ -86,20 +97,22 @@ function fire(event)
         bullets.push(
 		{
 			img: bulletImage,
-			x: player.x,
-			y: player.y,
+			x: bulletX,
+			y: bulletY,
 			xSpeed: finalSpeedX2,
 			ySpeed: finalSpeedY2,
 			onPlay: true,
+			bounceCount: 3
 		});
         bullets.push(
 		{
 			img: bulletImage,
-			x: player.x,
-			y: player.y,
+			x: bulletX,
+			y: bulletY,
 			xSpeed: finalSpeedX3,
 			ySpeed: finalSpeedY3,
 			onPlay: true,
+			bounceCount: 3
 		});
         powerUpAmmo = powerUpAmmo - 1;
         /*
@@ -115,11 +128,12 @@ function fire(event)
         bullets.push(
 		{
 			img: bulletImageD,
-			x: player.x,
-			y: player.y,
+			x: bulletX,
+			y: bulletY,
 			xSpeed: finalSpeedX,
 			ySpeed: finalSpeedY,
 			onPlay: true,
+			bounceCount: 3
 		});
         powerUpAmmo = powerUpAmmo - 1;
         /*

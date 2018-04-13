@@ -83,7 +83,6 @@ function collisionCratePad()
 	{ // For each pad in the pads array:
         var padY = getPadY(i);
         var padX = getPadX(i);
-        console.log('checking crate collision ', crate.y, padY, CRATE_SPEED);
         if (crate.y + crateImage.height <= padY + pads[i].img.height - CRATE_SPEED 
             && crate.y + crateImage.height >= padY + CRATE_SPEED)
 		{ // Then there is a collision between the y coordinates of the crate and the pad.

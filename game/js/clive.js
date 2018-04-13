@@ -251,10 +251,11 @@ function clearAllIntervals()
 function render()
 {
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
-    surface.drawImage(background.img, background.x, background.y, canvas.width, canvas.height); // Draw the background.
+    surface.drawImage(background.img, background.x, background.y, 
+                      canvas.width, canvas.height); // Draw the background.
     drawClouds(surface);
-    console.log(ground);
-    surface.drawImage(ground.img, ground.x, ground.y, canvas.width, ground.img.height); // Draw the ground.
+    surface.drawImage(ground.img, ground.x, ground.y, 
+                      canvas.width, ground.img.height); // Draw the ground.
 	drawPlayerHUD(surface);
     drawProgressHUD(surface);
     
@@ -263,8 +264,8 @@ function render()
     drawZombies(surface);
 	drawFlyingZombies(surface);
 	drawJumperZombies(surface);
-	drawSlimes(surface);
-    surface.drawImage(player.img,player.x,player.y, player.width, player.height); // Draw the player.
+    drawSlimes(surface);
+    drawPlayer(surface);
 	drawBullets(surface);
 	
     if (gameIsLost || gameIsWon) {
@@ -295,7 +296,22 @@ function render()
 	{
 		surface.drawImage(restartImg.img, restartImg.x, restartImg.y);
 	}
+}
 
+function drawPlayer(ctx){
+    ctx.save();
+    if(!currentDirection){
+        console.log('trying to draw the player');
+        ctx.scale(-1, 1);
+        ctx.drawImage(player.img,-(player.x+player.img.width),player.y, 
+            player.width, player.height); // Draw the player.
+    }
+    else{
+        ctx.drawImage(player.img,player.x,player.y, 
+            player.width, player.height); // Draw the player.
+    }
+    /* goes back to normal I hope */
+    ctx.restore();
 }
 
 function collisionCrateGround()

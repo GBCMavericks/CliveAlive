@@ -33,7 +33,8 @@ const LEVELS = [
         spawnCounts: {
             zombies: 4,
             flyingZombies: 0,
-            jumperZombies: 4
+            jumperZombies: 4,
+            shieldZombies: 0,
         },
         pads: [{x: -300, y: 470}, {x: 300, y: 470}, 
             {x: -500, y: 320}, {x: 500,  y: 320}, 
@@ -73,7 +74,8 @@ const LEVELS = [
         spawnCounts: {
             zombies: 10,
             flyingZombies: 10,
-            jumperZombies: 10
+            jumperZombies: 10,
+            shieldZombies: 10,
         },
         pads: [{x: -300, y: 470}, {x: 300, y: 470}, 
             {x: -500, y: 320}, {x: 500,  y: 320}, 

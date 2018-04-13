@@ -89,7 +89,6 @@ function collisionCratePad()
             if (crate.x + crateImage.width >= padX 
                 && crate.x <= padX + pads[i].img.width)
 			{
-                console.log('crate colision with pad!');
 				crate.onPad = true;
 				crate.y = padY - crate.img.height; // Make sure the crate is exactly on the pad.
 			}

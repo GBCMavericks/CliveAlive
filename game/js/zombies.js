@@ -434,6 +434,12 @@ function cleanJumperZombieArray()
 
 function spawnShieldZombie()
 {
+	if(reinforcements.shieldZombies <= 0)
+	{
+		clearInterval(intervals.shieldZombie);
+		return;
+	}
+
 	var currentZombie = Object.create(shieldZombie);
 	if (Math.random() > 0.5)
 	{
@@ -451,6 +457,7 @@ function spawnShieldZombie()
 	currentZombie.lives = 1;
 	currentZombie.onPlay = true;
 	shieldZombies.push(currentZombie);
+    reinforcements.shieldZombies--;
 }
 
 function drawShieldZombies(surface)

@@ -72,20 +72,34 @@ function setGameInterval(fn, interval)
 function loadLevel(levelNumber)
 {
     var level = LEVELS[levelNumber];
+    /* wooo-hoo new level for playa */
     currentLevel = levelNumber;
     pads = level.pads;
+    killCounter = 0;
+
+    /* Dimension of the HORDE */
     reinforcements.zombies = level.spawnCounts.zombies;
     reinforcements.flyingZombies = level.spawnCounts.flyingZombies;
     reinforcements.jumperZombies = level.spawnCounts.jumperZombies;
+    reinforcements.shieldZombies = level.spawnCounts.shieldZombies;
+    waveSize =  reinforcements.zombies 
+                + reinforcements.flyingZombies
+                + reinforcements.jumperZombies
+                + reinforcements.shieldZombies;
+
+    /* Spawners */
     intervals.crate = setGameInterval(spawnCrate, level.intervals.crate);
     intervals.zombie = setGameInterval(spawnZombie, level.intervals.zombie);
     intervals.flyingZombie = setGameInterval(spawnFlyingZombie, level.intervals.flyingZombie);
     intervals.flyngZombieFire = setGameInterval(fireFlyingZombie, level.intervals.flyingZombieFire);
     intervals.jumperZombie = setGameInterval (spawnJumperZombie, level.intervals.jumperZombie);
-    createMap();
+    intervals.shieldZombie = setGameInterval(spawnShieldZombie, level.intervals.shieldZombie);
+
+    /* back to life */
+    createMap(levelNumber != 0);
 }
 
-function createMap() // Initialize all the variables here.
+function createMap(doNotChangePlayerPosition) // Initialize all the variables here.
 {
 	leftPressed = false; 
 	rightPressed = false;
@@ -95,12 +109,16 @@ function createMap() // Initialize all the variables here.
 	background.y = 0;
 	ground.offset = 40;
 	ground.x = 0;
-	ground.y = canvas.height - ground.img.height + ground.offset;
-    player.x = canvas.width/2;
-    player.y = ground.y - player.height;
-	player.onPad = false;
-    player.currentPowerUp = 0;   
-	player.livesLeft = 1;	
+    ground.y = canvas.height - ground.img.height + ground.offset;
+    console.log(doNotChangePlayerPosition);
+    if(!doNotChangePlayerPosition){
+        player.x = canvas.width/2;
+        player.y = ground.y - player.height;
+        player.onPad = false;
+        player.currentPowerUp = 0;   
+        player.livesLeft = 1;	    
+    }
+
     initializeCrate();
     currentDirection = true;
     zombies = [];
@@ -119,8 +137,6 @@ function createMap() // Initialize all the variables here.
     gameIsLost = false;
     gameIsWon = false;
 
-	killCounter = 0;
-	waveSize = 10;
 	jumpSound.setAttribute("src","aud/jump.wav");
     shootSound.setAttribute("src","aud/shoot.wav");
     zombieDamageSound.setAttribute("src","aud/damage.wav");
@@ -204,6 +220,7 @@ function update()
 	moveSlime();
 	moveJumperZombie();
     moveClouds();
+    moveShieldZombie();
     animateZombie();
     /* then we detect if they have collided or not */
 	collisionCrateGround();
@@ -239,7 +256,8 @@ function update()
 	cleanFlyingZombieArray();
     cleanBulletArray();
 	cleanSlimesArray();
-	cleanJumperZombieArray();
+    cleanJumperZombieArray();
+    cleanShieldZombieArray();
 }
 
 function clearAllIntervals()
@@ -263,7 +281,8 @@ function render()
     drawCrate(surface);
     drawZombies(surface);
 	drawFlyingZombies(surface);
-	drawJumperZombies(surface);
+    drawJumperZombies(surface);
+    drawShieldZombies(surface);
     drawSlimes(surface);
     drawPlayer(surface);
 	drawBullets(surface);
@@ -301,7 +320,6 @@ function render()
 function drawPlayer(ctx){
     ctx.save();
     if(!currentDirection){
-        console.log('trying to draw the player');
         ctx.scale(-1, 1);
         ctx.drawImage(player.img,-(player.x+player.img.width),player.y, 
             player.width, player.height); // Draw the player.
@@ -448,13 +466,16 @@ function onKeyUp(event)
 
 function checkForWin()
 {
-    for(var typeOfZombie in reinforcements)
-        if(reinforcements[typeOfZombie] > 0)
+    for(var typeOfZombie in reinforcements){
+        if(reinforcements[typeOfZombie] > 0){
             return false;
-    if(zombies.length == 0 && flyingZombies.length == 0 && jumperZombies.length == 0)
+        }
+    }
+    if(killCounter==waveSize)
     {
-        if (currentLevel == LEVELS.length - 1)
+        if (currentLevel == LEVELS.length - 1){
             gameIsWon = true;
+        }
         return true;
     }
 }
@@ -522,7 +543,8 @@ function drawPlayerHUD(surface)
 
 function drawProgressHUD(surface)
 {
-	surface.drawImage(hud_progressBackground1.img, hud_progressBackground1.x, hud_progressBackground1.y);
+    surface.drawImage(hud_progressBackground1.img, 
+        hud_progressBackground1.x, hud_progressBackground1.y);
 	surface.drawImage(  hud_progressBackground2.img, 
 						hud_clipX,
 						hud_clipY,

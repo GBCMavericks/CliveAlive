@@ -258,11 +258,8 @@ function render()
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
     surface.drawImage(background.img, background.x, background.y, canvas.width, canvas.height); // Draw the background.
     drawClouds(surface);
-	surface.drawImage(ground.img, ground.x, ground.y, canvas.width, canvas.height); // Draw the ground.
-    for (var i = 0; i < pads.length; i++)
-    { // For each pad in the pads array, draw it on the canvas.
-        surface.drawImage(pads[i].img,pads[i].x, canvas.height - pads[i].y);
-    }
+    surface.drawImage(ground.img, ground.x, ground.y, canvas.width, canvas.height); // Draw the ground.
+    drawPads(surface);
     drawCrate(surface);
     drawZombies(surface);
 	drawFlyingZombies(surface);
@@ -312,24 +309,6 @@ function collisionCrateGround()
 		crate.onPad = false;
 		crate.y = ground.y - crateImage.height;
 	}
-}
-
-function collisionCratePad()
-{    
-	for (var i = 0; i < pads.length; i++)
-    { // For each pad in the pads array:
-        var padY = canvas.height - pads[i].Y;
-        if (crate.y + crateImage.height <= padY + pads[i].img.height - CRATE_SPEED 
-            && crate.y + crateImage.height >= padY + CRATE_SPEED)
-		{ // Then there is a collision between the y coordinates of the crate and the pad.
-            if (crate.x + crateImage.width >= pads[i].x 
-                && crate.x <= pads[i].x + pads[i].img.width)
-			{
-				crate.onPad = true;
-				crate.y = padY - crate.img.height; // Make sure the crate is exactly on the pad.
-			}
-		}
-    }
 }
 
 function collisionCratePlayer()

@@ -57,10 +57,6 @@ function fire(event)
     var finalSpeedX = commonSpeedVariable * xCoef * BULLET_SPEED_MULTIPLIER;
     var finalSpeedY = commonSpeedVariable * yCoef * BULLET_SPEED_MULTIPLIER;
     // END OF BULLET TRAJECTORY CALCULATION *****************************************************************************
-    var bulletImage = new Image();
-    var bulletImageD = new Image();
-    bulletImage.src = "img/bullet.png";
-    bulletImageD.src = "img/diBullet.png";
     if (player.currentPowerUp == 0){
         /* normal bullets */
         bullets.push(

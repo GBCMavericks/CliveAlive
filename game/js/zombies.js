@@ -10,6 +10,7 @@ const JUMPER_PROXIMITY_X = 200; // MAX proximity for the jumper to start jumping
 const JUMPER_PROXIMITY_Y = 100; // Same thing for the y axis.
 const SLIME_PROBABILITY = 0.64;
 const SHIELD_ZOMBIE_SPEED = 60 / FPS;
+const ZOMBIE_ANIMATION_FRAMES = 8;
 
 var zombies = []; // The array of zombies.
 var zombieDamageSound = document.createElement("audio"); // Played when the zombie takes damage.
@@ -17,6 +18,7 @@ var slime = {img:null, x:null, y:null, onPlay:null};
 var slimes = [];
 var flyingZombies = []; // The array of flying zombies.
 var jumperZombies = []; // The array of jumper zombies.
+var frameCounter = 0;
 
 var reinforcements = {
     zombies: null,
@@ -67,6 +69,11 @@ function moveZombie()
 
 function animateZombie()
 {
+	if(++frameCounter % ZOMBIE_ANIMATION_FRAMES != 0)
+	{
+		return;
+	}
+	frameCounter = 0;
 	for (var i = 0; i < zombies.length; i++)
 	{
 		if (zombies[i].animationState == 0)
@@ -119,7 +126,6 @@ function animateZombie()
 
 function spawnZombie()
 {
-	console.log('zombies: ' + reinforcements.zombies);
     if(reinforcements.zombies <= 0)
     {
         clearInterval(intervals.zombie);

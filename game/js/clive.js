@@ -129,11 +129,6 @@ function createMap() // Initialize all the variables here.
 	clouds = [];
 	for (var i = 0; i < 4; i++)
         spawnCloud();
-	crateInt = setInterval(spawnCrate,20000);
-    zombieInt = setInterval(spawnZombie,4000);
-	flyingZombieInt = setInterval(spawnFlyingZombie, 7000);
-	flyingZombieFireInt = setInterval(fireFlyingZombie, 2500);
-	jumperZombieInt = setInterval (spawnJumperZombie, 10000);
     restartImg.x = 635;
     restartImg.y = 330;
     restartImg.onPlay = false;
@@ -209,7 +204,7 @@ function update()
 	moveSlime();
 	moveJumperZombie();
     moveClouds();
-    
+    animateZombie();
     /* then we detect if they have collided or not */
 	collisionCrateGround();
 	collisionCratePad();
@@ -258,7 +253,11 @@ function render()
     surface.clearRect(0,0,canvas.width,canvas.height); // Clear the canvas first.
     surface.drawImage(background.img, background.x, background.y, canvas.width, canvas.height); // Draw the background.
     drawClouds(surface);
-    surface.drawImage(ground.img, ground.x, ground.y, canvas.width, canvas.height); // Draw the ground.
+    console.log(ground);
+    surface.drawImage(ground.img, ground.x, ground.y, canvas.width, ground.img.height); // Draw the ground.
+	drawPlayerHUD(surface);
+    drawProgressHUD(surface);
+    
     drawPads(surface);
     drawCrate(surface);
     drawZombies(surface);
@@ -268,8 +267,6 @@ function render()
     surface.drawImage(player.img,player.x,player.y, player.width, player.height); // Draw the player.
 	drawBullets(surface);
 	
-	drawPlayerHUD(surface);
-	drawProgressHUD(surface);
     if (gameIsLost || gameIsWon) {
         window.removeEventListener("keydown", onKeyDown);
         window.removeEventListener("keyup", onKeyUp);
@@ -309,24 +306,6 @@ function collisionCrateGround()
 		crate.onPad = false;
 		crate.y = ground.y - crateImage.height;
 	}
-}
-
-function collisionCratePad()
-{    
-	for (var i = 0; i < pads.length; i++)
-    { // For each pad in the pads array:
-        var padY = canvas.height - pads[i].Y;
-        if (crate.y + crateImage.height <= padY + pads[i].img.height - CRATE_SPEED 
-            && crate.y + crateImage.height >= padY + CRATE_SPEED)
-		{ // Then there is a collision between the y coordinates of the crate and the pad.
-            if (crate.x + crateImage.width >= pads[i].x 
-                && crate.x <= pads[i].x + pads[i].img.width)
-			{
-				crate.onPad = true;
-				crate.y = padY - crate.img.height; // Make sure the crate is exactly on the pad.
-			}
-		}
-    }
 }
 
 function collisionCratePlayer()

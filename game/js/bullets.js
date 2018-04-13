@@ -9,10 +9,6 @@ function moveBullet()
         if(!bullets[i].onPlay)
             continue;
         currentBullet = bullets[i];
-        /*if (currentBullet.x > canvas.width || currentBullet.x < 0 || currentBullet.y > canvas.height || currentBullet.y < 0)
-        { // Then the current bullet is out of the canvas. Time to delete it from the bullets array.
-            bullets.splice(i,i+1); // Removes the current bullet from the bullet array.
-        }*/
         currentBullet.x += currentBullet.xSpeed;
         currentBullet.y += currentBullet.ySpeed;
     }
@@ -46,8 +42,6 @@ function fire(event)
     var mouseX = event.clientX - surface.canvas.offsetLeft; // You have to subtract the offset value
     var mouseY = event.clientY - surface.canvas.offsetTop;  // to get the mouse coordinate inside the canvas.
     shootSound.play(); // Play the shooting sound effect. Pew pew pew!
-    var bulletImage = new Image();
-    var bulletImageD = new Image();
 	var bulletX, bulletY;
 	var bulletMargin = PLAYER_SPEED + 15;
 	if (currentDirection)

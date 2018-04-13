@@ -49,7 +49,7 @@ function startScreen() {
     moveClouds();
     moveStartZombies();
     moveSlime();
-    //animateZombie();
+    animateZombie();
     drawZombies(surface);
     drawFlyingZombies(surface);
     drawSlimes(surface);
@@ -71,7 +71,7 @@ function drawStartBackground(ctx){
     ctx.fill();
     ctx.drawImage(background.img, background.x, background.y, canvas.width, canvas.height); // Draw the background.
     drawClouds(ctx);
-	ctx.drawImage(ground.img, ground.x, ground.y, canvas.width, canvas.height); // Draw the ground.
+	ctx.drawImage(ground.img, ground.x, ground.y, canvas.width, ground.img.height); // Draw the ground.
     ctx.restore();
 }
 
@@ -128,18 +128,21 @@ function moveStartZombies(){
     for (var i = 0; i < zombies.length; i++)
 	{
         var zombieAtHand = zombies[i];
-        if (zombieAtHand.img.src.indexOf('Right') >= 0){
+        if (zombieAtHand.direction){
             zombieAtHand.x += ZOMBIE_SPEED;
             if(zombieAtHand.x >= (canvas.width - zombieAtHand.img.width)){
+                // turn around
                 zombieAtHand.img = zombieLeftWalk[0];
-                zombieAtHand.x -= ZOMBIE_SPEED;                    
+                zombieAtHand.x -= ZOMBIE_SPEED;
+                zombieAtHand.direction = false;
             }
         }
         else{
             zombieAtHand.x -= ZOMBIE_SPEED;                    
             if(zombieAtHand.x <= 0){
                 zombieAtHand.img = zombieRightWalk[0];
-                zombieAtHand.x += ZOMBIE_SPEED;                    
+                zombieAtHand.x += ZOMBIE_SPEED;
+                zombieAtHand.direction = true;
             }            
         }
 	}

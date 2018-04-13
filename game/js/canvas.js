@@ -50,7 +50,7 @@ var playerAnim = {
 var menuImage = {}
 var buttonImage = {};
 
-const NUM_RESOURCES = 105;
+const NUM_RESOURCES = 106;
 var zombieRightWalk = [];
 var zombieLeftWalk = [];
 var zombieRightIdle = [];
@@ -85,18 +85,12 @@ function onSpaceDown(event){
             canvas.addEventListener("click", fire);
             clearAllIntervals();
             canvas.addEventListener("mousemove", playerDirection);
-            /*
-            clearInterval(startZombieInterval);
-            clearInterval(startJumpingZombieInterval);
-            clearInterval(startFlyingZombieInterval);
-            clearInterval(startFlyingZombieFireInt);*/
             cancelAnimationFrame(startAnimation);
             loadLevel(0);
     }
 };
 
 function loadCounter(callback){
-    console.log(loadedResources);
     if(++loadedResources == NUM_RESOURCES){
         callback();
     }    

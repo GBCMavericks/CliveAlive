@@ -121,8 +121,11 @@ function createMap(doNotChangePlayerPosition) // Initialize all the variables he
 
     initializeCrate();
     currentDirection = true;
+
+    /* cleans the scene */
     zombies = [];
     flyingZombies = [];
+    shieldZombies=[];
     slimes = [];
     bullets = [];
     bulletSpeedMultiplier = 10;
@@ -238,6 +241,8 @@ function update()
 	collisionPlayerJumperZombie();
 	collisionBulletJumperZombie();
     collisionJumperZombiePad();
+    collisionPlayerShieldZombie();
+    collisionBulletShieldZombie();
     
     /* then we apply some other effects for the next move */
     playerGravity();

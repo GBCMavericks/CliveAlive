@@ -434,6 +434,7 @@ function cleanJumperZombieArray()
 
 function spawnShieldZombie()
 {
+	console.log(reinforcements.shieldZombies);
 	if(reinforcements.shieldZombies <= 0)
 	{
 		clearInterval(intervals.shieldZombie);
@@ -449,7 +450,7 @@ function spawnShieldZombie()
 	}
 	else
 	{
-		currentZombie.x = background.img.width;
+		currentZombie.x = canvas.width + shieldZombieRight.width;
 		currentZombie.img = shieldZombieLeft;
 		currentZombie.currentDirection = false;
 	}

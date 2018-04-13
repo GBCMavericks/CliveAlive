@@ -317,3 +317,149 @@ function collisionBulletJumperZombie()
     }
 }
 
+
+function collisionPlayerShieldZombie()
+{
+	for (var i = 0; i < shieldZombies.length; i++)
+	{
+		if(shieldZombies[i].onPlay)
+		{
+			if (player.x + player.img.width - 12 >= shieldZombies[i].x 
+				&& player.x <= shieldZombies[i].x + shieldZombieRight.width - 12)
+			{ // Then the x coordinates collide.
+				if (player.y + player.img.height >= shieldZombies[i].y + 12 
+					&& player.y <= shieldZombies[i].y + shieldZombieRight.height)
+				{ // Then the y coordinates collide. We have a collision!
+					player.livesLeft--;
+					if (player.livesLeft == 0)
+						gameIsLost = true;
+				}
+			}	
+		}
+	}
+}
+
+function collisionBulletShieldZombie()
+{
+    for (var i = 0; i < bullets.length; i++)
+    { // For each bullet in the bullets array:
+        if(!bullets[i].onPlay)
+            continue;
+        for (var j = 0; j < shieldZombies.length; j++)
+        { // For each shield zombie:
+            var leftCollide = false, rightCollide = false, upCollide = false, downCollide = false;
+            if (bullets[i].x + bullets[i].img.width + bullets[i].xSpeed >= shieldZombies[j].x)
+            { // IMPORTANT: Adding the speed of the bullet to these four if statements is crucial! It prevents the bullet from going inside the pad.
+                leftCollide = true;
+            }
+            if (bullets[i].x  + bullets[i].xSpeed <= shieldZombies[j].x + shieldZombies[j].img.width)
+            {
+                rightCollide = true;
+            }
+            if (bullets[i].y + bullets[i].img.height + bullets[i].ySpeed>= shieldZombies[j].y)
+            {
+                upCollide = true;
+            }
+            if (bullets[i].y + bullets[i].ySpeed<= shieldZombies[j].y + shieldZombies[j].img.height)
+            {
+                downCollide = true;
+            }
+            if (leftCollide && rightCollide && upCollide && downCollide)
+            {// Collision occured!
+				shieldZombies.length;
+                var bulletCenterY = bullets[i].y + bullets[i].img.height/2;
+                if ( bulletCenterY > shieldZombies[j].y && bulletCenterY < shieldZombies[j].y + shieldZombies[j].img.height)
+                { // Then a horizontal collision occured.
+                    if (bullets[i].x < shieldZombies[j].x)
+                    { // Then the bullet collided with the left side.
+						if (shieldZombies[j].currentDirection == false && player.currentPowerUp != 2)
+						{
+							bullets[i].x = shieldZombies[j].x - bullets[i].img.width; // This ensures the bullet ricochet animation is smooth.
+							bullets[i].xSpeed = -bullets[i].xSpeed;
+							bullets[i].bounceCount--;
+							if (bullets[i].bounceCount == 0)
+								bullets[i].onPlay = false;
+						}
+						else
+						{
+							shieldZombies[j].lives--;
+							var imgString = bullets[i].img.src
+							var subString = imgString.substring(imgString.length-14,imgString.length)
+							if (subString == "img/bullet.png")
+							{ // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
+								bullets[i].onPlay = false;
+							}
+							zombieDamageSound.load();
+							zombieDamageSound.play();
+							if (shieldZombies[j].lives == 0)
+							{ // If the zombie dies:
+								shieldZombies[j].onPlay=false;
+								killCounter++;
+								updateProgressHUD();
+								if (killCounter >= waveSize)
+								{
+									gameIsWon = true;
+								}
+							}
+						}
+                    }
+                    else
+                    { // Then the bullet collided with the right side.
+						if (shieldZombies[j].currentDirection == true && player.currentPowerUp != 2)
+						{
+							bullets[i].x = shieldZombies[j].x + shieldZombies[j].img.width; // This ensures the bullet ricochet animation is smooth.
+							bullets[i].xSpeed = -bullets[i].xSpeed;
+							bullets[i].bounceCount--;
+							if (bullets[i].bounceCount == 0)
+								bullets[i].onPlay = false;
+						}
+						else
+						{
+							shieldZombies[j].lives--;
+							var imgString = bullets[i].img.src
+							var subString = imgString.substring(imgString.length-14,imgString.length)
+							if (subString == "img/bullet.png")
+							{ // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
+								bullets[i].onPlay = false;
+							}
+							zombieDamageSound.load();
+							zombieDamageSound.play();
+							if (shieldZombies[j].lives == 0)
+							{ // If the zombie dies:
+								shieldZombies[j].onPlay=false;
+								killCounter++;
+								updateProgressHUD();
+								if (killCounter >= waveSize)
+								{
+									gameIsWon = true;
+								}
+							}
+						}
+					}
+                }
+                else
+				{
+					shieldZombies[j].lives--;
+					var imgString = bullets[i].img.src
+					var subString = imgString.substring(imgString.length-14,imgString.length)
+					if (subString == "img/bullet.png")
+					{ // Checking whether the image source is a regular or diamond bullet, deleting it if the former.
+						bullets[i].onPlay = false;
+					}
+					zombieDamageSound.load();
+					zombieDamageSound.play();
+					if (shieldZombies[j].lives == 0)
+					{ // If the zombie dies:
+						shieldZombies[j].onPlay=false;
+						killCounter++;
+						updateProgressHUD();
+						if (killCounter >= waveSize)
+						{
+							gameIsWon = true;
+						}
+					}
+				}
+            }
+        }
+    }
+}

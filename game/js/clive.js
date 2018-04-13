@@ -581,3 +581,13 @@ function updateProgressHUD()
 	hud_clipXLength = hud_slotWidth * killCounter;
 	hud_clipYHeight = hud_progressBackground2.img.height;
 }
+
+function playerDirection(event)
+{
+	var mouseX = event.clientX - surface.canvas.offsetLeft; 
+    var mouseY = event.clientY - surface.canvas.offsetTop;
+	if (mouseX < player.x)
+		currentDirection = false;
+	else
+		currentDirection = true;
+}

@@ -99,7 +99,7 @@ function loadLevel(levelNumber)
     createMap(levelNumber != 0);
 }
 
-function createMap(doNotChangePlayerPosition) // Initialize all the variables here.
+function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
 {
 	leftPressed = false; 
 	rightPressed = false;
@@ -110,8 +110,8 @@ function createMap(doNotChangePlayerPosition) // Initialize all the variables he
 	ground.offset = 40;
 	ground.x = 0;
     ground.y = canvas.height - ground.img.height + ground.offset;
-    console.log(doNotChangePlayerPosition);
-    if(!doNotChangePlayerPosition){
+    console.log(thisIsNotTheFirstTime);
+    if(!thisIsNotTheFirstTime){
         player.x = canvas.width/2;
         player.y = ground.y - player.height;
         player.onPad = false;
@@ -198,23 +198,102 @@ function createMap(doNotChangePlayerPosition) // Initialize all the variables he
 	hud_clipXLength = 0;
 	hud_clipYHeight = 0;
 	hud_slotWidth = 0;
-	
-    update();
+	if(!thisIsNotTheFirstTime){
+        update();
+    }
+}
+
+var transitionState = 0;
+var transitionMenu = null;
+var transitionPause = 0;
+const TOTAL_TRANSITION_PAUSE = 240;
+
+function moveTransition(){
+    if(transitionMenu != null && transitionState == 1 
+        && transitionMenu.y < (canvas.height - transitionMenu.img.height)/2)
+    {
+        transitionMenu.y += PLAYER_SPEED;        
+    }
+    else if(transitionState > 0 && transitionPause < TOTAL_TRANSITION_PAUSE){
+        transitionPause++;
+        transitionState = 2;
+    }
+    else if(transitionState == 2 && transitionMenu.y  > (- transitionMenu.img.height) ){
+        transitionMenu.y -= PLAYER_SPEED;        
+    }
+    else{
+        transitionState = 0;
+        transitionPause = 0;
+        loadLevel(currentLevel);
+    }
+}
+
+var levelFontSize = 45;
+var levelDescriptionFontSize = 30;
+
+function drawTransition(ctx){
+    ctx.drawImage(transitionMenu.img, transitionMenu.x, transitionMenu.y);
+    /* draw the fantastic text */
+    ctx.font = levelFontSize + "px zombieSlayer";
+    ctx.fillStyle = BLOOD_RED;
+    ctx.fillText("New Level",
+    transitionMenu.x + 220, transitionMenu.y+60);
+
+    ctx.font = levelDescriptionFontSize + "px zombieSlayer";
+    ctx.fillStyle = BLOOD_RED;
+    ctx.fillText("Now you'll have to kill:",
+    transitionMenu.x + 80, transitionMenu.y+155);
+    var textY = transitionMenu.y + 155;
+    var zombieMenu = LEVELS[currentLevel].spawnCounts;
+    if(zombieMenu.zombies > 0)
+    {
+        textY += 40;
+        ctx.fillText("- " + zombieMenu.zombies + " Normal Zombies",
+        transitionMenu.x + 80, textY);
+    }
+    if(zombieMenu.flyingZombies > 0)
+    {
+        textY += 40;
+        ctx.fillText("- " + zombieMenu.flyingZombies + " Flying Zombies",
+        transitionMenu.x + 80, textY);
+    }
+    if(zombieMenu.jumperZombies > 0)
+    {
+        textY += 40;
+        ctx.fillText("- " + zombieMenu.jumperZombies + " Jumper Zombies",
+        transitionMenu.x + 80, textY);
+    }
+    if(zombieMenu.shieldZombies > 0)
+    {
+        textY += 40;
+        ctx.fillText("- " + zombieMenu.shieldZombies + " Shield Zombies",
+        transitionMenu.x + 80, textY);
+    }
+    textY += 50;
+    ctx.fillText(" GOOD LUCK ",
+        transitionMenu.x + 80, textY);
 }
 
 function update()
 {
-    /* First we move stuff around */
-    if(checkForWin())
+    /* check for winning and not transitioning */
+    if(transitionState == 0 && checkForWin())
     {
         if(!gameIsWon)
         {
-            loadLevel(++currentLevel);
-            return; // Let a new loop run for the next level.
+            currentLevel++;
+            transitionState = 1;
+            transitionMenu = {
+                img: windowImage,
+                y: -windowImage.height,
+                x: (canvas.width - windowImage.width)/2,
+            };
         }
         else
             render(); // Render the win screen forever.
-    }
+    }    
+
+    /* Move stuff around */
     moveZombie();
     movePlayer();
     moveBullet();
@@ -225,6 +304,9 @@ function update()
     moveClouds();
     moveShieldZombie();
     animateZombie();
+    if(transitionState != 0){
+        moveTransition();
+    }
     /* then we detect if they have collided or not */
 	collisionCrateGround();
 	collisionCratePad();
@@ -290,7 +372,10 @@ function render()
     drawShieldZombies(surface);
     drawSlimes(surface);
     drawPlayer(surface);
-	drawBullets(surface);
+    drawBullets(surface);
+    if(transitionState != 0){
+        drawTransition(surface);
+    }
 	
     if (gameIsLost || gameIsWon) {
         window.removeEventListener("keydown", onKeyDown);

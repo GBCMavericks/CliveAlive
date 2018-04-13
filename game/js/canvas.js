@@ -49,8 +49,9 @@ var playerAnim = {
 
 var menuImage = {}
 var buttonImage = {};
+var windowImage = {};
 
-const NUM_RESOURCES = 106;
+const NUM_RESOURCES = 107;
 var zombieRightWalk = [];
 var zombieLeftWalk = [];
 var zombieRightIdle = [];
@@ -294,6 +295,11 @@ function loadResources(callback){
     buttonImage= new Image();
     buttonImage.src = "img/Menu.png";
     buttonImage.onload = function(){loadCounter(callback);}
+
+    windowImage = new Image();
+    windowImage.src = "img/Window.png";
+    windowImage.onload = function(){loadCounter(callback);}
+
 
 }
 

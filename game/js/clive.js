@@ -100,7 +100,7 @@ function createMap() // Initialize all the variables here.
     player.y = ground.y - player.height;
 	player.onPad = false;
     player.currentPowerUp = 0;   
-	player.livesLeft = 5;	
+	player.livesLeft = 1;	
     initializeCrate();
     currentDirection = true;
     zombies = [];
@@ -353,35 +353,7 @@ function movePlayer()
     }
 }
 
-function collisionPlayerPad()
-{
-    for ( var i = 0; i < pads.length; i++)
-    { // For each pad in the pads array:
-        if (player.inAir) // We only want to check collision between the pad and the player when the player is falling down.
-        {
-            var padY = canvas.height - pads[i].y ;
-            if (player.y + player.height <= padY - player.verticalVelocity && player.y + player.height >= padY + player.verticalVelocity)
-            { // Then there is a collision between the y coordinates of the player and the pad.
-                if (player.x + player.width >= pads[i].x && player.x <= pads[i].x + pads[i].img.width)
-                { // Then the x coordinates collide as well. We have a collision!
-					player.onPad = true;
-					pads[i].onPad = true;
-                    player.y = padY - player.height; // Make sure the player is exactly on the pad.
-                    resetJump(); // Reset the jump variables so the next jump is not screwed up.
-                }
-            }
-        }
-        if (pads[i].onPad) // This part captures the moment when the player leaves the pad, so the fall animation can start.
-        {
-            if (player.x > pads[i].x + pads[i].img.width || player.x + player.width < pads[i].x)
-            { // Then the player left the pad, time to apply gravity.
-                player.inAir = true;
-                player.onPad = false;
-				pads[i].onPad = false;
-            }
-        }
-    }
-}
+
 
 function playerAnimation()
 {

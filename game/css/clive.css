@@ -5,6 +5,10 @@ body
 	margin:0px !important;
 }
 
+canvas{
+	cursor:url(../img/targeticon.png) 32 32, auto;
+}
+
 #stage
 {
 	position: absolute;

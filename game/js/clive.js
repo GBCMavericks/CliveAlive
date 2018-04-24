@@ -116,7 +116,8 @@ function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
         player.y = ground.y - player.height;
         player.onPad = false;
         player.currentPowerUp = 0;   
-        player.livesLeft = 1;	    
+        player.livesLeft = 4; /* more than 4 */
+        player.maxLives = 4;  /* breaks the interface */	    
     }
 
     initializeCrate();
@@ -154,11 +155,8 @@ function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
 	playerPortraitBackground.x = canvas.width/50;
 	playerPortraitBackground.y = canvas.height/30;
 	playerPortraitBackground.onPlay = true;
-	playerLives.x1 = canvas.width/50;
-	playerLives.x2 = canvas.width/50 + 35;
-	playerLives.x3 = canvas.width/50 + 2*35;
-	playerLives.x2 = canvas.width/50 + 3*35;
-	playerLives.x3 = canvas.width/50 + 4*35;
+    playerLives.x1 = canvas.width/50;
+    playerLives.skipX = 35;
 	playerLives.y = canvas.height/30;
 	playerLives.onPlay = true;
 	powerupPortraitBackground.x = canvas.width/50;
@@ -184,13 +182,13 @@ function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
 	hud_diamondGunBullets.x5 = canvas.width/50 + 4*15;
 	hud_diamondGunBullets.y = canvas.height/30;
 	hud_diamondGunBullets.onPlay = true;
-	hud_progressFrame.x = canvas.width/50 + 410;
+	hud_progressFrame.x = (canvas.width - hud_progressBackground1.img.width)/2;
 	hud_progressFrame.y = canvas.height/30;
 	hud_progressFrame.onPlay = true;
-	hud_progressBackground1.x = canvas.width/50 + 410;
+	hud_progressBackground1.x = (canvas.width - hud_progressBackground1.img.width)/2;
 	hud_progressBackground1.y = canvas.height/30;
 	hud_progressBackground1.onPlay = true;
-	hud_progressBackground2.x = canvas.width/50 + 410;
+	hud_progressBackground2.x = (canvas.width - hud_progressBackground1.img.width)/2;
 	hud_progressBackground2.y = canvas.height/30;
 	hud_progressBackground2.onPlay = true;
 	hud_clipX = 0;
@@ -622,13 +620,14 @@ function drawPlayerHUD(surface)
 		if (powerUpAmmo >= 5)
 			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x5,hud_diamondGunBullets.y);
 	}
-	surface.drawImage(playerPortraitBackground.img,playerPortraitBackground.x,playerPortraitBackground.y);
-	if (player.livesLeft >= 1)
-		surface.drawImage(playerLives.img,playerLives.x1,playerLives.y);
-	if (player.livesLeft >= 2)
-		surface.drawImage(playerLives.img,playerLives.x2,playerLives.y);
-	if (player.livesLeft >= 3)
-		surface.drawImage(playerLives.img,playerLives.x3,playerLives.y);
+    surface.drawImage(playerPortraitBackground.img,playerPortraitBackground.x,playerPortraitBackground.y);
+    // let's draw lives 
+    for(var cliveLives = 0; cliveLives < player.livesLeft; cliveLives++)
+    {
+        surface.drawImage(playerLives.img,
+            playerLives.x1 + cliveLives * playerLives.skipX,
+            playerLives.y);
+    }
 }
 
 function drawProgressHUD(surface)
@@ -645,10 +644,11 @@ function drawProgressHUD(surface)
 						hud_clipXLength,
 						hud_clipYHeight);
 	surface.drawImage(hud_progressFrame.img, hud_progressFrame.x, hud_progressFrame.y);
-	var currentProgress = killCounter + " / " + waveSize;
+    var currentProgress = killCounter + " / " + waveSize;
+    var currentProgressWidth = (currentProgress.length) * 12;
 	surface.font = "34px Arial";
 	surface.fillStyle = '#000000';
-	surface.fillText(currentProgress, 770, 90);
+	surface.fillText(currentProgress, (canvas.width - currentProgressWidth)/2, 90);
 }
 
 function updateProgressHUD()

@@ -19,12 +19,17 @@ function collisionCratePlayer()
                 && player.y <= crate.y + crateImage.height)
 			{ // Then the y coordinates collide. We have a collision!
 				player.currentPowerUp = Math.floor((Math.random() * 2) + 1);
+				console.log(player.currentPowerUp);
 				powerUpAmmo = POWERUP_USES;
 				crate.hide = true;
 				crateSound.play();
 			}
 		}
 	}
+}
+function removeInvulnerability(){
+	console.log('Is this executed too fast?' + player.livesLeft);
+	player.invulnerable = false;
 }
 
 function collisionPlayerZombie()
@@ -39,9 +44,20 @@ function collisionPlayerZombie()
 				if (player.y + player.img.height >= zombies[i].y + 12 
 					&& player.y <= zombies[i].y + zombieRightWalk[zombies[i].animationWalkIndex].height)
 				{ // Then the y coordinates collide. We have a collision!
-					player.livesLeft--;
-					if (player.livesLeft == 0)
-						gameIsLost = true;
+					console.log('checking player vulnerability' + player.invulnerable);
+
+					if(!player.invulnerable){
+						player.livesLeft--;
+						console.log('how many times the player dies?' + player.livesLeft);
+						if (player.livesLeft == 0){
+							gameIsLost = true;
+						}
+						else{
+							console.log('Is this even executed?' + player.livesLeft);
+							player.invulnerable = true;
+							setTimeout(removeInvulnerability, 2000);
+						}
+					}
 				}
 			}	
 		}

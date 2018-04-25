@@ -7,7 +7,7 @@ var bullets; // This array will hold all the bullets displayed on the canvas.
 var bulletSpeedMultiplier; // A variable used to determine the value of bullet speed.
 var currentLevel = 0;
 var nextFrame;
-
+var restartOffset = 20;
 // Variables related to level progress HUD
 var hud_clipX;
 var hud_clipY;
@@ -42,6 +42,7 @@ var player =
     width:56,
     animationIndex:0,
     animationTransition: 17,
+    invulnerable: false,
 };
 const JUMP_INITIAL_VELOCITY = 600 / FPS; // The player's vertical velocity at the beginning of a jump.
 const GRAVITY_MULTIPLIER = 40;
@@ -149,9 +150,10 @@ function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
 	clouds = [];
 	for (var i = 0; i < 4; i++)
         spawnCloud();
-    restartImg.x = 635;
-    restartImg.y = 330;
+    restartImg.x = (canvas.width - restartImg.img.width)/2 ;
+    restartImg.y = (canvas.height)/2 + restartOffset; // Centralizes the image
     restartImg.onPlay = false;
+    console.log(restartImg);
 	playerPortraitBackground.x = canvas.width/50;
 	playerPortraitBackground.y = canvas.height/30;
 	playerPortraitBackground.onPlay = true;
@@ -165,21 +167,15 @@ function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
 	hud_sprayGun.x = canvas.width/50;
 	hud_sprayGun.y = canvas.height/30;
 	hud_sprayGun.onPlay = true;
-	hud_sprayGunBullets.x1 = canvas.width/50;
-	hud_sprayGunBullets.x2 = canvas.width/50 + 15;
-	hud_sprayGunBullets.x3 = canvas.width/50 + 2*15;
-	hud_sprayGunBullets.x4 = canvas.width/50 + 3*15;
-	hud_sprayGunBullets.x5 = canvas.width/50 + 4*15;
+    hud_sprayGunBullets.x1 = canvas.width/50;
+    hud_sprayGunBullets.skipX = 15;
 	hud_sprayGunBullets.y = canvas.height/30;
 	hud_sprayGun.onPlay = true;
 	hud_diamondGun.x = canvas.width/50;
 	hud_diamondGun.y = canvas.height/30;
 	hud_diamondGun.onPlay = true;
-	hud_diamondGunBullets.x1 = canvas.width/50;
-	hud_diamondGunBullets.x2 = canvas.width/50 + 15;
-	hud_diamondGunBullets.x3 = canvas.width/50 + 2*15;
-	hud_diamondGunBullets.x4 = canvas.width/50 + 3*15;
-	hud_diamondGunBullets.x5 = canvas.width/50 + 4*15;
+    hud_diamondGunBullets.x1 = canvas.width/50;
+    hud_diamondGunBullets.skipX = 15;
 	hud_diamondGunBullets.y = canvas.height/30;
 	hud_diamondGunBullets.onPlay = true;
 	hud_progressFrame.x = (canvas.width - hud_progressBackground1.img.width)/2;
@@ -382,12 +378,16 @@ function render()
         if (gameIsLost)
         {
             canvas.addEventListener("click", restartGame);
-            surface.drawImage(loseImage, 602, 220);
+            surface.drawImage(loseImage,
+                              (canvas.width - loseImage.width)/2, 
+                              canvas.height/2-loseImage.height);
             restartImg.onPlay = true;
         }
         if (gameIsWon) 
 		{
-			surface.drawImage(winImage, 602, 220);
+			surface.drawImage(winImage, 
+                (canvas.width - winImage.width)/2, 
+                (canvas.height - winImage.height)/2);
 		}
         clearAllIntervals();
     }
@@ -420,35 +420,6 @@ function drawPlayer(ctx){
     ctx.restore();
 }
 
-function collisionCrateGround()
-{
-	if (crate.y + crateImage.height >= ground.y)
-	{
-		crate.onGround = true;
-		crate.onPad = false;
-		crate.y = ground.y - crateImage.height;
-	}
-}
-
-function collisionCratePlayer()
-{
-	if (!crate.hide)
-	{
-        if (player.x + player.width >= crate.x 
-            && player.x <= crate.x + crateImage.width)
-		{ // Then the x coordinates collide.
-            if (player.y + player.height >= crate.y 
-                && player.y <= crate.y + crateImage.height)
-			{ // Then the y coordinates collide. We have a collision!
-				currentPowerUp = Math.floor((Math.random() * 2) + 1);
-				powerUpAmmo = POWERUP_USES;
-				crate.hide = true;
-				crateSound.play();
-			}
-		}
-	}
-}
-
 function movePlayer()
 {
     if (leftPressed && player.x > 0)
@@ -474,8 +445,6 @@ function movePlayer()
         jumpSound.play();
     }
 }
-
-
 
 function playerAnimation()
 {
@@ -592,33 +561,26 @@ function drawPlayerHUD(surface)
 {
 	if (player.currentPowerUp == 1)
 	{
-		surface.drawImage(powerupPortraitBackground.img,powerupPortraitBackground.x,powerupPortraitBackground.y);
-		surface.drawImage(hud_sprayGun.img,hud_sprayGun.x,hud_sprayGun.y);
-		if (powerUpAmmo >= 1)
-			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x1,hud_sprayGunBullets.y);
-		if (powerUpAmmo >= 2)
-			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x2,hud_sprayGunBullets.y);
-		if (powerUpAmmo >= 3)
-			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x3,hud_sprayGunBullets.y);
-		if (powerUpAmmo >= 4)
-			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x4,hud_sprayGunBullets.y);
-		if (powerUpAmmo >= 5)
-			surface.drawImage(hud_sprayGunBullets.img,hud_sprayGunBullets.x5,hud_sprayGunBullets.y);
+        surface.drawImage(powerupPortraitBackground.img,
+                          powerupPortraitBackground.x,powerupPortraitBackground.y);
+        surface.drawImage(hud_sprayGun.img,hud_sprayGun.x,hud_sprayGun.y);
+        for(var ammoCount = 0; ammoCount < powerUpAmmo; ammoCount++)
+        {
+            surface.drawImage(hud_sprayGunBullets.img,
+                              hud_sprayGunBullets.x1 + ammoCount * hud_sprayGunBullets.skipX,
+                              hud_sprayGunBullets.y);
+        }
 	}
 	else if (player.currentPowerUp == 2)
 	{
 		surface.drawImage(powerupPortraitBackground.img,powerupPortraitBackground.x,powerupPortraitBackground.y);
 		surface.drawImage(hud_diamondGun.img,hud_diamondGun.x,hud_diamondGun.y);
-		if (powerUpAmmo >= 1)
-			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x1,hud_diamondGunBullets.y);
-		if (powerUpAmmo >= 2)
-			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x2,hud_diamondGunBullets.y);
-		if (powerUpAmmo >= 3)
-			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x3,hud_diamondGunBullets.y);
-		if (powerUpAmmo >= 4)
-			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x4,hud_diamondGunBullets.y);
-		if (powerUpAmmo >= 5)
-			surface.drawImage(hud_diamondGunBullets.img,hud_diamondGunBullets.x5,hud_diamondGunBullets.y);
+        for(var ammoCount = 0; ammoCount < powerUpAmmo; ammoCount++)
+        {
+            surface.drawImage(hud_diamondGunBullets.img,
+                              hud_diamondGunBullets.x1 + ammoCount * hud_diamondGunBullets.skipX,
+                              hud_diamondGunBullets.y);
+        }
 	}
     surface.drawImage(playerPortraitBackground.img,playerPortraitBackground.x,playerPortraitBackground.y);
     // let's draw lives 

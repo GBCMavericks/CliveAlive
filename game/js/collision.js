@@ -255,9 +255,18 @@ function collisionSlimePlayer()
 		{
 			if (slimes[i].y + slimes[i].img.height >= player.y && slimes[i].y <= player.y + player.height)
 			{ 
-				player.livesLeft--;
-				if (player.livesLeft == 0)
-					gameIsLost = true;
+				if(!player.invulnerable){
+					player.livesLeft--;
+					console.log('how many times the player dies?' + player.livesLeft);
+					if (player.livesLeft == 0){
+						gameIsLost = true;
+					}
+					else{
+						console.log('Is this even executed?' + player.livesLeft);
+						player.invulnerable = true;
+						setTimeout(removeInvulnerability, 2000);
+					}
+				}
 			}
 		}
 	}

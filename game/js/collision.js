@@ -129,11 +129,6 @@ function collisionBulletZombie()
 							zombies[j].animationState = 2;
 							killCounter++;
 							updateProgressHUD();
-							/*
-							if (killCounter >= waveSize)
-							{
-								gameIsWon = true;
-							}*/
 						}
 					}
 				}
@@ -199,11 +194,6 @@ function collisionBulletFlyingZombie()
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
 						updateProgressHUD();
-						/*
-						if (killCounter >= waveSize)
-						{
-							gameIsWon = true;
-						}*/
 					}
 				}
 			}
@@ -223,9 +213,18 @@ function collisionPlayerFlyingZombie()
 				if (player.y + player.height >= flyingZombies[i].y + 12 
 					&& player.y <= flyingZombies[i].y + flyingZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
-					player.livesLeft--;
-					if (player.livesLeft == 0)
-						gameIsLost = true;
+					if(!player.invulnerable){
+						player.livesLeft--;
+						console.log('how many times the player dies?' + player.livesLeft);
+						if (player.livesLeft == 0){
+							gameIsLost = true;
+						}
+						else{
+							console.log('Is this even executed?' + player.livesLeft);
+							player.invulnerable = true;
+							setTimeout(removeInvulnerability, 2000);
+						}
+					}
 				}
 			}	
 		}
@@ -284,9 +283,18 @@ function collisionPlayerJumperZombie()
 				if (player.y + player.height >= jumperZombies[i].y + 12 
 					&& player.y <= jumperZombies[i].y + jumperZombies[i].img.height)
 				{ // Then the y coordinates collide. We have a collision!
-					player.livesLeft--;
-					if (player.livesLeft == 0)
-						gameIsLost = true;
+					if(!player.invulnerable){
+						player.livesLeft--;
+						console.log('how many times the player dies?' + player.livesLeft);
+						if (player.livesLeft == 0){
+							gameIsLost = true;
+						}
+						else{
+							console.log('Is this even executed?' + player.livesLeft);
+							player.invulnerable = true;
+							setTimeout(removeInvulnerability, 2000);
+						}
+					}
 				}
 			}	
 		}
@@ -330,11 +338,6 @@ function collisionBulletJumperZombie()
 						//zombies.splice(j,j+1); // Remove it from the zombies array.
 						killCounter++;
 						updateProgressHUD();
-						/*
-						if (killCounter >= waveSize)
-						{
-							gameIsWon = true;
-						}*/
 					}
 				}
 			}
@@ -355,9 +358,18 @@ function collisionPlayerShieldZombie()
 				if (player.y + player.img.height >= shieldZombies[i].y + 12 
 					&& player.y <= shieldZombies[i].y + shieldZombieRight.height)
 				{ // Then the y coordinates collide. We have a collision!
-					player.livesLeft--;
-					if (player.livesLeft == 0)
-						gameIsLost = true;
+					if(!player.invulnerable){
+						player.livesLeft--;
+						console.log('how many times the player dies?' + player.livesLeft);
+						if (player.livesLeft == 0){
+							gameIsLost = true;
+						}
+						else{
+							console.log('Is this even executed?' + player.livesLeft);
+							player.invulnerable = true;
+							setTimeout(removeInvulnerability, 2000);
+						}
+					}
 				}
 			}	
 		}
@@ -421,10 +433,6 @@ function collisionBulletShieldZombie()
 								shieldZombies[j].onPlay=false;
 								killCounter++;
 								updateProgressHUD();
-								if (killCounter >= waveSize)
-								{
-									gameIsWon = true;
-								}
 							}
 						}
                     }
@@ -454,10 +462,6 @@ function collisionBulletShieldZombie()
 								shieldZombies[j].onPlay=false;
 								killCounter++;
 								updateProgressHUD();
-								if (killCounter >= waveSize)
-								{
-									gameIsWon = true;
-								}
 							}
 						}
 					}
@@ -478,10 +482,6 @@ function collisionBulletShieldZombie()
 						shieldZombies[j].onPlay=false;
 						killCounter++;
 						updateProgressHUD();
-						if (killCounter >= waveSize)
-						{
-							gameIsWon = true;
-						}
 					}
 				}
             }

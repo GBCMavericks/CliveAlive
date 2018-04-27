@@ -111,7 +111,7 @@ function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
 	ground.offset = 40;
 	ground.x = 0;
     ground.y = canvas.height - ground.img.height + ground.offset;
-    console.log(thisIsNotTheFirstTime);
+
     if(!thisIsNotTheFirstTime){
         player.x = canvas.width/2;
         player.y = ground.y - player.height;
@@ -153,7 +153,7 @@ function createMap(thisIsNotTheFirstTime) // Initialize all the variables here.
     restartImg.x = (canvas.width - restartImg.img.width)/2 ;
     restartImg.y = (canvas.height)/2 + restartOffset; // Centralizes the image
     restartImg.onPlay = false;
-    console.log(restartImg);
+
 	playerPortraitBackground.x = canvas.width/50;
 	playerPortraitBackground.y = canvas.height/30;
 	playerPortraitBackground.onPlay = true;
@@ -528,9 +528,14 @@ function checkForWin()
             return false;
         }
     }
-    if(killCounter==waveSize)
+    if(transitionState == 0 && killCounter==waveSize)
     {
+        console.log('Checking for win at level: ' + currentLevel);
+        console.log('With killcounter: ' + killCounter);
+        console.log('With waveSize: ' + waveSize);
+
         if (currentLevel == LEVELS.length - 1){
+            console.log('youre a winner!');
             gameIsWon = true;
         }
         return true;

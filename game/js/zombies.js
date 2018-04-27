@@ -434,7 +434,6 @@ function cleanJumperZombieArray()
 
 function spawnShieldZombie()
 {
-	console.log(reinforcements.shieldZombies);
 	if(reinforcements.shieldZombies <= 0)
 	{
 		clearInterval(intervals.shieldZombie);
